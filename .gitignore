@@ -13,3 +13,9 @@ _*.mjs
 # heavy source photos — commit only the web-optimized versions
 brand_assets/hf_*.png
 brand_assets/hf-grandma.png
+
+# secrets — never commit real env files
+.env
+.env.local
+.env*.local
+.vercel

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank you — Heart Note</title>
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      claret: { DEFAULT: '#6E1423', deep: '#4E0E1A' }, gold: { DEFAULT: '#C6973F', soft: '#E4C67F' },
+      ivory: { DEFAULT: '#F7F1E6' }, ink: { DEFAULT: '#2B2019', soft: '#6B5D50' } },
+      fontFamily: { display: ['Fraunces','serif'], body: ['"Nunito Sans"','sans-serif'] } } } };
+  </script>
+  <style>
+    body { background:#F7F1E6; color:#2B2019; font-family:'Nunito Sans',sans-serif; }
+    h1,.font-display { font-family:'Fraunces',serif; }
+    .hero-bg { background-image:
+      radial-gradient(60% 55% at 50% 0%, rgba(233,203,192,.5) 0%, rgba(233,203,192,0) 60%),
+      radial-gradient(45% 45% at 12% 90%, rgba(198,151,63,.18) 0%, rgba(198,151,63,0) 60%); }
+  </style>
+</head>
+<body class="hero-bg min-h-screen grid place-items-center px-6 py-16">
+  <div class="max-w-xl text-center">
+    <div class="grid place-items-center w-24 h-24 rounded-full bg-claret text-gold-soft mx-auto mb-8">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Order received</p>
+    <h1 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.1]">Your song is on its way</h1>
+    <p class="mt-5 text-ink/85 text-[1.15rem]">Thank you — we've got everything we need. Our team is crafting your personal song now, and it will arrive by email within 24 hours. A receipt is on its way too.</p>
+    <p class="mt-3 text-ink-soft">Keep an eye on your inbox (and your spam folder, just in case).</p>
+    <div class="mt-9 flex flex-wrap gap-4 justify-center">
+      <a href="index.html" class="inline-flex items-center justify-center font-700 rounded-full px-7 py-3.5 bg-claret text-ivory hover:bg-claret-deep transition-colors">Back to home</a>
+      <a href="tel:18005550142" class="inline-flex items-center justify-center font-700 rounded-full px-7 py-3.5 border border-claret/30 text-claret hover:bg-claret/5 transition-colors">Questions? (800) 555-0142</a>
+    </div>
+  </div>
+</body>
+</html>
