@@ -10,5 +10,6 @@ _*.mjs
 # os
 .DS_Store
 
-# stray render output that isn't a brand asset
+# heavy source photos — commit only the web-optimized versions
 brand_assets/hf_*.png
+brand_assets/hf-grandma.png
