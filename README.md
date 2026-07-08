@@ -20,7 +20,7 @@ Open http://localhost:3000 in your browser.
 - The whole home page lives in **`index.html`**. Styles are inline (`<style>` block + Tailwind utility classes configured in the `<head>`).
 - Brand tokens (colors, fonts) are defined once in the Tailwind config and the `<style>` block near the top of `index.html`.
 - Design rules for this project are in **`CLAUDE.md`** — Claude Code loads these automatically. Read it before making design changes.
-- **`logo-concepts.html`** is a working gallery of logo directions (not part of the live site).
+- Logo assets live in **`brand_assets/`**: `HeartNote.png` is the original client logo; `heartnote-mark.png` (claret, for light backgrounds) and `heartnote-mark-reversed.png` (gold, for dark) are the recolored marks used on the site; plus horizontal lockups, a square profile badge, and `favicon.png`.
 
 ### Taking screenshots (for design review)
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Heart Note — A song written just for the ones you love</title>
   <meta name="description" content="Heart Note turns your story into a beautifully composed, personal song — a keepsake gift for birthdays, weddings, and every moment worth remembering." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='s' cx='0.36' cy='0.32' r='0.75'%3E%3Cstop offset='0' stop-color='%23F6E7BC'/%3E%3Cstop offset='0.5' stop-color='%23CB9C45'/%3E%3Cstop offset='1' stop-color='%239A6C28'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%236E1423'/%3E%3Crect x='11' y='24' width='42' height='28' rx='5' fill='none' stroke='%23F7F1E6' stroke-width='3'/%3E%3Cpath d='M13 26 L32 40 L51 26' fill='none' stroke='%23F7F1E6' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='39' r='7.6' fill='url(%23s)' stroke='%238F6425' stroke-width='1'/%3E%3Ccircle cx='30.1' cy='41.6' r='1.9' fill='%235A1020'/%3E%3Crect x='31.5' y='34.6' width='1.2' height='7' rx='.6' fill='%235A1020'/%3E%3Cpath d='M31.5 34.6 c2.7 -.2 3.6 1.5 3.2 3.5 c-.7 -1.3 -2 -1.5 -3.2 -.8 z' fill='%235A1020'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -165,17 +165,8 @@
   <header class="sticky top-0 z-50 backdrop-blur-md bg-ivory/85 border-b border-claret/10">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
       <a href="#top" class="flex items-center gap-3 shrink-0" aria-label="Heart Note home">
-        <!-- Logo mark: sealed letter (envelope + gold wax seal) -->
-        <svg width="46" height="46" viewBox="0 0 64 64" aria-hidden="true">
-          <defs><radialGradient id="hnSealNav" cx="0.36" cy="0.32" r="0.75"><stop offset="0" stop-color="#F6E7BC"/><stop offset="0.5" stop-color="#CB9C45"/><stop offset="1" stop-color="#9A6C28"/></radialGradient></defs>
-          <rect x="8" y="22" width="48" height="32" rx="5.5" fill="#FBF7EE" stroke="#6E1423" stroke-width="3"/>
-          <rect x="11.5" y="25.5" width="41" height="25" rx="3" fill="none" stroke="#6E1423" stroke-width="1" opacity=".4"/>
-          <path d="M10 24 L32 39.5 L54 24" fill="none" stroke="#6E1423" stroke-width="3" stroke-linejoin="round"/>
-          <circle cx="32" cy="39" r="8.4" fill="url(#hnSealNav)" stroke="#8F6425" stroke-width="1"/>
-          <circle cx="29.9" cy="42" r="2.1" fill="#5A1020"/>
-          <rect x="31.4" y="34.4" width="1.3" height="7.8" rx=".6" fill="#5A1020"/>
-          <path d="M31.4 34.4 c3 -.2 4 1.6 3.5 3.9 c-.8 -1.5 -2.2 -1.7 -3.5 -.9 z" fill="#5A1020"/>
-        </svg>
+        <!-- Logo (client-provided mark, recolored claret for light backgrounds) -->
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:46px;width:auto" class="shrink-0" />
         <span class="font-display text-2xl font-500 text-claret tracking-tight leading-none">Heart&nbsp;Note</span>
       </a>
 
@@ -647,16 +638,7 @@
     <div class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10">
       <div>
         <a href="#top" class="flex items-center gap-3 mb-4" aria-label="Heart Note home">
-          <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true">
-            <defs><radialGradient id="hnSealFoot" cx="0.36" cy="0.32" r="0.75"><stop offset="0" stop-color="#F6E7BC"/><stop offset="0.5" stop-color="#CB9C45"/><stop offset="1" stop-color="#9A6C28"/></radialGradient></defs>
-            <rect x="8" y="22" width="48" height="32" rx="5.5" fill="#5A1020" stroke="#F7F1E6" stroke-width="3"/>
-            <rect x="11.5" y="25.5" width="41" height="25" rx="3" fill="none" stroke="#F7F1E6" stroke-width="1" opacity=".4"/>
-            <path d="M10 24 L32 39.5 L54 24" fill="none" stroke="#F7F1E6" stroke-width="3" stroke-linejoin="round"/>
-            <circle cx="32" cy="39" r="8.4" fill="url(#hnSealFoot)" stroke="#8F6425" stroke-width="1"/>
-            <circle cx="29.9" cy="42" r="2.1" fill="#360911"/>
-            <rect x="31.4" y="34.4" width="1.3" height="7.8" rx=".6" fill="#360911"/>
-            <path d="M31.4 34.4 c3 -.2 4 1.6 3.5 3.9 c-.8 -1.5 -2.2 -1.7 -3.5 -.9 z" fill="#360911"/>
-          </svg>
+          <img src="brand_assets/heartnote-mark-reversed.png" alt="" style="height:42px;width:auto" />
           <span class="font-display text-2xl text-ivory">Heart Note</span>
         </a>
         <p class="text-ivory/60 max-w-xs text-[.98rem]">Custom-composed keepsake songs for life's most meaningful moments.</p>
