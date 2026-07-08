@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heart Note — A song written just for the ones you love</title>
+  <meta name="description" content="Heart Note turns your story into a beautifully composed, personal song — a keepsake gift for birthdays, weddings, and every moment worth remembering." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236E1423'/%3E%3Crect x='12' y='30' width='40' height='24' rx='4' fill='none' stroke='%23F7F1E6' stroke-width='3'/%3E%3Cpath d='M14 33 L32 45 L50 33' fill='none' stroke='%23F7F1E6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='22' r='4' fill='%23E4C67F'/%3E%3Cpath d='M31.8 22 V11' stroke='%23E4C67F' stroke-width='2.6' stroke-linecap='round'/%3E%3Cpath d='M31.5 11 c5.6 -.4 7.8 3 6.8 7 c-1.5 -2.8 -4 -3.2 -6.8 -1.8 z' fill='%23E4C67F'/%3E%3C/svg%3E" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Pinyon+Script&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+            gold: { DEFAULT: '#C6973F', soft: '#E4C67F', pale: '#EFDCA9' },
+            ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+            blush: '#E9CBC0',
+            ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
+            script: ['"Pinyon Script"', 'cursive'],
+          },
+          boxShadow: {
+            keepsake: '0 1px 2px rgba(54,9,17,.06), 0 12px 28px -12px rgba(110,20,35,.28), 0 40px 64px -32px rgba(110,20,35,.22)',
+            lift: '0 2px 4px rgba(54,9,17,.05), 0 18px 40px -16px rgba(110,20,35,.30)',
+            gold: '0 8px 24px -8px rgba(198,151,63,.45)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --ivory: #F7F1E6;
+      --claret: #6E1423;
+      --gold: #C6973F;
+    }
+    html { scroll-behavior: smooth; font-size: 18px; }
+    body {
+      background-color: var(--ivory);
+      color: #2B2019;
+      font-family: 'Nunito Sans', system-ui, sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', Georgia, serif; }
+
+    /* Paper grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: .05;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Headline flourish */
+    .script-accent { font-family: 'Pinyon Script', cursive; font-weight: 400; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      font-weight: 700; letter-spacing: .01em; border-radius: 999px;
+      padding: .95rem 1.9rem; font-size: 1.06rem; line-height: 1;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease, background-color .3s ease, color .3s ease;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--claret); color: #F7F1E6; box-shadow: 0 10px 24px -10px rgba(110,20,35,.6); }
+    .btn-primary:hover { background: #5a0f1c; transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(110,20,35,.7); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    .btn-ghost { background: transparent; color: #6E1423; border-color: rgba(110,20,35,.28); }
+    .btn-ghost:hover { background: rgba(110,20,35,.06); border-color: rgba(110,20,35,.5); transform: translateY(-2px); }
+    .btn-ghost:active { transform: translateY(0); }
+    .btn-ghost:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    .btn-gold { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; box-shadow: 0 10px 24px -10px rgba(198,151,63,.7); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -12px rgba(198,151,63,.85); }
+    .btn-gold:focus-visible { outline: 3px solid #6E1423; outline-offset: 3px; }
+
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+    /* Hero atmosphere */
+    .hero-bg {
+      background-color: #F7F1E6;
+      background-image:
+        radial-gradient(60% 55% at 82% 18%, rgba(233,203,192,.55) 0%, rgba(233,203,192,0) 60%),
+        radial-gradient(45% 45% at 8% 82%, rgba(198,151,63,.20) 0%, rgba(198,151,63,0) 60%),
+        radial-gradient(80% 70% at 50% -10%, rgba(110,20,35,.10) 0%, rgba(110,20,35,0) 55%);
+    }
+
+    /* Lifestyle image treatment */
+    .lifestyle { position: relative; overflow: hidden; }
+    .lifestyle img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .lifestyle::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(54,9,17,.42) 0%, rgba(54,9,17,.06) 45%, rgba(54,9,17,0) 100%);
+    }
+    .lifestyle::before {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background: #6E1423; mix-blend-mode: multiply; opacity: .14;
+    }
+
+    /* Staff ribbon divider */
+    .staff path, .staff line { stroke: #C6973F; }
+    .staff .note { fill: #C6973F; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Occasion + testimonial cards */
+    .card {
+      background: #FBF7EE; border: 1px solid rgba(110,20,35,.10); border-radius: 20px;
+      transition: transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 2px 4px rgba(54,9,17,.05), 0 22px 44px -18px rgba(110,20,35,.32); border-color: rgba(198,151,63,.5); }
+
+    .occasion { position: relative; display: block; border-radius: 20px; overflow: hidden; }
+    .occasion img { transition: transform .8s cubic-bezier(.22,.61,.36,1); }
+    .occasion:hover img { transform: scale(1.06); }
+    .occasion:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    /* Equalizer (sample player mock) */
+    .eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 22px; }
+    .eq span { width: 3px; background: #C6973F; border-radius: 2px; height: 30%; }
+    .playing .eq span { animation: bounce 1s ease-in-out infinite; }
+    .playing .eq span:nth-child(2){ animation-delay:.12s } .playing .eq span:nth-child(3){ animation-delay:.28s }
+    .playing .eq span:nth-child(4){ animation-delay:.42s } .playing .eq span:nth-child(5){ animation-delay:.6s }
+    @keyframes bounce { 0%,100%{ height:25% } 50%{ height:100% } }
+
+    /* Floating keepsake card */
+    @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
+    .floaty { animation: floaty 6s ease-in-out infinite; }
+
+    /* Draw-in staff line */
+    .draw { stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 2.4s ease; }
+    .draw.in { stroke-dashoffset: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; scroll-behavior: auto !important; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .draw { stroke-dashoffset: 0; transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-ivory/85 border-b border-claret/10">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
+      <a href="#top" class="flex items-center gap-3 shrink-0" aria-label="Heart Note home">
+        <!-- Logo mark: musical letter (envelope + note) -->
+        <svg width="42" height="42" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect x="7" y="26" width="50" height="30" rx="5" stroke="#6E1423" stroke-width="3.4"/>
+          <path d="M9 30 L32 45 L55 30" stroke="#6E1423" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="26" cy="18" r="4.6" fill="#C6973F"/>
+          <path d="M30.3 18 V7.5" stroke="#C6973F" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 7.5 c6.4 -.4 9 3.4 7.8 8.2 c-1.7 -3.3 -4.7 -3.7 -7.8 -2.1 z" fill="#C6973F"/>
+        </svg>
+        <span class="font-display text-2xl font-500 text-claret tracking-tight leading-none">Heart&nbsp;Note</span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-[1.02rem] font-600 text-ink/80">
+        <a href="#how" class="hover:text-claret transition-colors">How it works</a>
+        <a href="#occasions" class="hover:text-claret transition-colors">Occasions</a>
+        <a href="#listen" class="hover:text-claret transition-colors">Hear a song</a>
+        <a href="#pricing" class="hover:text-claret transition-colors">Pricing</a>
+        <a href="#reviews" class="hover:text-claret transition-colors">Reviews</a>
+      </nav>
+
+      <div class="flex items-center gap-4 shrink-0">
+        <a href="tel:18005550142" class="hidden md:flex items-center gap-2 text-claret font-700">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span class="hidden xl:inline">(800) 555-0142</span>
+        </a>
+        <a href="#create" class="btn btn-primary !py-3 !px-6 !text-base">Create your song</a>
+      </div>
+    </div>
+  </header>
+
+  <span id="top"></span>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero-bg relative">
+    <div class="max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28 grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-16 items-center">
+      <!-- Copy -->
+      <div class="reveal">
+        <p class="inline-flex items-center gap-2 text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-6">
+          <span class="h-px w-8 bg-gold"></span> Handcrafted keepsake songs
+        </p>
+        <h1 class="font-display font-500 text-claret leading-[1.02] tracking-tight text-[3rem] sm:text-[3.7rem] lg:text-[4.15rem]">
+          A song written just for<br class="hidden sm:block" />
+          the ones you <span class="script-accent text-gold text-[1.15em] leading-none">love</span>.
+        </h1>
+        <p class="mt-7 text-ink/85 text-[1.22rem] max-w-xl leading-[1.65]">
+          Heart Note turns your story into a beautifully composed, personal song — a heartfelt gift
+          for birthdays, weddings, and every moment worth remembering.
+        </p>
+
+        <div class="mt-9 flex flex-wrap items-center gap-4">
+          <a href="#create" class="btn btn-primary">Create your song</a>
+          <a href="#listen" class="btn btn-ghost">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Hear an example
+          </a>
+        </div>
+
+        <div class="mt-10 flex items-center gap-4">
+          <div class="flex text-gold" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          </div>
+          <p class="text-ink-soft font-600">Loved by over <span class="text-claret font-700">12,000 families</span></p>
+        </div>
+      </div>
+
+      <!-- Lifestyle image + keepsake card -->
+      <div class="relative reveal">
+        <div class="lifestyle rounded-[26px] shadow-keepsake aspect-[4/5] ring-1 ring-claret/10">
+          <img src="https://placehold.co/900x1125/8a3b46/F7F1E6?text=Lifestyle+photo%0A%28grandparent+%2B+grandchild%29" alt="A grandparent and grandchild sharing a warm moment" loading="eager" />
+        </div>
+
+        <!-- Now playing keepsake card -->
+        <div class="floaty absolute -bottom-8 -left-4 sm:-left-8 w-[19rem] max-w-[85%] bg-ivory rounded-2xl shadow-lift border border-gold/40 p-4">
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-ivory shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            <div class="min-w-0">
+              <p class="text-[.72rem] uppercase tracking-[.14em] text-gold font-700">Now playing</p>
+              <p class="font-display text-claret text-lg leading-tight truncate">For Grandma, with love</p>
+            </div>
+          </div>
+          <svg class="staff mt-3 w-full" height="34" viewBox="0 0 300 34" fill="none" aria-hidden="true">
+            <line x1="0" y1="6" x2="300" y2="6" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="13" x2="300" y2="13" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="20" x2="300" y2="20" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="27" x2="300" y2="27" stroke-width="1" opacity=".5"/>
+            <circle class="note" cx="40" cy="20" r="4"/><rect class="note" x="43" y="6" width="1.5" height="15"/>
+            <circle class="note" cx="110" cy="13" r="4"/><rect class="note" x="113" y="2" width="1.5" height="12"/>
+            <circle class="note" cx="180" cy="24" r="4"/><rect class="note" x="183" y="10" width="1.5" height="15"/>
+            <circle class="note" cx="250" cy="16" r="4"/><rect class="note" x="253" y="4" width="1.5" height="13"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRUST BAR ============ -->
+  <section class="bg-claret text-ivory">
+    <div class="max-w-6xl mx-auto px-6 py-7 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-center">
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Professionally produced for you</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Delivered in 24 hours</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>
+        <p class="text-sm font-600 text-ivory/90">100% happiness guarantee</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Yours to keep forever</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how" class="py-24 md:py-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">How it works</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          A meaningful gift, in three gentle steps
+        </h2>
+        <p class="mt-5 text-ink/80 text-[1.15rem]">No apps to download. No complicated steps. Just tell us your story — we'll take care of the rest.</p>
+      </div>
+
+      <!-- staff ribbon -->
+      <svg class="staff mx-auto mt-14 mb-2 w-full max-w-4xl" height="24" viewBox="0 0 1000 24" fill="none" aria-hidden="true">
+        <line class="draw" x1="0" y1="12" x2="1000" y2="12" stroke-width="1.5" opacity=".55"/>
+      </svg>
+
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8 mt-10">
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">01</span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl mb-2.5">Choose the occasion</h3>
+          <p class="text-ink/80 text-[1.08rem]">Pick the moment you're celebrating and the style of music your loved one adores.</p>
+        </div>
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">02</span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl mb-2.5">Share your story</h3>
+          <p class="text-ink/80 text-[1.08rem]">Tell us the names, memories, and little moments that make it personal. It takes just a few minutes.</p>
+        </div>
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">03</span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl mb-2.5">Receive your song</h3>
+          <p class="text-ink/80 text-[1.08rem]">Within 24 hours, your song arrives as your own private gift page — ready to play, download, and share with the people who matter.</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-14 reveal">
+        <a href="#create" class="btn btn-primary">Start your song</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OCCASIONS ============ -->
+  <section id="occasions" class="py-24 md:py-32 bg-ivory-deep">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">For every occasion</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          A song for the moments that matter most
+        </h2>
+        <p class="mt-5 text-ink/80 text-[1.15rem]">Whatever you're celebrating or remembering, there's a Heart Note for it.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/9c4a4a/9c4a4a" alt="Birthday celebration" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Birthdays</h3><p class="text-ivory/85 text-sm">A joyful tune to mark another year.</p></div>
+        </a>
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/8a3b46/8a3b46" alt="Wedding celebration" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Weddings</h3><p class="text-ivory/85 text-sm">Their love story, set to music.</p></div>
+        </a>
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/7a5230/7a5230" alt="Anniversary celebration" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Anniversaries</h3><p class="text-ivory/85 text-sm">Years of memories in one melody.</p></div>
+        </a>
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/6E1423/6E1423" alt="Christmas celebration" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Christmas</h3><p class="text-ivory/85 text-sm">A warm carol for the whole family.</p></div>
+        </a>
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/8a6a3b/8a6a3b" alt="Faith and blessings" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Faith &amp; Blessings</h3><p class="text-ivory/85 text-sm">Hymns and blessings for holy days.</p></div>
+        </a>
+        <a href="#create" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/5a4a52/5a4a52" alt="In loving memory" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">In Loving Memory</h3><p class="text-ivory/85 text-sm">A tender tribute to someone dear.</p></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LISTEN / SAMPLE ============ -->
+  <section id="listen" class="py-24 md:py-32 bg-claret-deep text-ivory relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[.12] pointer-events-none" style="background-image: radial-gradient(50% 60% at 80% 20%, #C6973F 0%, transparent 60%), radial-gradient(45% 55% at 10% 90%, #E9CBC0 0%, transparent 55%);"></div>
+    <div class="max-w-4xl mx-auto px-6 relative">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-gold font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Hear it for yourself</p>
+        <h2 class="font-display font-500 text-ivory text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          The kind of song you'll receive
+        </h2>
+        <p class="mt-5 text-ivory/80 text-[1.15rem]">Every Heart Note is warm, rich, and made to be played again and again. Take a listen.</p>
+      </div>
+
+      <div class="mt-12 bg-ivory/[.06] border border-gold/30 rounded-3xl p-6 sm:p-8 reveal backdrop-blur-sm" id="player">
+        <div class="flex items-center gap-5">
+          <button type="button" id="playBtn" aria-pressed="false" aria-label="Play sample song"
+            class="grid place-items-center w-16 h-16 rounded-full bg-gold text-claret-dark shrink-0 shadow-gold transition-transform hover:scale-105 active:scale-95">
+            <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="min-w-0 flex-1">
+            <p class="font-display text-ivory text-xl leading-tight">A birthday waltz — “Eighty Years Young”</p>
+            <p class="text-ivory/70 text-sm mt-0.5" id="playState">Tap play to listen · 1:58</p>
+          </div>
+          <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-2.5">
+          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A birthday waltz — “Eighty Years Young”">Birthday waltz</button>
+          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A wedding ballad — “The Day We Said Yes”">Wedding ballad</button>
+          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A Christmas carol — “Home for the Holidays”">Christmas carol</button>
+          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A blessing — “Grace for Our Family”">Faith &amp; blessing</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing" class="py-24 md:py-32 bg-ivory-deep">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Simple, honest pricing</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          Choose the gift that fits the moment
+        </h2>
+        <p class="mt-5 text-ink/80 text-[1.15rem]">One price, no surprises. Every song is made just for you and backed by our happiness guarantee.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 lg:gap-7 mt-14 items-center">
+        <!-- Single -->
+        <div class="card p-8 flex flex-col reveal">
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-ink-soft">Single</p>
+          <div class="mt-3 flex items-end gap-1">
+            <span class="font-display text-claret text-[3rem] leading-none font-500">$39</span>
+          </div>
+          <p class="mt-3 text-ink/75 text-[1.02rem]">A heartfelt, personalized song — simple and complete.</p>
+          <ul class="mt-6 space-y-3 text-ink/85 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>One complete, personalized song</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Delivered within 24 hours</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Yours to download and keep forever</li>
+          </ul>
+          <a href="#create" class="btn btn-ghost mt-8 w-full">Choose Single</a>
+        </div>
+
+        <!-- Deluxe (hero) -->
+        <div class="relative bg-claret text-ivory rounded-[22px] p-8 flex flex-col shadow-keepsake ring-1 ring-gold/40 md:-mt-4 md:mb-4 reveal">
+          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gold text-claret-dark text-[.72rem] font-700 tracking-[.12em] uppercase px-4 py-1.5 rounded-full shadow-gold">Most loved</span>
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-gold-soft">Deluxe</p>
+          <div class="mt-3 flex items-end gap-1">
+            <span class="font-display text-ivory text-[3.4rem] leading-none font-500">$69</span>
+          </div>
+          <p class="mt-3 text-ivory/80 text-[1.02rem]">Versions to choose from, beautifully presented.</p>
+          <ul class="mt-6 space-y-3 text-ivory/90 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Two to three versions to choose from</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>A beautiful private gift page to share</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>High-quality download</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Delivered within 24 hours</li>
+          </ul>
+          <a href="#create" class="btn btn-gold mt-8 w-full">Choose Deluxe</a>
+        </div>
+
+        <!-- Keepsake -->
+        <div class="card p-8 flex flex-col reveal">
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-ink-soft">Keepsake</p>
+          <div class="mt-3 flex items-end gap-1">
+            <span class="font-display text-claret text-[3rem] leading-none font-500">$99</span>
+          </div>
+          <p class="mt-3 text-ink/75 text-[1.02rem]">Our most treasured gift, with a keepsake to hold.</p>
+          <ul class="mt-6 space-y-3 text-ink/85 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Deluxe</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>A keepsake card with a scan-to-play code</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Priority rush delivery</li>
+          </ul>
+          <a href="#create" class="btn btn-ghost mt-8 w-full">Choose Keepsake</a>
+        </div>
+      </div>
+
+      <p class="text-center mt-10 text-ink-soft flex items-center justify-center gap-2 reveal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Every order is backed by our 100% happiness guarantee.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section id="reviews" class="py-24 md:py-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">From our families</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          Gifts that brought people to tears
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-7 mt-14">
+        <!-- card 1 -->
+        <figure class="card p-7 flex flex-col reveal">
+          <div class="flex text-gold mb-4" aria-label="5 out of 5 stars">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          </div>
+          <blockquote class="font-display text-ink text-[1.28rem] leading-[1.5] flex-1">
+            “I gave it to my mother on her 80th and she has played it every single day since. She says it's the most thoughtful gift she's ever received.”
+          </blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <img src="https://placehold.co/56x56/C6973F/360911?text=%20" alt="" class="w-12 h-12 rounded-full object-cover" loading="lazy" />
+            <div>
+              <p class="script-accent text-claret text-2xl leading-none">Margaret H.</p>
+              <p class="text-ink-soft text-sm mt-1">Birthday · Ohio</p>
+            </div>
+          </figcaption>
+        </figure>
+
+        <!-- card 2 -->
+        <figure class="card p-7 flex flex-col reveal">
+          <div class="flex text-gold mb-4" aria-label="5 out of 5 stars">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          </div>
+          <blockquote class="font-display text-ink text-[1.28rem] leading-[1.5] flex-1">
+            “We played our song during the anniversary dinner and there wasn't a dry eye at the table. It captured 50 years together perfectly.”
+          </blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <img src="https://placehold.co/56x56/8a3b46/F7F1E6?text=%20" alt="" class="w-12 h-12 rounded-full object-cover" loading="lazy" />
+            <div>
+              <p class="script-accent text-claret text-2xl leading-none">Robert &amp; Nancy</p>
+              <p class="text-ink-soft text-sm mt-1">50th Anniversary · Texas</p>
+            </div>
+          </figcaption>
+        </figure>
+
+        <!-- card 3 -->
+        <figure class="card p-7 flex flex-col reveal">
+          <div class="flex text-gold mb-4" aria-label="5 out of 5 stars">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          </div>
+          <blockquote class="font-display text-ink text-[1.28rem] leading-[1.5] flex-1">
+            “I'm not one for computers, but this was so simple. I told them about my late husband and they turned it into the most beautiful hymn.”
+          </blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <img src="https://placehold.co/56x56/7a5230/F7F1E6?text=%20" alt="" class="w-12 h-12 rounded-full object-cover" loading="lazy" />
+            <div>
+              <p class="script-accent text-claret text-2xl leading-none">Eleanor P.</p>
+              <p class="text-ink-soft text-sm mt-1">In Loving Memory · Florida</p>
+            </div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GUARANTEE / REASSURANCE ============ -->
+  <section class="py-20 bg-blush/40">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="bg-ivory rounded-[28px] shadow-keepsake border border-gold/30 p-8 md:p-12 grid md:grid-cols-[auto_1fr] gap-8 items-center reveal">
+        <div class="grid place-items-center w-24 h-24 rounded-full bg-claret text-gold-pale mx-auto md:mx-0 shrink-0">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div class="text-center md:text-left">
+          <h2 class="font-display text-claret text-[2rem] md:text-[2.4rem] leading-tight">Our promise to you</h2>
+          <p class="mt-3 text-ink/85 text-[1.15rem] leading-relaxed">
+            Every Heart Note is made with genuine care. If your song doesn't move you, we'll happily revise it or refund you — that's our 100% happiness guarantee. And a real person is always here to help.
+          </p>
+          <a href="tel:18005550142" class="inline-flex items-center gap-2.5 mt-5 text-claret font-700 text-lg hover:text-claret-deep transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Call us at (800) 555-0142
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="py-24 md:py-28">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Good to know</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[2.8rem] leading-tight tracking-tight">Questions, answered</h2>
+      </div>
+      <div class="divide-y divide-claret/12 border-y border-claret/12">
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            Is the song really made just for us?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Yes. Every song is composed around the names, details, and memories you share, so no two Heart Notes are ever alike.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            How long does it take to arrive?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Most songs are ready within 24 hours of your order. If you're on a tight timeline for a special date, give us a call and we'll do our best to help.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            What exactly do I receive?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">A beautifully produced song on your own private gift page, with the link sent straight to your email. You can play it on any phone or computer, download it, and forward it to family and friends however you like.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            Do I need to be good with technology?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Not at all. If you can fill out a short form, you can create a Heart Note. And our team is always a phone call away if you'd like a hand.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section id="create" class="py-24 md:py-32 bg-claret text-ivory relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[.16] pointer-events-none" style="background-image: radial-gradient(50% 60% at 15% 20%, #C6973F 0%, transparent 55%), radial-gradient(45% 55% at 90% 85%, #E9CBC0 0%, transparent 55%);"></div>
+    <div class="max-w-3xl mx-auto px-6 text-center relative reveal">
+      <svg class="staff mx-auto mb-8 w-40" height="30" viewBox="0 0 160 30" fill="none" aria-hidden="true">
+        <line x1="0" y1="15" x2="160" y2="15" stroke-width="1" opacity=".4"/>
+        <circle class="note" cx="55" cy="15" r="4" style="fill:#E4C67F"/><rect x="58" y="3" width="1.4" height="13" style="fill:#E4C67F"/>
+        <circle class="note" cx="100" cy="11" r="4" style="fill:#E4C67F"/><rect x="103" y="0" width="1.4" height="12" style="fill:#E4C67F"/>
+      </svg>
+      <h2 class="font-display font-500 text-ivory text-[2.6rem] md:text-[3.4rem] leading-[1.06] tracking-tight">
+        Give a gift they'll <span class="script-accent text-gold-soft text-[1.12em]">treasure</span> for years
+      </h2>
+      <p class="mt-6 text-ivory/85 text-[1.2rem] max-w-xl mx-auto">
+        In just a few minutes, you can start a song that will be played, shared, and remembered long after the day is over.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-4 justify-center">
+        <a href="#create" class="btn btn-gold">Create your song</a>
+        <a href="#listen" class="btn btn-ghost !text-ivory !border-ivory/40 hover:!bg-ivory/10">Hear an example</a>
+      </div>
+      <p class="mt-6 text-ivory/60 text-sm">Loved by over 12,000 families · 100% happiness guarantee</p>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-claret-dark text-ivory/75">
+    <div class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10">
+      <div>
+        <a href="#top" class="flex items-center gap-3 mb-4" aria-label="Heart Note home">
+          <svg width="36" height="36" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="7" y="26" width="50" height="30" rx="5" stroke="#F7F1E6" stroke-width="3.4"/>
+            <path d="M9 30 L32 45 L55 30" stroke="#F7F1E6" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="26" cy="18" r="4.6" fill="#E4C67F"/>
+            <path d="M30.3 18 V7.5" stroke="#E4C67F" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 7.5 c6.4 -.4 9 3.4 7.8 8.2 c-1.7 -3.3 -4.7 -3.7 -7.8 -2.1 z" fill="#E4C67F"/>
+          </svg>
+          <span class="font-display text-2xl text-ivory">Heart Note</span>
+        </a>
+        <p class="text-ivory/60 max-w-xs text-[.98rem]">Custom-composed keepsake songs for life's most meaningful moments.</p>
+        <a href="tel:18005550142" class="inline-block mt-4 text-gold-soft font-700">(800) 555-0142</a>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Occasions</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Birthdays</a></li>
+          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Weddings</a></li>
+          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Anniversaries</a></li>
+          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Christmas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Company</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="#how" class="hover:text-gold-soft transition-colors">How it works</a></li>
+          <li><a href="#pricing" class="hover:text-gold-soft transition-colors">Pricing</a></li>
+          <li><a href="#reviews" class="hover:text-gold-soft transition-colors">Reviews</a></li>
+          <li><a href="#listen" class="hover:text-gold-soft transition-colors">Hear a song</a></li>
+          <li><a href="#" class="hover:text-gold-soft transition-colors">Our story</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Help</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="#" class="hover:text-gold-soft transition-colors">Contact us</a></li>
+          <li><a href="#create" class="hover:text-gold-soft transition-colors">Order a song</a></li>
+          <li><a href="#" class="hover:text-gold-soft transition-colors">Gift cards</a></li>
+          <li><a href="#" class="hover:text-gold-soft transition-colors">Track my order</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-ivory/10">
+      <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-ivory/50">
+        <p>© 2026 Heart Note. Made with love.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-ivory/80 transition-colors">Privacy</a>
+          <a href="#" class="hover:text-ivory/80 transition-colors">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.14 });
+    document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+
+    // Sample player mock (visual only — no audio file yet)
+    const player = document.getElementById('player');
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const playState = document.getElementById('playState');
+    let playing = false;
+    const PLAY = 'M8 5v14l11-7z';
+    const PAUSE = 'M6 5h4v14H6zM14 5h4v14h-4z';
+    playBtn.addEventListener('click', () => {
+      playing = !playing;
+      player.classList.toggle('playing', playing);
+      playBtn.setAttribute('aria-pressed', String(playing));
+      playIcon.querySelector('path').setAttribute('d', playing ? PAUSE : PLAY);
+      playState.textContent = playing ? 'Playing a sample… · 1:58' : 'Tap play to listen · 1:58';
+    });
+
+    // Sample chips swap the title
+    document.querySelectorAll('.sample-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        document.querySelector('#player .font-display').textContent = chip.dataset.title;
+        if (!playing) { playState.textContent = 'Tap play to listen · 1:58'; }
+      });
+    });
+  </script>
+</body>
+</html>

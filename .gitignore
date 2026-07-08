@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# generated screenshots (local review only)
+temporary screenshots/
+
+# scratch scripts
+_*.mjs
+
+# os
+.DS_Store
+
+# stray render output that isn't a brand asset
+brand_assets/hf_*.png
