@@ -375,9 +375,9 @@
           <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/8a6a3b/8a6a3b" alt="Faith and blessings" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Faith &amp; Blessings</h3><p class="text-ivory/85 text-sm">Hymns and blessings for holy days.</p></div>
         </a>
-        <a href="order.html?occasion=In%20Loving%20Memory" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/5a4a52/5a4a52" alt="In loving memory" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">In Loving Memory</h3><p class="text-ivory/85 text-sm">A tender tribute to someone dear.</p></div>
+        <a href="order.html?occasion=New%20Baby" class="occasion group shadow-lift">
+          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/c48b8b/c48b8b" alt="Welcoming a new baby" loading="lazy" /></div>
+          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">New Baby</h3><p class="text-ivory/85 text-sm">Welcome a little one into the family.</p></div>
         </a>
       </div>
     </div>
@@ -531,13 +531,13 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
           </div>
           <blockquote class="font-display text-ink text-[1.28rem] leading-[1.5] flex-1">
-            “I gave it to my daughters on the first anniversary of losing their father. The moment his song began to play, we all held each other and wept. It's the most precious thing our family owns now.”
+            “I had one made for my grandson's 18th birthday, all about how proud we are of him. He grinned ear to ear and played it for all his friends at his party. Worth every penny.”
           </blockquote>
           <figcaption class="mt-6 flex items-center gap-3">
             <img src="https://placehold.co/56x56/7a5230/F7F1E6?text=%20" alt="" class="w-12 h-12 rounded-full object-cover" loading="lazy" />
             <div>
               <p class="script-accent text-claret text-2xl leading-none">Eleanor P.</p>
-              <p class="text-ink-soft text-sm mt-1">In Loving Memory · Florida</p>
+              <p class="text-ink-soft text-sm mt-1">Birthday · Florida</p>
             </div>
           </figcaption>
         </figure>
@@ -690,12 +690,12 @@
     // ---- Sample audio players ----
     // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
     const SAMPLES = [
-      { occasion: 'Birthday',          style: 'Country waltz',   title: 'Eighty Years Young',    context: 'For Rose’s 80th, from her five grandchildren',   src: 'audio/sample-birthday.mp3' },
-      { occasion: 'Wedding',           style: 'Acoustic ballad', title: 'The Day We Said Yes',   context: 'A groom’s surprise for his bride’s first dance',  src: 'audio/sample-wedding.mp3' },
-      { occasion: 'Anniversary',       style: 'Soul',            title: 'Fifty Golden Years',    context: 'Fifty years of marriage, in one song',           src: 'audio/sample-anniversary.mp3' },
-      { occasion: 'Christmas',         style: 'Warm carol',      title: 'Home for the Holidays', context: 'For a family scattered across the country',       src: 'audio/sample-christmas.mp3' },
-      { occasion: 'Faith & Blessings', style: 'Hymn',            title: 'Grace for Our Family',  context: 'A blessing sung at a family reunion',            src: 'audio/sample-faith.mp3' },
-      { occasion: 'In Loving Memory',  style: 'Tender piano',    title: 'Always With Us',        context: 'A tribute to a father, played at his memorial',  src: 'audio/sample-memory.mp3' },
+      { occasion: 'Wedding',     style: 'Acoustic ballad', title: 'Forever Starts Tonight',   context: 'Played for a couple’s first dance',              src: 'audio/sample-wedding.mp3' },
+      { occasion: 'Anniversary', style: 'Soul',            title: 'One More Dance',           context: 'Fifty years together, one more dance',           src: 'audio/sample-anniversary.mp3' },
+      { occasion: 'New Baby',    style: 'Gentle folk',     title: 'Here Comes Grace',         context: 'Welcoming baby Grace into the family',           src: 'audio/sample-newbaby.mp3' },
+      { occasion: 'Birthday',    style: 'Country',         title: 'The Old Man Called David', context: 'For Grandpa David’s birthday, from the grandkids', src: 'audio/sample-birthday.mp3' },
+      { occasion: 'For Mom',     style: 'Pop ballad',      title: 'Love You, Mom',            context: 'A daughter’s thank-you to her mom',              src: 'audio/sample-mom.mp3' },
+      { occasion: 'Engagement',  style: 'Acoustic',        title: 'Tonight We Start',         context: 'Written for the night he proposed',              src: 'audio/sample-engagement.mp3' },
     ];
     const PLAY_D = 'M8 5v14l11-7z';
     const PAUSE_D = 'M6 5h4v14H6zM14 5h4v14h-4z';
@@ -710,12 +710,12 @@
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
             <p class="text-gold text-[.72rem] font-700 tracking-[.12em] uppercase">${s.occasion} · ${s.style}</p>
-            <p class="font-display text-ivory text-xl leading-tight mt-1 truncate">${s.title}</p>
+            <p class="font-display text-ivory text-xl leading-tight mt-1">${s.title}</p>
           </div>
           <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
         </div>
         <p class="text-ivory/65 text-[.92rem] italic mt-2 leading-snug">${s.context}</p>
-        <div class="mt-4 flex items-center gap-3.5">
+        <div class="mt-auto pt-5 flex items-center gap-3.5">
           <button type="button" class="samp-play" aria-label="Play ${s.title}">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${PLAY_D}"/></svg>
           </button>
