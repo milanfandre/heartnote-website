@@ -12,8 +12,21 @@ appear automatically in the "Hear a song" section on the home page:
 | `sample-faith.mp3` | Faith & Blessings · Hymn — "Grace for Our Family" |
 | `sample-memory.mp3` | In Loving Memory · Tender piano — "Always With Us" |
 
-The titles/occasions/styles are just labels — tell me if you want them changed
-(they're set in the `SAMPLES` list in `index.html`).
+Each card also shows a short **story line** under the title (e.g. "For Rose's
+80th, from her five grandchildren"). The title / occasion / style / story are
+all just labels set in the `SAMPLES` list in `index.html` — send the real ones
+for each song and they get swapped in:
+
+```
+File:     sample-birthday.mp3
+Title:    Eighty Years Young
+Occasion: Birthday
+Style:    Country waltz
+Story:    For Rose's 80th, from her five grandchildren   (~6–12 words)
+```
+
+You don't need exactly six — send however many finished songs you have and the
+grid resizes to fit.
 
 ## How to prepare each file
 
