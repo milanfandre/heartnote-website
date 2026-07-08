@@ -19,3 +19,4 @@ brand_assets/hf-grandma.png
 .env.local
 .env*.local
 .vercel
+env/heartnote.env
