@@ -17,6 +17,9 @@ brand_assets/hf-grandma.png
 # full-length master songs — commit only the web-optimized /audio samples
 audio/source/
 
+# internal reference docs (contain AI prompts) — never commit / never web-accessible
+brand_assets/*.pdf
+
 # secrets — never commit real env files
 .env
 .env.local
