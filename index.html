@@ -143,6 +143,19 @@
     .playing .eq span:nth-child(4){ animation-delay:.42s } .playing .eq span:nth-child(5){ animation-delay:.6s }
     @keyframes bounce { 0%,100%{ height:25% } 50%{ height:100% } }
 
+    /* Sample audio cards */
+    .samp-card { background: rgba(247,241,230,.06); border:1px solid rgba(198,151,63,.3); border-radius:20px; padding:1.25rem 1.4rem; backdrop-filter: blur(4px); transition: border-color .3s ease, background .3s ease, transform .3s ease; display:flex; flex-direction:column; }
+    .samp-card:hover { border-color: rgba(198,151,63,.6); background: rgba(247,241,230,.09); transform: translateY(-3px); }
+    .samp-play { display:grid; place-items:center; width:52px; height:52px; border-radius:999px; background:#C6973F; color:#360911; flex:0 0 auto; box-shadow:0 8px 24px -8px rgba(198,151,63,.55); transition: transform .25s ease, opacity .25s ease; cursor:pointer; }
+    .samp-play:hover { transform: scale(1.06); }
+    .samp-play:active { transform: scale(.95); }
+    .samp-progress { position:relative; height:6px; border-radius:999px; background: rgba(247,241,230,.16); cursor:pointer; }
+    .samp-fill { position:absolute; inset:0 auto 0 0; width:0%; background:#C6973F; border-radius:999px; }
+    .samp-card.pending { opacity:.72; }
+    .samp-card.pending .samp-play { opacity:.4; cursor:default; box-shadow:none; }
+    .samp-card.pending .samp-play:hover { transform:none; }
+    .samp-card.pending .samp-progress { cursor:default; }
+
     /* Floating keepsake card */
     @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
     .floaty { animation: floaty 6s ease-in-out infinite; }
@@ -373,35 +386,18 @@
   <!-- ============ LISTEN / SAMPLE ============ -->
   <section id="listen" class="py-24 md:py-32 bg-claret-deep text-ivory relative overflow-hidden">
     <div class="absolute inset-0 opacity-[.12] pointer-events-none" style="background-image: radial-gradient(50% 60% at 80% 20%, #C6973F 0%, transparent 60%), radial-gradient(45% 55% at 10% 90%, #E9CBC0 0%, transparent 55%);"></div>
-    <div class="max-w-4xl mx-auto px-6 relative">
+    <div class="max-w-5xl mx-auto px-6 relative">
       <div class="text-center max-w-2xl mx-auto reveal">
         <p class="text-gold font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Hear it for yourself</p>
         <h2 class="font-display font-500 text-ivory text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
           The kind of song you'll receive
         </h2>
-        <p class="mt-5 text-ivory/80 text-[1.15rem]">Every Heart Note is warm, rich, and made to be played again and again. Take a listen.</p>
+        <p class="mt-5 text-ivory/80 text-[1.15rem]">A few we've made for other families. Press play on any one — this is the quality you'll get.</p>
       </div>
 
-      <div class="mt-12 bg-ivory/[.06] border border-gold/30 rounded-3xl p-6 sm:p-8 reveal backdrop-blur-sm" id="player">
-        <div class="flex items-center gap-5">
-          <button type="button" id="playBtn" aria-pressed="false" aria-label="Play sample song"
-            class="grid place-items-center w-16 h-16 rounded-full bg-gold text-claret-dark shrink-0 shadow-gold transition-transform hover:scale-105 active:scale-95">
-            <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <div class="min-w-0 flex-1">
-            <p class="font-display text-ivory text-xl leading-tight">A birthday waltz — “Eighty Years Young”</p>
-            <p class="text-ivory/70 text-sm mt-0.5" id="playState">Tap play to listen · 1:58</p>
-          </div>
-          <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-        </div>
+      <div id="sampleGrid" class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal"></div>
 
-        <div class="mt-6 flex flex-wrap gap-2.5">
-          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A birthday waltz — “Eighty Years Young”">Birthday waltz</button>
-          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A wedding ballad — “The Day We Said Yes”">Wedding ballad</button>
-          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A Christmas carol — “Home for the Holidays”">Christmas carol</button>
-          <button type="button" class="sample-chip px-4 py-2 rounded-full border border-gold/40 text-ivory/90 text-sm font-600 hover:bg-gold/15 transition-colors" data-title="A blessing — “Grace for Our Family”">Faith &amp; blessing</button>
-        </div>
-      </div>
+      <p class="text-center text-ivory/60 text-sm mt-8 reveal">Every song is written new for your story — these are just a taste.</p>
     </div>
   </section>
 
@@ -691,28 +687,74 @@
     }, { threshold: 0.14 });
     document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
 
-    // Sample player mock (visual only — no audio file yet)
-    const player = document.getElementById('player');
-    const playBtn = document.getElementById('playBtn');
-    const playIcon = document.getElementById('playIcon');
-    const playState = document.getElementById('playState');
-    let playing = false;
-    const PLAY = 'M8 5v14l11-7z';
-    const PAUSE = 'M6 5h4v14H6zM14 5h4v14h-4z';
-    playBtn.addEventListener('click', () => {
-      playing = !playing;
-      player.classList.toggle('playing', playing);
-      playBtn.setAttribute('aria-pressed', String(playing));
-      playIcon.querySelector('path').setAttribute('d', playing ? PAUSE : PLAY);
-      playState.textContent = playing ? 'Playing a sample… · 1:58' : 'Tap play to listen · 1:58';
-    });
+    // ---- Sample audio players ----
+    // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
+    const SAMPLES = [
+      { occasion: 'Birthday',          style: 'Country waltz',   title: 'Eighty Years Young',    src: 'audio/sample-birthday.mp3' },
+      { occasion: 'Wedding',           style: 'Acoustic ballad', title: 'The Day We Said Yes',   src: 'audio/sample-wedding.mp3' },
+      { occasion: 'Anniversary',       style: 'Soul',            title: 'Fifty Golden Years',    src: 'audio/sample-anniversary.mp3' },
+      { occasion: 'Christmas',         style: 'Warm carol',      title: 'Home for the Holidays', src: 'audio/sample-christmas.mp3' },
+      { occasion: 'Faith & Blessings', style: 'Hymn',            title: 'Grace for Our Family',  src: 'audio/sample-faith.mp3' },
+      { occasion: 'In Loving Memory',  style: 'Tender piano',    title: 'Always With Us',        src: 'audio/sample-memory.mp3' },
+    ];
+    const PLAY_D = 'M8 5v14l11-7z';
+    const PAUSE_D = 'M6 5h4v14H6zM14 5h4v14h-4z';
+    const fmt = (s) => { if (!isFinite(s) || s < 0) return '0:00'; const m = Math.floor(s/60), ss = Math.floor(s%60); return `${m}:${String(ss).padStart(2,'0')}`; };
+    const grid = document.getElementById('sampleGrid');
+    let current = null;
 
-    // Sample chips swap the title
-    document.querySelectorAll('.sample-chip').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        document.querySelector('#player .font-display').textContent = chip.dataset.title;
-        if (!playing) { playState.textContent = 'Tap play to listen · 1:58'; }
+    SAMPLES.forEach((s) => {
+      const card = document.createElement('div');
+      card.className = 'samp-card reveal';
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-gold text-[.72rem] font-700 tracking-[.12em] uppercase">${s.occasion} · ${s.style}</p>
+            <p class="font-display text-ivory text-xl leading-tight mt-1 truncate">${s.title}</p>
+          </div>
+          <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="mt-5 flex items-center gap-3.5">
+          <button type="button" class="samp-play" aria-label="Play ${s.title}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${PLAY_D}"/></svg>
+          </button>
+          <div class="samp-progress flex-1"><div class="samp-fill"></div></div>
+          <span class="samp-time text-ivory/70 text-sm tabular-nums w-9 text-right">0:00</span>
+        </div>`;
+
+      const audio = new Audio();
+      audio.preload = 'metadata';
+      audio.src = s.src;
+      const btn = card.querySelector('.samp-play');
+      const icon = btn.querySelector('path');
+      const fill = card.querySelector('.samp-fill');
+      const timeEl = card.querySelector('.samp-time');
+      const bar = card.querySelector('.samp-progress');
+
+      audio.addEventListener('loadedmetadata', () => { timeEl.textContent = fmt(audio.duration); });
+      audio.addEventListener('timeupdate', () => {
+        const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+        fill.style.width = pct + '%';
+        timeEl.textContent = fmt(audio.duration - audio.currentTime);
       });
+      audio.addEventListener('ended', () => { fill.style.width = '0%'; timeEl.textContent = fmt(audio.duration); });
+      audio.addEventListener('error', () => { card.classList.add('pending'); timeEl.textContent = ''; });
+      audio.addEventListener('play', () => { card.classList.add('playing'); icon.setAttribute('d', PAUSE_D); });
+      audio.addEventListener('pause', () => { card.classList.remove('playing'); icon.setAttribute('d', PLAY_D); });
+
+      btn.addEventListener('click', () => {
+        if (card.classList.contains('pending')) return;
+        if (audio.paused) { if (current && current !== audio) current.pause(); current = audio; audio.play(); }
+        else { audio.pause(); }
+      });
+      bar.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const r = bar.getBoundingClientRect();
+        audio.currentTime = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * audio.duration;
+      });
+
+      grid.appendChild(card);
+      io.observe(card);
     });
   </script>
 </body>
