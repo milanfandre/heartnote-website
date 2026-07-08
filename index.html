@@ -690,12 +690,12 @@
     // ---- Sample audio players ----
     // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
     const SAMPLES = [
-      { occasion: 'Birthday',          style: 'Country waltz',   title: 'Eighty Years Young',    src: 'audio/sample-birthday.mp3' },
-      { occasion: 'Wedding',           style: 'Acoustic ballad', title: 'The Day We Said Yes',   src: 'audio/sample-wedding.mp3' },
-      { occasion: 'Anniversary',       style: 'Soul',            title: 'Fifty Golden Years',    src: 'audio/sample-anniversary.mp3' },
-      { occasion: 'Christmas',         style: 'Warm carol',      title: 'Home for the Holidays', src: 'audio/sample-christmas.mp3' },
-      { occasion: 'Faith & Blessings', style: 'Hymn',            title: 'Grace for Our Family',  src: 'audio/sample-faith.mp3' },
-      { occasion: 'In Loving Memory',  style: 'Tender piano',    title: 'Always With Us',        src: 'audio/sample-memory.mp3' },
+      { occasion: 'Birthday',          style: 'Country waltz',   title: 'Eighty Years Young',    context: 'For Rose’s 80th, from her five grandchildren',   src: 'audio/sample-birthday.mp3' },
+      { occasion: 'Wedding',           style: 'Acoustic ballad', title: 'The Day We Said Yes',   context: 'A groom’s surprise for his bride’s first dance',  src: 'audio/sample-wedding.mp3' },
+      { occasion: 'Anniversary',       style: 'Soul',            title: 'Fifty Golden Years',    context: 'Fifty years of marriage, in one song',           src: 'audio/sample-anniversary.mp3' },
+      { occasion: 'Christmas',         style: 'Warm carol',      title: 'Home for the Holidays', context: 'For a family scattered across the country',       src: 'audio/sample-christmas.mp3' },
+      { occasion: 'Faith & Blessings', style: 'Hymn',            title: 'Grace for Our Family',  context: 'A blessing sung at a family reunion',            src: 'audio/sample-faith.mp3' },
+      { occasion: 'In Loving Memory',  style: 'Tender piano',    title: 'Always With Us',        context: 'A tribute to a father, played at his memorial',  src: 'audio/sample-memory.mp3' },
     ];
     const PLAY_D = 'M8 5v14l11-7z';
     const PAUSE_D = 'M6 5h4v14H6zM14 5h4v14h-4z';
@@ -714,7 +714,8 @@
           </div>
           <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
         </div>
-        <div class="mt-5 flex items-center gap-3.5">
+        <p class="text-ivory/65 text-[.92rem] italic mt-2 leading-snug">${s.context}</p>
+        <div class="mt-4 flex items-center gap-3.5">
           <button type="button" class="samp-play" aria-label="Play ${s.title}">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${PLAY_D}"/></svg>
           </button>
