@@ -45,31 +45,43 @@ export default async function handler(req, res) {
 
     const voiceOn = b.voiceAddon === 'yes';
 
-    // Short fields (each < 500 chars)
+    // Build the brief metadata. Stripe caps each value at 500 chars and 50 keys
+    // per object, so long text is chunked. For weddings, each song's fields are
+    // combined into one chunked value so several songs stay within the key limit.
     const metadata = {
       tier: tierKey,
-      occasion: clip(b.occasion, 120),
-      occasion_other: clip(b.occasionOther, 120),
-      recipient_name: clip(b.recipient, 120),
-      recipient_relationship: clip(b.relationship, 120),
       sender_name: clip(b.sender, 120),
-      music_style: clip(b.style, 80),
-      mood: clip(b.mood, 80),
-      voice_addon: voiceOn ? 'yes' : 'no',
+      voice_addon: voiceOn ? 'yes' : 'no',      // applied once per order, not per song
       voice: voiceOn ? clip(b.voice, 80) : '',
       delivery_email: clip(b.email, 200),
     };
-    // Long fields (chunked so the full text survives to the webhook)
-    putChunked(metadata, 'story', b.story);
-    putChunked(metadata, 'must_include', b.details);
-    putChunked(metadata, 'other_info', b.other);
 
-    // Wedding songs: song1_moment / song1_story, song2_..., etc.
-    for (const k of Object.keys(b)) {
-      if (/^song\d+_moment$/.test(k)) metadata[k] = clip(b[k], 120);
-      else if (/^song\d+_story$/.test(k)) putChunked(metadata, k, b[k], 3000);
+    if (tierKey === 'wedding') {
+      const nums = [...new Set(
+        Object.keys(b).filter((k) => /^song\d+_/.test(k)).map((k) => parseInt(k.match(/^song(\d+)_/)[1], 10))
+      )].sort((a, z) => a - z);
+      metadata.song_count = clip(String(b.songCount || nums.length || 3), 10);
+      for (const n of nums) {
+        const moment = clip(b[`song${n}_moment`], 200);
+        const story = (b[`song${n}_story`] || '').trim();
+        const other = (b[`song${n}_other`] || '').trim();
+        const parts = [];
+        if (moment) parts.push(`Moment: ${moment}`);
+        if (story) parts.push(`About this song:\n${story}`);
+        if (other) parts.push(`Other info:\n${other}`);
+        putChunked(metadata, `song${n}`, parts.join('\n\n'), 3000);
+      }
+    } else {
+      metadata.occasion = clip(b.occasion, 120);
+      metadata.occasion_other = clip(b.occasionOther, 120);
+      metadata.recipient_name = clip(b.recipient, 120);
+      metadata.recipient_relationship = clip(b.relationship, 120);
+      metadata.music_style = clip(b.style, 80);
+      metadata.mood = clip(b.mood, 80);
+      putChunked(metadata, 'story', b.story);
+      putChunked(metadata, 'must_include', b.details);
+      putChunked(metadata, 'other_info', b.other);
     }
-    if (tierKey === 'wedding') metadata.song_count = clip(String(b.songCount || 3), 10);
 
     const line_items = [{ price, quantity: 1 }];
     if (voiceOn) {

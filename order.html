@@ -186,6 +186,7 @@
         <div>
           <label>Choose your voice <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
           <p class="text-ink-soft text-sm -mt-1 mb-2">Prefer a particular voice for the vocals? Add one for $10.</p>
+          <p id="voiceWeddingNote" class="hidden text-ink-soft text-sm -mt-1 mb-2 italic">Your chosen voice is used once and applied across all the songs in your package.</p>
           <div class="grid grid-cols-2 gap-3">
             <label><input type="radio" name="voiceAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
             <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
@@ -260,7 +261,7 @@
     }
 
     // Wedding songs
-    const EXTRA_SONG = 49, WEDDING_BASE = 3, WEDDING_MAX = 8;
+    const EXTRA_SONG = 49, WEDDING_BASE = 3, WEDDING_MAX = 6;
     const MOMENTS = ['First Dance','Father-Daughter Dance','Mother-Son Dance','Processional','Reception Entrance','Cake Cutting','Last Dance','Other'];
     let songCount = WEDDING_BASE;
     function songBlock(i) {
@@ -277,20 +278,23 @@
         </select>
         <label for="song${i}_story" class="req" style="margin-top:1rem">Tell us about this song</label>
         <p class="text-ink-soft text-sm -mt-1 mb-2">Who it's for, the story behind it, the style you'd like, and anything to include in the lyrics.</p>
-        <textarea id="song${i}_story" name="song${i}_story" maxlength="3000" class="field" style="min-height:110px" placeholder="Our first dance. How we met at the coffee shop, the road trip where he proposed, the life we're starting together…"></textarea>
+        <textarea id="song${i}_story" name="song${i}_story" maxlength="1500" class="field" style="min-height:110px" placeholder="Our first dance. How we met at the coffee shop, the road trip where he proposed, the life we're starting together…"></textarea>
+        <label for="song${i}_other" style="margin-top:1rem">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
+        <p class="text-ink-soft text-sm -mt-1 mb-2">Favorite songs or artists, the vibe you're after, or anything else about this moment.</p>
+        <textarea id="song${i}_other" name="song${i}_other" maxlength="1200" class="field" style="min-height:90px" placeholder="We love Van Morrison. Keep it soft and romantic, nothing too upbeat…"></textarea>
       </div>`;
     }
     function collectSongs() {
       const arr = [];
-      for (let i = 1; i <= songCount; i++) arr.push({ moment: (form.elements[`song${i}_moment`] || {}).value || '', story: (form.elements[`song${i}_story`] || {}).value || '' });
+      for (let i = 1; i <= songCount; i++) arr.push({ moment: (form.elements[`song${i}_moment`] || {}).value || '', story: (form.elements[`song${i}_story`] || {}).value || '', other: (form.elements[`song${i}_other`] || {}).value || '' });
       return arr;
     }
     function renderSongs(arr) {
       songCount = Math.max(WEDDING_BASE, Math.min(arr.length, WEDDING_MAX));
       const list = arr.slice(0, songCount);
-      while (list.length < songCount) list.push({ moment: '', story: '' });
+      while (list.length < songCount) list.push({ moment: '', story: '', other: '' });
       $('weddingSongs').innerHTML = list.map((s, k) => songBlock(k + 1)).join('');
-      list.forEach((s, k) => { form.elements[`song${k + 1}_moment`].value = s.moment; form.elements[`song${k + 1}_story`].value = s.story; });
+      list.forEach((s, k) => { form.elements[`song${k + 1}_moment`].value = s.moment; form.elements[`song${k + 1}_story`].value = s.story; form.elements[`song${k + 1}_other`].value = s.other || ''; });
       $('weddingSongs').querySelectorAll('.rm-song').forEach(b => b.addEventListener('click', () => {
         const a = collectSongs(); a.splice(parseInt(b.dataset.i, 10) - 1, 1); renderSongs(a); refreshSummary(); save();
       }));
@@ -322,6 +326,7 @@
       $('weddingFields').classList.toggle('hidden', !wedding);
       $('singleFields').classList.toggle('hidden', wedding);
       $('weddingNote').classList.toggle('hidden', !wedding);
+      $('voiceWeddingNote').classList.toggle('hidden', !wedding);
     }
 
     // Char counters
