@@ -17,6 +17,23 @@ async function readRawBody(req) {
   return Buffer.concat(chunks);
 }
 
+// Long brief fields are stored across `${name}_1..N` (with `${name}_parts`) to
+// fit Stripe's 500-char metadata limit. Rebuild them into single fields.
+function reassembleChunks(meta) {
+  const out = { ...meta };
+  for (const key of Object.keys(meta)) {
+    const m = key.match(/^(.+)_parts$/);
+    if (!m) continue;
+    const base = m[1];
+    const n = parseInt(meta[key], 10) || 0;
+    let s = '';
+    for (let i = 1; i <= n; i++) { s += meta[`${base}_${i}`] || ''; delete out[`${base}_${i}`]; }
+    out[base] = s;
+    delete out[key];
+  }
+  return out;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -38,7 +55,7 @@ export default async function handler(req, res) {
 
     // The full brief to hand to the AI workflow.
     const order = {
-      ...session.metadata,
+      ...reassembleChunks(session.metadata || {}),
       stripe_session_id: session.id,
       amount_total: session.amount_total,
       currency: session.currency,

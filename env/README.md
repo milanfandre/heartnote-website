@@ -14,7 +14,8 @@ This folder holds the **keys and settings** the checkout needs. Open
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret (`whsec_…`) | Stripe → Developers → Webhooks → your endpoint |
 | `PRICE_SINGLE` | Price ID for the $59 Single product (`price_…`) | Stripe → Products → Single |
 | `PRICE_DELUXE` | Price ID for the $69 Deluxe product (`price_…`) | Stripe → Products → Deluxe |
-| `PRICE_KEEPSAKE` | Price ID for the $99 Keepsake product (`price_…`) | Stripe → Products → Keepsake |
+| `PRICE_EXPERIENCE` | Price ID for the $99 Heart Note Experience (`price_…`) | Stripe → Products |
+| `PRICE_WEDDING` | Price ID for the $199 Wedding Package (`price_…`) | Stripe → Products |
 | `AI_WORKFLOW_URL` | Where paid orders are sent to make the song | Your AI workflow (leave blank for now) |
 | `AI_WORKFLOW_SECRET` | Optional token your workflow expects | Your AI workflow (optional) |
 

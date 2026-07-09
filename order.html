@@ -31,10 +31,12 @@
       padding:.8rem 1rem; font-size:1.05rem; color:#2B2019; font-family:inherit; transition:border-color .2s, box-shadow .2s;
     }
     .field:focus, textarea:focus, select:focus { outline:none; border-color:#C6973F; box-shadow:0 0 0 3px rgba(198,151,63,.22); }
-    textarea { resize:vertical; min-height:120px; line-height:1.5; }
-    .tier { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:14px; padding:1rem 1.1rem; background:#FBF7EE; transition:border-color .2s, box-shadow .2s, background .2s; }
+    textarea { resize:vertical; min-height:150px; line-height:1.5; }
+    .tier { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:14px; padding:1rem 1.1rem; background:#FBF7EE; transition:border-color .2s, box-shadow .2s, background .2s; height:100%; }
     .tier:hover { border-color:rgba(198,151,63,.6); }
     input[type=radio]:checked + .tier { border-color:#6E1423; background:#fff; box-shadow:0 6px 20px -10px rgba(110,20,35,.4); }
+    .opt { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.7rem 1rem; background:#FBF7EE; font-weight:600; transition:border-color .2s, background .2s; }
+    input[type=radio]:checked + .opt { border-color:#6E1423; background:#fff; }
     .btn-primary { background:#6E1423; color:#F7F1E6; font-weight:700; border-radius:999px; padding:1rem 2rem; font-size:1.1rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .2s; }
     .btn-primary:hover:not(:disabled){ background:#5a0f1c; transform:translateY(-2px); }
     .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
@@ -60,7 +62,7 @@
     <div class="max-w-2xl">
       <p class="text-claret font-700 tracking-[.14em] uppercase text-[.8rem] mb-3">Create your Heart Note</p>
       <h1 class="font-display font-500 text-claret text-[2.2rem] md:text-[2.8rem] leading-[1.1]">Tell us about the moment</h1>
-      <p class="mt-3 text-ink/80 text-[1.1rem]">Share a few details and we'll craft a personal song from them. It only takes a few minutes. You tell us about them, and we handle the rest.</p>
+      <p class="mt-3 text-ink/80 text-[1.1rem]">Share the details and we'll craft a personal song from them. The more you tell us, the more personal your song will be.</p>
     </div>
 
     <div id="canceledNote" class="hidden mt-6 max-w-2xl rounded-xl border border-gold/50 bg-gold/10 px-5 py-4 text-ink">
@@ -73,32 +75,34 @@
         <!-- Tier -->
         <fieldset>
           <legend class="font-display text-claret text-xl mb-3">Choose your package</legend>
-          <div class="grid sm:grid-cols-3 gap-3" id="tiers">
+          <div class="grid sm:grid-cols-2 gap-3" id="tiers">
             <label><input type="radio" name="tier" value="single" class="sr-only" />
-              <div class="tier"><div class="flex items-baseline justify-between"><span class="font-700 text-claret">Single</span><span class="font-display text-xl text-claret">$59</span></div><p class="text-sm text-ink-soft mt-1">One personalized song</p></div>
+              <div class="tier"><div class="flex items-baseline justify-between gap-2"><span class="font-700 text-claret">Single</span><span class="font-display text-xl text-claret">$59</span></div><p class="text-sm text-ink-soft mt-1">One personalized song (MP3)</p></div>
             </label>
             <label><input type="radio" name="tier" value="deluxe" class="sr-only" />
-              <div class="tier"><div class="flex items-baseline justify-between"><span class="font-700 text-claret">Deluxe</span><span class="font-display text-xl text-claret">$69</span></div><p class="text-sm text-ink-soft mt-1">2 to 3 versions + gift page</p></div>
+              <div class="tier"><div class="flex items-baseline justify-between gap-2"><span class="font-700 text-claret">Deluxe</span><span class="font-display text-xl text-claret">$69</span></div><p class="text-sm text-ink-soft mt-1">2 versions · WAV + MP3</p></div>
             </label>
-            <label><input type="radio" name="tier" value="keepsake" class="sr-only" />
-              <div class="tier"><div class="flex items-baseline justify-between"><span class="font-700 text-claret">Keepsake</span><span class="font-display text-xl text-claret">$99</span></div><p class="text-sm text-ink-soft mt-1">+ keepsake card & rush</p></div>
+            <label><input type="radio" name="tier" value="experience" class="sr-only" />
+              <div class="tier"><div class="flex items-baseline justify-between gap-2"><span class="font-700 text-claret">The Experience</span><span class="font-display text-xl text-claret">$99</span></div><p class="text-sm text-ink-soft mt-1">3 versions · multitrack + remaster</p></div>
+            </label>
+            <label><input type="radio" name="tier" value="wedding" class="sr-only" />
+              <div class="tier"><div class="flex items-baseline justify-between gap-2"><span class="font-700 text-claret">Wedding Package</span><span class="font-display text-xl text-claret">$199</span></div><p class="text-sm text-ink-soft mt-1">3 full songs for your day</p></div>
             </label>
           </div>
+          <p id="weddingNote" class="hidden mt-3 text-sm text-ink-soft bg-blush/30 border border-claret/10 rounded-xl px-4 py-3">Tell us about the first song below. After checkout, we'll reach out to gather details for the other songs in your package.</p>
         </fieldset>
 
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label for="occasion" class="req">What's the occasion?</label>
-            <select id="occasion" name="occasion" class="field">
-              <option value="">Choose one…</option>
-              <option>Birthday</option><option>Wedding</option><option>Anniversary</option>
-              <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
-              <option>Graduation</option><option>Retirement</option><option>Just because</option><option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label for="neededBy">When do you need it by?</label>
-            <input type="date" id="neededBy" name="neededBy" class="field" />
+        <div>
+          <label for="occasion" class="req">What's the occasion?</label>
+          <select id="occasion" name="occasion" class="field">
+            <option value="">Choose one…</option>
+            <option>Birthday</option><option>Wedding</option><option>Anniversary</option>
+            <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
+            <option>Graduation</option><option>Retirement</option><option>Celebration of Life</option>
+            <option>Just because</option><option>Other</option>
+          </select>
+          <div id="occasionOtherWrap" class="hidden mt-3">
+            <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" />
           </div>
         </div>
 
@@ -138,18 +142,43 @@
           </div>
         </div>
 
+        <!-- Voice add-on -->
+        <div>
+          <label>Choose your voice <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
+          <p class="text-ink-soft text-sm -mt-1 mb-2">Prefer a particular voice for the vocals? Add one for $10.</p>
+          <div class="grid grid-cols-2 gap-3">
+            <label><input type="radio" name="voiceAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
+            <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
+          </div>
+          <div id="voicePicker" class="hidden mt-3">
+            <select id="voice" name="voice" class="field">
+              <option value="">Choose a voice…</option>
+              <option>Warm female</option><option>Warm male</option><option>Bright female</option>
+              <option>Deep male</option><option>Youthful</option><option>Classic &amp; timeless</option>
+            </select>
+            <p class="text-ink-soft text-sm mt-2">Voice previews and photos are coming soon.</p>
+          </div>
+        </div>
+
         <div>
           <label for="story" class="req">Tell us their story</label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, little moments, whatever makes them special. The more heartfelt, the better.</p>
-          <textarea id="story" name="story" maxlength="500" class="field" placeholder="Grandma Rose raised five kids on the farm, loves her Sunday garden, and always hums while she bakes…"></textarea>
-          <p class="text-right text-xs text-ink-soft mt-1"><span id="storyCount">0</span>/500</p>
+          <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be. We read every word.</p>
+          <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
+          <p class="text-right text-xs text-ink-soft mt-1"><span id="storyCount">0</span>/5000</p>
         </div>
 
         <div>
           <label for="details">Anything we must include? <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, phrases, or an inside joke to work in.</p>
-          <textarea id="details" name="details" maxlength="500" class="field" style="min-height:90px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora."></textarea>
-          <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/500</p>
+          <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, places, phrases, or an inside joke you'd love in the lyrics.</p>
+          <textarea id="details" name="details" maxlength="5000" class="field" style="min-height:110px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora. Work in 'meet me in the garden' if you can."></textarea>
+          <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
+        </div>
+
+        <div>
+          <label for="other">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
+          <p class="text-ink-soft text-sm -mt-1 mb-2">Anything else at all. Favorite songs or artists, the vibe you're after, who'll be in the room when it plays. More detail always helps.</p>
+          <textarea id="other" name="other" maxlength="5000" class="field" style="min-height:110px" placeholder="She loves Patsy Cline and old gospel. We'll play it at her 80th with the whole family there…"></textarea>
+          <p class="text-right text-xs text-ink-soft mt-1"><span id="otherCount">0</span>/5000</p>
         </div>
 
         <div>
@@ -163,11 +192,17 @@
       <aside class="lg:sticky lg:top-28">
         <div class="bg-white rounded-2xl border border-claret/12 shadow-[0_18px_40px_-20px_rgba(110,20,35,.3)] p-6">
           <h2 class="font-display text-claret text-xl">Order summary</h2>
-          <div class="mt-4 flex items-baseline justify-between">
-            <span class="font-700 text-ink" id="sumTier">Deluxe</span>
-            <span class="font-display text-2xl text-claret" id="sumPrice">$69</span>
+          <div class="mt-4 flex items-baseline justify-between gap-3">
+            <span class="font-700 text-ink" id="sumTier">Deluxe Package</span>
+            <span class="font-display text-xl text-claret" id="sumTierPrice">$69</span>
           </div>
           <ul id="sumIncludes" class="mt-4 space-y-2 text-[.98rem] text-ink/85"></ul>
+
+          <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
+            <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
+            <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span>Choose your voice</span><span>+$10</span></div>
+            <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1"><span>Total</span><span id="sumTotal">$69</span></div>
+          </div>
 
           <button type="submit" id="submitBtn" class="btn-primary w-full mt-6 flex items-center justify-center gap-2">
             <span id="submitLabel">Continue to secure payment</span>
@@ -185,52 +220,100 @@
   </main>
 
   <script>
+    const STORAGE_KEY = 'heartnote_order_v1';
+    const VOICE_ADDON = 10;
     const TIERS = {
-      single:   { name: 'Single',   price: '$59', includes: ['One complete, personalized song', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
-      deluxe:   { name: 'Deluxe',   price: '$69', includes: ['Two to three versions to choose from', 'A private gift page to share', 'High-quality download', 'Delivered within 24 hours'] },
-      keepsake: { name: 'Keepsake', price: '$99', includes: ['Everything in Deluxe', 'A keepsake card with scan-to-play code', 'Priority rush delivery'] },
+      single:     { name: 'Single',                    price: 59,  includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
+      deluxe:     { name: 'Deluxe Package',             price: 69,  includes: ['Two versions to choose from', 'WAV + MP3 of the version you pick', 'Delivered within 24 hours', 'Yours to keep forever'] },
+      experience: { name: 'The Heart Note Experience',  price: 99,  includes: ['Three versions to choose from', 'Chosen version remastered', 'WAV + MP3 of your pick', 'Multitrack recordings included'] },
+      wedding:    { name: 'The Wedding Package',        price: 199, includes: ['Three full songs, full Experience each', 'For any moments of your day', '$49 per additional song'] },
     };
     const params = new URLSearchParams(location.search);
+    const form = document.getElementById('orderForm');
+    const $ = (id) => document.getElementById(id);
+    const money = (n) => '$' + n;
 
-    function selectTier(key) {
-      const t = TIERS[key] || TIERS.deluxe;
-      document.querySelector(`input[name=tier][value="${key}"]`).checked = true;
-      document.getElementById('sumTier').textContent = t.name;
-      document.getElementById('sumPrice').textContent = t.price;
-      document.getElementById('sumIncludes').innerHTML = t.includes.map(i =>
+    function currentTier() {
+      const r = form.querySelector('input[name=tier]:checked');
+      return (r && TIERS[r.value]) ? r.value : 'deluxe';
+    }
+    function voiceOn() {
+      const r = form.querySelector('input[name=voiceAddon]:checked');
+      return r && r.value === 'yes';
+    }
+
+    function refreshSummary() {
+      const key = currentTier();
+      const t = TIERS[key];
+      $('sumTier').textContent = t.name;
+      $('sumTierPrice').textContent = money(t.price);
+      $('sumTierLabel').textContent = t.name;
+      $('sumBase').textContent = money(t.price);
+      $('sumIncludes').innerHTML = t.includes.map(i =>
         `<li class="flex gap-2"><span class="text-gold shrink-0">✓</span>${i}</li>`).join('');
+      const on = voiceOn();
+      $('sumVoiceRow').classList.toggle('hidden', !on);
+      $('sumTotal').textContent = money(t.price + (on ? VOICE_ADDON : 0));
+      $('weddingNote').classList.toggle('hidden', key !== 'wedding');
     }
 
-    // Init tier + occasion from URL
-    const startTier = ['single','deluxe','keepsake'].includes(params.get('tier')) ? params.get('tier') : 'deluxe';
-    selectTier(startTier);
-    document.querySelectorAll('input[name=tier]').forEach(r => r.addEventListener('change', e => selectTier(e.target.value)));
-
-    const occ = params.get('occasion');
-    if (occ) {
-      const sel = document.getElementById('occasion');
-      [...sel.options].forEach(o => { if (o.value.toLowerCase() === occ.toLowerCase()) o.selected = true; });
+    function refreshConditional() {
+      $('voicePicker').classList.toggle('hidden', !voiceOn());
+      $('occasionOtherWrap').classList.toggle('hidden', $('occasion').value !== 'Other');
     }
-    if (params.get('canceled')) document.getElementById('canceledNote').classList.remove('hidden');
 
     // Char counters
-    const bind = (id, cid) => { const el=document.getElementById(id), c=document.getElementById(cid);
-      const upd=()=>c.textContent=el.value.length; el.addEventListener('input',upd); upd(); };
-    bind('story','storyCount'); bind('details','detailsCount');
+    const counters = [['story','storyCount'],['details','detailsCount'],['other','otherCount']];
+    function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
 
-    // Submit
-    const form = document.getElementById('orderForm');
-    const btn = document.getElementById('submitBtn');
-    const label = document.getElementById('submitLabel');
-    const errEl = document.getElementById('formError');
+    // ---- Restore saved data (fixes losing details when returning from payment) ----
+    function restore() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+      for (const [k, v] of Object.entries(saved)) {
+        const els = form.elements[k];
+        if (!els) continue;
+        if (els instanceof RadioNodeList || (els.length && els[0] && els[0].type === 'radio')) {
+          const radio = form.querySelector(`input[name="${k}"][value="${CSS.escape(v)}"]`);
+          if (radio) radio.checked = true;
+        } else {
+          els.value = v;
+        }
+      }
+    }
+    function save() {
+      const data = Object.fromEntries(new FormData(form).entries());
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
 
+    // ---- Init ----
+    restore();
+    // URL params override saved values
+    if (['single','deluxe','experience','wedding'].includes(params.get('tier'))) {
+      const r = form.querySelector(`input[name=tier][value="${params.get('tier')}"]`); if (r) r.checked = true;
+    } else if (!form.querySelector('input[name=tier]:checked')) {
+      form.querySelector('input[name=tier][value="deluxe"]').checked = true;
+    }
+    const occ = params.get('occasion');
+    if (occ) { [...$('occasion').options].forEach(o => { if (o.value.toLowerCase() === occ.toLowerCase()) o.selected = true; }); }
+    if (params.get('canceled')) $('canceledNote').classList.remove('hidden');
+
+    refreshSummary(); refreshConditional(); refreshCounts();
+
+    form.addEventListener('change', () => { refreshSummary(); refreshConditional(); save(); });
+    form.addEventListener('input', () => { refreshCounts(); save(); });
+
+    // ---- Submit ----
+    const btn = $('submitBtn'), label = $('submitLabel'), errEl = $('formError');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       errEl.classList.add('hidden');
       const data = Object.fromEntries(new FormData(form).entries());
       if (!data.occasion) return showErr('Please choose an occasion.');
+      if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.');
       if (!data.recipient) return showErr('Please tell us who the song is for.');
-      if (!data.story || data.story.trim().length < 10) return showErr('Please share a little about them so we can personalize the song.');
+      if (!data.story || data.story.trim().length < 80) return showErr('Please share a bit more of their story so we can make the song personal (a few sentences at least).');
+      if (voiceOn() && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose “No thanks”.');
       if (!data.email) return showErr('Please add a delivery email.');
 
       btn.disabled = true; label.textContent = 'Taking you to secure payment…';
@@ -246,7 +329,7 @@
         showErr(err.message + ' Please try again.');
       }
     });
-    function showErr(m){ errEl.textContent = m; errEl.classList.remove('hidden'); btn.disabled=false; label.textContent='Continue to secure payment'; return false; }
+    function showErr(m){ errEl.textContent = m; errEl.classList.remove('hidden'); btn.disabled = false; label.textContent = 'Continue to secure payment'; window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'}); return false; }
   </script>
 </body>
 </html>
