@@ -14,11 +14,15 @@ _*.mjs
 brand_assets/hf_*.png
 brand_assets/hf-grandma.png
 
-# full-length master songs — commit only the web-optimized /audio samples
+# full-length master songs & voice sources — commit only the web-optimized clips
 audio/source/
+audio/Avatars/
 
 # internal reference docs (contain AI prompts) — never commit / never web-accessible
 brand_assets/*.pdf
+
+# heavy original photos — commit only the optimized occasion-*.jpg versions
+brand_assets/source/
 
 # secrets — never commit real env files
 .env

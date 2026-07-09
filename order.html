@@ -37,6 +37,13 @@
     input[type=radio]:checked + .tier { border-color:#6E1423; background:#fff; box-shadow:0 6px 20px -10px rgba(110,20,35,.4); }
     .opt { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.7rem 1rem; background:#FBF7EE; font-weight:600; transition:border-color .2s, background .2s; }
     input[type=radio]:checked + .opt { border-color:#6E1423; background:#fff; }
+    .vc { display:flex; align-items:center; gap:.7rem; cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.55rem .7rem; background:#FBF7EE; transition:border-color .2s, background .2s; }
+    .vc:hover { border-color:rgba(198,151,63,.6); }
+    input[type=radio]:checked + .vc { border-color:#6E1423; background:#fff; box-shadow:0 6px 18px -10px rgba(110,20,35,.4); }
+    .vc-play { display:grid; place-items:center; width:38px; height:38px; border-radius:999px; background:#C6973F; color:#360911; flex:0 0 auto; cursor:pointer; border:none; transition:transform .2s; }
+    .vc-play:hover { transform:scale(1.06); }
+    .vc-check { margin-left:auto; color:#6E1423; font-weight:700; opacity:0; transition:opacity .2s; }
+    input[type=radio]:checked + .vc .vc-check { opacity:1; }
     .btn-primary { background:#6E1423; color:#F7F1E6; font-weight:700; border-radius:999px; padding:1rem 2rem; font-size:1.1rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .2s; }
     .btn-primary:hover:not(:disabled){ background:#5a0f1c; transform:translateY(-2px); }
     .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
@@ -89,57 +96,90 @@
               <div class="tier"><div class="flex items-baseline justify-between gap-2"><span class="font-700 text-claret">Wedding Package</span><span class="font-display text-xl text-claret">$199</span></div><p class="text-sm text-ink-soft mt-1">3 full songs for your day</p></div>
             </label>
           </div>
-          <p id="weddingNote" class="hidden mt-3 text-sm text-ink-soft bg-blush/30 border border-claret/10 rounded-xl px-4 py-3">Tell us about the first song below. After checkout, we'll reach out to gather details for the other songs in your package.</p>
+          <p id="weddingNote" class="hidden mt-3 text-sm text-ink-soft bg-blush/30 border border-claret/10 rounded-xl px-4 py-3">Your package includes three songs. Tell us about each one below. Need more than three? Add another for $49.</p>
         </fieldset>
 
-        <div>
-          <label for="occasion" class="req">What's the occasion?</label>
-          <select id="occasion" name="occasion" class="field">
-            <option value="">Choose one…</option>
-            <option>Birthday</option><option>Wedding</option><option>Anniversary</option>
-            <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
-            <option>Graduation</option><option>Retirement</option><option>Celebration of Life</option>
-            <option>Just because</option><option>Other</option>
-          </select>
-          <div id="occasionOtherWrap" class="hidden mt-3">
-            <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" />
+        <!-- Single-song brief -->
+        <div id="singleFields" class="space-y-7">
+          <div>
+            <label for="occasion" class="req">What's the occasion?</label>
+            <select id="occasion" name="occasion" class="field">
+              <option value="">Choose one…</option>
+              <option>Birthday</option><option>Wedding</option><option>Anniversary</option>
+              <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
+              <option>Graduation</option><option>Retirement</option><option>Celebration of Life</option>
+              <option>Just because</option><option>Other</option>
+            </select>
+            <div id="occasionOtherWrap" class="hidden mt-3">
+              <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" />
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label for="recipient" class="req">Who is the song for?</label>
+              <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" />
+            </div>
+            <div>
+              <label for="relationship">Your relationship to them</label>
+              <input type="text" id="relationship" name="relationship" class="field" placeholder="e.g. their granddaughter" />
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label for="style">Style of music</label>
+              <select id="style" name="style" class="field">
+                <option value="">No preference</option>
+                <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
+                <option>Classical / Hymn</option><option>Jazz</option><option>Soul / R&amp;B</option>
+                <option>Rock</option><option>Children's</option>
+              </select>
+            </div>
+            <div>
+              <label for="mood">Mood</label>
+              <select id="mood" name="mood" class="field">
+                <option value="">No preference</option>
+                <option>Joyful</option><option>Tender</option><option>Upbeat</option>
+                <option>Reflective</option><option>Celebratory</option><option>Comforting</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="story" class="req">Tell us their story</label>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be. We read every word.</p>
+            <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
+            <p class="text-right text-xs text-ink-soft mt-1"><span id="storyCount">0</span>/5000</p>
+          </div>
+
+          <div>
+            <label for="details">Anything we must include? <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, places, phrases, or an inside joke you'd love in the lyrics.</p>
+            <textarea id="details" name="details" maxlength="5000" class="field" style="min-height:110px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora. Work in 'meet me in the garden' if you can."></textarea>
+            <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
+          </div>
+
+          <div>
+            <label for="other">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Anything else at all. Favorite songs or artists, the vibe you're after, who'll be in the room when it plays. More detail always helps.</p>
+            <textarea id="other" name="other" maxlength="5000" class="field" style="min-height:110px" placeholder="She loves Patsy Cline and old gospel. We'll play it at her 80th with the whole family there…"></textarea>
+            <p class="text-right text-xs text-ink-soft mt-1"><span id="otherCount">0</span>/5000</p>
           </div>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label for="recipient" class="req">Who is the song for?</label>
-            <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" />
-          </div>
-          <div>
-            <label for="relationship">Your relationship to them</label>
-            <input type="text" id="relationship" name="relationship" class="field" placeholder="e.g. their granddaughter" />
-          </div>
+        <!-- Wedding songs (shown only for the Wedding Package) -->
+        <div id="weddingFields" class="hidden space-y-5">
+          <div id="weddingSongs" class="space-y-5"></div>
+          <button type="button" id="addSongBtn" class="inline-flex items-center gap-2 text-claret font-700 hover:text-claret-deep">
+            <span class="grid place-items-center w-6 h-6 rounded-full border-2 border-claret text-lg leading-none">+</span> Add another song <span class="text-ink-soft font-600">(+$49)</span>
+          </button>
         </div>
 
+        <!-- Shared: your name -->
         <div>
           <label for="sender">Your name (how they'll know it's from you)</label>
           <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" />
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label for="style">Style of music</label>
-            <select id="style" name="style" class="field">
-              <option value="">No preference</option>
-              <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
-              <option>Classical / Hymn</option><option>Jazz</option><option>Soul / R&amp;B</option>
-              <option>Rock</option><option>Children's</option>
-            </select>
-          </div>
-          <div>
-            <label for="mood">Mood</label>
-            <select id="mood" name="mood" class="field">
-              <option value="">No preference</option>
-              <option>Joyful</option><option>Tender</option><option>Upbeat</option>
-              <option>Reflective</option><option>Celebratory</option><option>Comforting</option>
-            </select>
-          </div>
         </div>
 
         <!-- Voice add-on -->
@@ -151,34 +191,9 @@
             <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
           </div>
           <div id="voicePicker" class="hidden mt-3">
-            <select id="voice" name="voice" class="field">
-              <option value="">Choose a voice…</option>
-              <option>Warm female</option><option>Warm male</option><option>Bright female</option>
-              <option>Deep male</option><option>Youthful</option><option>Classic &amp; timeless</option>
-            </select>
-            <p class="text-ink-soft text-sm mt-2">Voice previews and photos are coming soon.</p>
+            <p class="text-ink-soft text-sm mb-2.5">Press play to hear each voice, then pick your favorite.</p>
+            <div class="grid sm:grid-cols-2 gap-2.5" id="voiceGrid"></div>
           </div>
-        </div>
-
-        <div>
-          <label for="story" class="req">Tell us their story</label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be. We read every word.</p>
-          <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
-          <p class="text-right text-xs text-ink-soft mt-1"><span id="storyCount">0</span>/5000</p>
-        </div>
-
-        <div>
-          <label for="details">Anything we must include? <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, places, phrases, or an inside joke you'd love in the lyrics.</p>
-          <textarea id="details" name="details" maxlength="5000" class="field" style="min-height:110px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora. Work in 'meet me in the garden' if you can."></textarea>
-          <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
-        </div>
-
-        <div>
-          <label for="other">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Anything else at all. Favorite songs or artists, the vibe you're after, who'll be in the room when it plays. More detail always helps.</p>
-          <textarea id="other" name="other" maxlength="5000" class="field" style="min-height:110px" placeholder="She loves Patsy Cline and old gospel. We'll play it at her 80th with the whole family there…"></textarea>
-          <p class="text-right text-xs text-ink-soft mt-1"><span id="otherCount">0</span>/5000</p>
         </div>
 
         <div>
@@ -200,6 +215,7 @@
 
           <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
             <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
+            <div id="sumExtraRow" class="hidden flex justify-between text-ink/80"><span id="sumExtraLabel">Extra songs</span><span id="sumExtraAmt">+$49</span></div>
             <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span>Choose your voice</span><span>+$10</span></div>
             <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1"><span>Total</span><span id="sumTotal">$69</span></div>
           </div>
@@ -242,29 +258,106 @@
       return r && r.value === 'yes';
     }
 
+    // Wedding songs
+    const EXTRA_SONG = 49, WEDDING_BASE = 3, WEDDING_MAX = 8;
+    const MOMENTS = ['First Dance','Father-Daughter Dance','Mother-Son Dance','Processional','Reception Entrance','Cake Cutting','Last Dance','Other'];
+    let songCount = WEDDING_BASE;
+    function songBlock(i) {
+      const removable = i > WEDDING_BASE;
+      return `<div class="rounded-xl border border-claret/12 bg-white/60 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="font-display text-claret text-lg">Song ${i}</p>
+          ${removable ? `<button type="button" class="rm-song text-ink-soft text-sm font-600 hover:text-claret" data-i="${i}">Remove</button>` : ''}
+        </div>
+        <label for="song${i}_moment" class="req">Which moment is this song for?</label>
+        <select id="song${i}_moment" name="song${i}_moment" class="field">
+          <option value="">Choose a moment…</option>
+          ${MOMENTS.map(m => `<option>${m}</option>`).join('')}
+        </select>
+        <label for="song${i}_story" class="req" style="margin-top:1rem">Tell us about this song</label>
+        <p class="text-ink-soft text-sm -mt-1 mb-2">Who it's for, the story behind it, the style you'd like, and anything to include in the lyrics.</p>
+        <textarea id="song${i}_story" name="song${i}_story" maxlength="3000" class="field" style="min-height:110px" placeholder="Our first dance. How we met at the coffee shop, the road trip where he proposed, the life we're starting together…"></textarea>
+      </div>`;
+    }
+    function collectSongs() {
+      const arr = [];
+      for (let i = 1; i <= songCount; i++) arr.push({ moment: (form.elements[`song${i}_moment`] || {}).value || '', story: (form.elements[`song${i}_story`] || {}).value || '' });
+      return arr;
+    }
+    function renderSongs(arr) {
+      songCount = Math.max(WEDDING_BASE, Math.min(arr.length, WEDDING_MAX));
+      const list = arr.slice(0, songCount);
+      while (list.length < songCount) list.push({ moment: '', story: '' });
+      $('weddingSongs').innerHTML = list.map((s, k) => songBlock(k + 1)).join('');
+      list.forEach((s, k) => { form.elements[`song${k + 1}_moment`].value = s.moment; form.elements[`song${k + 1}_story`].value = s.story; });
+      $('weddingSongs').querySelectorAll('.rm-song').forEach(b => b.addEventListener('click', () => {
+        const a = collectSongs(); a.splice(parseInt(b.dataset.i, 10) - 1, 1); renderSongs(a); refreshSummary(); save();
+      }));
+      $('addSongBtn').classList.toggle('hidden', songCount >= WEDDING_MAX);
+    }
+
     function refreshSummary() {
       const key = currentTier();
       const t = TIERS[key];
+      const extra = key === 'wedding' ? Math.max(0, songCount - WEDDING_BASE) : 0;
+      const voice = voiceOn() ? VOICE_ADDON : 0;
       $('sumTier').textContent = t.name;
       $('sumTierPrice').textContent = money(t.price);
       $('sumTierLabel').textContent = t.name;
       $('sumBase').textContent = money(t.price);
       $('sumIncludes').innerHTML = t.includes.map(i =>
         `<li class="flex gap-2"><span class="text-gold shrink-0">✓</span>${i}</li>`).join('');
-      const on = voiceOn();
-      $('sumVoiceRow').classList.toggle('hidden', !on);
-      $('sumTotal').textContent = money(t.price + (on ? VOICE_ADDON : 0));
-      $('weddingNote').classList.toggle('hidden', key !== 'wedding');
+      $('sumExtraRow').classList.toggle('hidden', extra <= 0);
+      $('sumExtraLabel').textContent = extra + (extra === 1 ? ' extra song' : ' extra songs');
+      $('sumExtraAmt').textContent = '+' + money(extra * EXTRA_SONG);
+      $('sumVoiceRow').classList.toggle('hidden', voice === 0);
+      $('sumTotal').textContent = money(t.price + extra * EXTRA_SONG + voice);
     }
 
     function refreshConditional() {
+      const wedding = currentTier() === 'wedding';
       $('voicePicker').classList.toggle('hidden', !voiceOn());
       $('occasionOtherWrap').classList.toggle('hidden', $('occasion').value !== 'Other');
+      $('weddingFields').classList.toggle('hidden', !wedding);
+      $('singleFields').classList.toggle('hidden', wedding);
+      $('weddingNote').classList.toggle('hidden', !wedding);
     }
 
     // Char counters
     const counters = [['story','storyCount'],['details','detailsCount'],['other','otherCount']];
     function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
+
+    // Voice picker with audio previews
+    const VOICES = [
+      { name:'Brett',   desc:'Male · country',     src:'audio/voices/voice-brett.mp3' },
+      { name:'Cameron', desc:'Male · pop',         src:'audio/voices/voice-cameron.mp3' },
+      { name:'Gabriel', desc:'Female · pop',       src:'audio/voices/voice-gabriel.mp3' },
+      { name:'Harper',  desc:'Female · country',   src:'audio/voices/voice-harper.mp3' },
+      { name:'Justin',  desc:'Male · soul',        src:'audio/voices/voice-justin.mp3' },
+      { name:'Lily',    desc:'Female · joyful pop', src:'audio/voices/voice-lily.mp3' },
+      { name:'Shaun',   desc:'Male · hip hop',     src:'audio/voices/voice-shaun.mp3' },
+    ];
+    let voiceAudio = null, voiceBtn = null;
+    const setVIcon = (btn, playing) => btn.querySelector('path').setAttribute('d', playing ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'M8 5v14l11-7z');
+    function buildVoices() {
+      $('voiceGrid').innerHTML = VOICES.map(v => `
+        <label>
+          <input type="radio" name="voice" value="${v.name}" class="sr-only" />
+          <div class="vc">
+            <button type="button" class="vc-play" data-src="${v.src}" aria-label="Hear ${v.name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="min-w-0"><p class="font-700 text-claret leading-tight">${v.name}</p><p class="text-sm text-ink-soft">${v.desc}</p></div>
+            <span class="vc-check">✓</span>
+          </div>
+        </label>`).join('');
+      $('voiceGrid').querySelectorAll('.vc-play').forEach(btn => btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (voiceAudio && voiceBtn === btn && !voiceAudio.paused) { voiceAudio.pause(); setVIcon(btn, false); return; }
+        if (voiceAudio) { voiceAudio.pause(); if (voiceBtn) setVIcon(voiceBtn, false); }
+        voiceAudio = new Audio(btn.dataset.src); voiceBtn = btn; setVIcon(btn, true);
+        voiceAudio.play().catch(()=>{});
+        voiceAudio.addEventListener('ended', () => setVIcon(btn, false));
+      }));
+    }
 
     // ---- Restore saved data (fixes losing details when returning from payment) ----
     function restore() {
@@ -287,6 +380,13 @@
     }
 
     // ---- Init ----
+    buildVoices();
+    // Build enough wedding song blocks for any saved data, before restoring values
+    let _saved = {}; try { _saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+    let _sc = WEDDING_BASE;
+    for (let i = WEDDING_MAX; i > WEDDING_BASE; i--) { if (_saved[`song${i}_moment`] !== undefined || _saved[`song${i}_story`] !== undefined) { _sc = i; break; } }
+    renderSongs(Array.from({ length: _sc }, () => ({ moment: '', story: '' })));
+    $('addSongBtn').addEventListener('click', () => { const a = collectSongs(); a.push({ moment: '', story: '' }); renderSongs(a); refreshSummary(); save(); });
     restore();
     // URL params override saved values
     if (['single','deluxe','experience','wedding'].includes(params.get('tier'))) {
@@ -309,10 +409,19 @@
       e.preventDefault();
       errEl.classList.add('hidden');
       const data = Object.fromEntries(new FormData(form).entries());
-      if (!data.occasion) return showErr('Please choose an occasion.');
-      if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.');
-      if (!data.recipient) return showErr('Please tell us who the song is for.');
-      if (!data.story || data.story.trim().length < 80) return showErr('Please share a bit more of their story so we can make the song personal (a few sentences at least).');
+      if (currentTier() === 'wedding') {
+        for (let i = 1; i <= songCount; i++) {
+          if (!(data[`song${i}_moment`] || '')) return showErr(`Please choose the moment for song ${i}.`);
+          if ((data[`song${i}_story`] || '').trim().length < 40) return showErr(`Please tell us a bit more about song ${i}.`);
+        }
+        data.songCount = String(songCount);
+        data.extraSongs = String(Math.max(0, songCount - WEDDING_BASE));
+      } else {
+        if (!data.occasion) return showErr('Please choose an occasion.');
+        if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.');
+        if (!data.recipient) return showErr('Please tell us who the song is for.');
+        if (!data.story || data.story.trim().length < 80) return showErr('Please share a bit more of their story so we can make the song personal (a few sentences at least).');
+      }
       if (voiceOn() && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose “No thanks”.');
       if (!data.email) return showErr('Please add a delivery email.');
 

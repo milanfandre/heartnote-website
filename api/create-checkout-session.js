@@ -64,6 +64,13 @@ export default async function handler(req, res) {
     putChunked(metadata, 'must_include', b.details);
     putChunked(metadata, 'other_info', b.other);
 
+    // Wedding songs: song1_moment / song1_story, song2_..., etc.
+    for (const k of Object.keys(b)) {
+      if (/^song\d+_moment$/.test(k)) metadata[k] = clip(b[k], 120);
+      else if (/^song\d+_story$/.test(k)) putChunked(metadata, k, b[k], 3000);
+    }
+    if (tierKey === 'wedding') metadata.song_count = clip(String(b.songCount || 3), 10);
+
     const line_items = [{ price, quantity: 1 }];
     if (voiceOn) {
       line_items.push({
@@ -74,6 +81,15 @@ export default async function handler(req, res) {
         },
         quantity: 1,
       });
+    }
+    if (tierKey === 'wedding') {
+      const extra = Math.max(0, parseInt(b.extraSongs, 10) || 0);
+      if (extra > 0) {
+        line_items.push({
+          price_data: { currency: 'usd', unit_amount: 4900, product_data: { name: 'Additional wedding song' } },
+          quantity: extra,
+        });
+      }
     }
 
     const origin = req.headers.origin || `https://${req.headers.host}`;

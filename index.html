@@ -175,6 +175,9 @@
     /* Floating keepsake card */
     @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
     .floaty { animation: floaty 6s ease-in-out infinite; }
+    #heroCard.playing .note { animation: notebob 1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    #heroCard.playing .note:nth-of-type(even) { animation-delay: .35s; }
+    @keyframes notebob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-3px) } }
 
     /* Draw-in staff line */
     .draw { stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 2.4s ease; }
@@ -257,11 +260,11 @@
         </div>
 
         <!-- Now playing keepsake card -->
-        <div class="floaty absolute -bottom-8 -left-4 sm:-left-8 w-[19rem] max-w-[85%] bg-ivory rounded-2xl shadow-lift border border-gold/40 p-4">
+        <div id="heroCard" class="floaty absolute -bottom-8 -left-4 sm:-left-8 w-[19rem] max-w-[85%] bg-ivory rounded-2xl shadow-lift border border-gold/40 p-4">
           <div class="flex items-center gap-3">
-            <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-ivory shrink-0">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            </span>
+            <button type="button" id="heroPlay" aria-label="Play a sample song" class="grid place-items-center w-12 h-12 rounded-full bg-claret text-ivory shrink-0 transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+              <svg id="heroPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
             <div class="min-w-0">
               <p class="text-[.72rem] uppercase tracking-[.14em] text-gold font-700">Now playing</p>
               <p class="font-display text-claret text-lg leading-tight truncate">For Grandma, with love</p>
@@ -366,23 +369,23 @@
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
         <a href="order.html?occasion=Birthday" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/9c4a4a/9c4a4a" alt="Birthday celebration" loading="lazy" /></div>
+          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-birthday.jpg" alt="Birthday celebration" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Birthdays</h3><p class="text-ivory/85 text-sm">A joyful tune to mark another year.</p></div>
         </a>
         <a href="order.html?occasion=Wedding" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/8a3b46/8a3b46" alt="Wedding celebration" loading="lazy" /></div>
+          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-wedding.jpg" alt="Wedding celebration" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Weddings</h3><p class="text-ivory/85 text-sm">Their love story, set to music.</p></div>
         </a>
         <a href="order.html?occasion=Anniversary" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/7a5230/7a5230" alt="Anniversary celebration" loading="lazy" /></div>
+          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-anniversary.jpg" alt="Anniversary celebration" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Anniversaries</h3><p class="text-ivory/85 text-sm">Years of memories in one melody.</p></div>
         </a>
         <a href="order.html?occasion=Christmas" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/6E1423/6E1423" alt="Christmas celebration" loading="lazy" /></div>
+          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-christmas.jpg" alt="Christmas celebration" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Christmas</h3><p class="text-ivory/85 text-sm">A warm carol for the whole family.</p></div>
         </a>
         <a href="order.html?occasion=Faith%20%26%20Blessings" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="https://placehold.co/600x450/8a6a3b/8a6a3b" alt="Faith and blessings" loading="lazy" /></div>
+          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-faith.jpg" alt="Faith and blessings" loading="lazy" /></div>
           <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Faith &amp; Blessings</h3><p class="text-ivory/85 text-sm">Hymns and blessings for holy days.</p></div>
         </a>
         <a href="order.html?occasion=New%20Baby" class="occasion group shadow-lift">
@@ -402,7 +405,7 @@
         <h2 class="font-display font-500 text-ivory text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
           The kind of song you'll receive
         </h2>
-        <p class="mt-5 text-ivory/80 text-[1.15rem]">A few we've made for other families. Press play on any of them to hear the kind of song you'll get.</p>
+        <p class="mt-5 text-ivory/80 text-[1.15rem]">A few we've made for other families. Press play to hear the quality, then we'll write yours from scratch, in any style and for any occasion you like.</p>
       </div>
 
       <div id="sampleGrid" class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal"></div>
@@ -607,7 +610,7 @@
             How long does it take to arrive?
             <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
           </summary>
-          <p class="mt-3 text-ink/80 text-[1.08rem]">Most songs are ready within 24 hours of your order. If you're on a tight timeline for a special date, give us a call and we'll do our best to help.</p>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Most songs are ready within 24 hours of your order. If you're on a tight timeline for a special date, <a href="contact.html" class="text-claret font-700 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">contact our team</a> and we'll do our best to help.</p>
         </details>
         <details class="group py-5 reveal">
           <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
@@ -646,7 +649,7 @@
         <a href="order.html" class="btn btn-gold">Create your Heart Note</a>
         <a href="#listen" class="btn btn-ghost !text-ivory !border-ivory/40 hover:!bg-ivory/10">Hear an example</a>
       </div>
-      <p class="mt-6 text-ivory/60 text-sm">Loved by over 12,000 families · 100% happiness guarantee</p>
+      <p class="mt-6 text-ivory/60 text-sm">Loved by 10,000+ families · 100% happiness guarantee</p>
     </div>
   </section>
 
@@ -682,10 +685,8 @@
       <div>
         <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Help</p>
         <ul class="space-y-2.5 text-[.98rem]">
-          <li><a href="#" class="hover:text-gold-soft transition-colors">Contact us</a></li>
+          <li><a href="contact.html" class="hover:text-gold-soft transition-colors">Contact us</a></li>
           <li><a href="order.html" class="hover:text-gold-soft transition-colors">Order a Heart Note</a></li>
-          <li><a href="#" class="hover:text-gold-soft transition-colors">Gift cards</a></li>
-          <li><a href="#" class="hover:text-gold-soft transition-colors">Track my order</a></li>
         </ul>
       </div>
     </div>
@@ -710,11 +711,11 @@
     // ---- Sample audio players ----
     // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
     const SAMPLES = [
-      { occasion: 'First Dance',           style: 'Country-pop',      title: 'Forever Starts Tonight',   context: 'For Sophie & Ben’s first dance as newlyweds', src: 'audio/sample-first-dance.mp3' },
       { occasion: 'Father-Daughter Dance', style: 'Heartfelt ballad', title: 'One More Dance',           context: 'For Emma and her dad on her wedding day',      src: 'audio/sample-father-daughter.mp3' },
       { occasion: 'Walking the Aisle',     style: 'Acoustic',         title: 'Here Comes Grace',         context: 'Tyler’s song for his bride, Grace',           src: 'audio/sample-groom-aisle.mp3' },
       { occasion: 'Father’s Day',          style: 'Warm country',     title: 'The Old Man Called David', context: 'A Father’s Day tribute to Dad',               src: 'audio/sample-fathers-day.mp3' },
       { occasion: 'Mother’s Day',          style: 'Easy listening',   title: 'Love You, Mom',            context: 'For Karen, from her kids Luke & Emma',        src: 'audio/sample-mothers-day.mp3' },
+      { occasion: 'First Dance',           style: 'Country-pop',      title: 'Forever Starts Tonight',   context: 'For Sophie & Ben’s first dance as newlyweds', src: 'audio/sample-first-dance.mp3' },
       { occasion: 'Reception Entrance',    style: 'Upbeat pop',       title: 'Tonight We Start',         context: 'Mia & Ethan’s big reception entrance',        src: 'audio/sample-reception.mp3' },
     ];
     const PLAY_D = 'M8 5v14l11-7z';
@@ -777,6 +778,21 @@
       grid.appendChild(card);
       io.observe(card);
     });
+
+    // Hero "For Grandma, with love" preview
+    const heroPlay = document.getElementById('heroPlay');
+    if (heroPlay) {
+      const heroAudio = new Audio('audio/sample-grandma.mp3');
+      const heroIconPath = document.getElementById('heroPlayIcon').querySelector('path');
+      const heroCard = document.getElementById('heroCard');
+      heroAudio.addEventListener('play', () => { heroIconPath.setAttribute('d', 'M6 5h4v14H6zM14 5h4v14h-4z'); heroCard.classList.add('playing'); });
+      heroAudio.addEventListener('pause', () => { heroIconPath.setAttribute('d', 'M8 5v14l11-7z'); heroCard.classList.remove('playing'); });
+      heroAudio.addEventListener('ended', () => heroAudio.pause());
+      heroPlay.addEventListener('click', () => {
+        if (heroAudio.paused) { if (current && current !== heroAudio) current.pause(); current = heroAudio; heroAudio.play().catch(() => {}); }
+        else { heroAudio.pause(); }
+      });
+    }
   </script>
 </body>
 </html>
