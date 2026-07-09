@@ -170,6 +170,11 @@
 
         <!-- Wedding songs (shown only for the Wedding Package) -->
         <div id="weddingFields" class="hidden space-y-5">
+          <div class="rounded-xl border border-claret/12 bg-blush/20 p-4 sm:p-5">
+            <p class="font-600 text-claret">Choose a voice for any song <span class="font-400 text-ink-soft text-sm">(optional, +$10 each)</span></p>
+            <p class="text-ink-soft text-sm mt-1 mb-3">Press play to hear each voice, then pick one under any song below.</p>
+            <div class="grid sm:grid-cols-2 gap-2" id="voicePreview"></div>
+          </div>
           <div id="weddingSongs" class="space-y-5"></div>
           <button type="button" id="addSongBtn" class="inline-flex items-center gap-2 text-claret font-700 hover:text-claret-deep">
             <span class="grid place-items-center w-6 h-6 rounded-full border-2 border-claret text-lg leading-none">+</span> Add another song <span class="text-ink-soft font-600">(+$49)</span>
@@ -182,11 +187,10 @@
           <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" />
         </div>
 
-        <!-- Voice add-on -->
-        <div>
+        <!-- Voice add-on (single-song tiers; weddings choose per song) -->
+        <div id="voiceAddonSection">
           <label>Choose your voice <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
           <p class="text-ink-soft text-sm -mt-1 mb-2">Prefer a particular voice for the vocals? Add one for $10.</p>
-          <p id="voiceWeddingNote" class="hidden text-ink-soft text-sm -mt-1 mb-2 italic">Your chosen voice is used once and applied across all the songs in your package.</p>
           <div class="grid grid-cols-2 gap-3">
             <label><input type="radio" name="voiceAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
             <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
@@ -217,7 +221,7 @@
           <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
             <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
             <div id="sumExtraRow" class="hidden flex justify-between text-ink/80"><span id="sumExtraLabel">Extra songs</span><span id="sumExtraAmt">+$49</span></div>
-            <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span>Choose your voice</span><span>+$10</span></div>
+            <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span id="sumVoiceLabel">Choose your voice</span><span id="sumVoiceAmt">+$10</span></div>
             <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1"><span>Total</span><span id="sumTotal">$69</span></div>
           </div>
 
@@ -282,19 +286,24 @@
         <label for="song${i}_other" style="margin-top:1rem">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
         <p class="text-ink-soft text-sm -mt-1 mb-2">Favorite songs or artists, the vibe you're after, or anything else about this moment.</p>
         <textarea id="song${i}_other" name="song${i}_other" maxlength="1200" class="field" style="min-height:90px" placeholder="We love Van Morrison. Keep it soft and romantic, nothing too upbeat…"></textarea>
+        <label for="song${i}_voice" style="margin-top:1rem">Voice for this song <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
+        <select id="song${i}_voice" name="song${i}_voice" class="field">
+          <option value="">No specific voice</option>
+          ${voiceOptionsHTML()}
+        </select>
       </div>`;
     }
     function collectSongs() {
       const arr = [];
-      for (let i = 1; i <= songCount; i++) arr.push({ moment: (form.elements[`song${i}_moment`] || {}).value || '', story: (form.elements[`song${i}_story`] || {}).value || '', other: (form.elements[`song${i}_other`] || {}).value || '' });
+      for (let i = 1; i <= songCount; i++) arr.push({ moment: (form.elements[`song${i}_moment`] || {}).value || '', story: (form.elements[`song${i}_story`] || {}).value || '', other: (form.elements[`song${i}_other`] || {}).value || '', voice: (form.elements[`song${i}_voice`] || {}).value || '' });
       return arr;
     }
     function renderSongs(arr) {
       songCount = Math.max(WEDDING_BASE, Math.min(arr.length, WEDDING_MAX));
       const list = arr.slice(0, songCount);
-      while (list.length < songCount) list.push({ moment: '', story: '', other: '' });
+      while (list.length < songCount) list.push({ moment: '', story: '', other: '', voice: '' });
       $('weddingSongs').innerHTML = list.map((s, k) => songBlock(k + 1)).join('');
-      list.forEach((s, k) => { form.elements[`song${k + 1}_moment`].value = s.moment; form.elements[`song${k + 1}_story`].value = s.story; form.elements[`song${k + 1}_other`].value = s.other || ''; });
+      list.forEach((s, k) => { form.elements[`song${k + 1}_moment`].value = s.moment; form.elements[`song${k + 1}_story`].value = s.story; form.elements[`song${k + 1}_other`].value = s.other || ''; form.elements[`song${k + 1}_voice`].value = s.voice || ''; });
       $('weddingSongs').querySelectorAll('.rm-song').forEach(b => b.addEventListener('click', () => {
         const a = collectSongs(); a.splice(parseInt(b.dataset.i, 10) - 1, 1); renderSongs(a); refreshSummary(); save();
       }));
@@ -305,7 +314,10 @@
       const key = currentTier();
       const t = TIERS[key];
       const extra = key === 'wedding' ? Math.max(0, songCount - WEDDING_BASE) : 0;
-      const voice = voiceOn() ? VOICE_ADDON : 0;
+      const voiceCount = key === 'wedding'
+        ? Array.from({ length: songCount }, (_, i) => (form.elements[`song${i + 1}_voice`] || {}).value).filter(v => v && v.trim()).length
+        : (voiceOn() ? 1 : 0);
+      const voice = voiceCount * VOICE_ADDON;
       $('sumTier').textContent = t.name;
       $('sumTierPrice').textContent = money(t.price);
       $('sumTierLabel').textContent = t.name;
@@ -315,7 +327,9 @@
       $('sumExtraRow').classList.toggle('hidden', extra <= 0);
       $('sumExtraLabel').textContent = extra + (extra === 1 ? ' extra song' : ' extra songs');
       $('sumExtraAmt').textContent = '+' + money(extra * EXTRA_SONG);
-      $('sumVoiceRow').classList.toggle('hidden', voice === 0);
+      $('sumVoiceRow').classList.toggle('hidden', voiceCount === 0);
+      $('sumVoiceLabel').textContent = voiceCount > 1 ? `Choose your voice (×${voiceCount})` : 'Choose your voice';
+      $('sumVoiceAmt').textContent = '+' + money(voice);
       $('sumTotal').textContent = money(t.price + extra * EXTRA_SONG + voice);
     }
 
@@ -326,7 +340,7 @@
       $('weddingFields').classList.toggle('hidden', !wedding);
       $('singleFields').classList.toggle('hidden', wedding);
       $('weddingNote').classList.toggle('hidden', !wedding);
-      $('voiceWeddingNote').classList.toggle('hidden', !wedding);
+      $('voiceAddonSection').classList.toggle('hidden', wedding);
     }
 
     // Char counters
@@ -345,24 +359,38 @@
     ];
     let voiceAudio = null, voiceBtn = null;
     const setVIcon = (btn, playing) => btn.querySelector('path').setAttribute('d', playing ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'M8 5v14l11-7z');
+    // One delegated handler drives every voice preview button (order-level grid + wedding strip)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.vc-play'); if (!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      if (voiceAudio && voiceBtn === btn && !voiceAudio.paused) { voiceAudio.pause(); setVIcon(btn, false); return; }
+      if (voiceAudio) { voiceAudio.pause(); if (voiceBtn) setVIcon(voiceBtn, false); }
+      voiceAudio = new Audio(btn.dataset.src); voiceBtn = btn; setVIcon(btn, true);
+      voiceAudio.play().catch(() => {});
+      voiceAudio.addEventListener('ended', () => setVIcon(btn, false));
+    });
+    const voicePlayBtn = (v) => `<button type="button" class="vc-play" data-src="${v.src}" aria-label="Hear ${v.name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>`;
+    const voiceOptionsHTML = () => VOICES.map(v => `<option value="${v.name}">${v.name} — ${v.desc}</option>`).join('');
+    // Order-level selectable picker (single-song tiers)
     function buildVoices() {
       $('voiceGrid').innerHTML = VOICES.map(v => `
         <label>
           <input type="radio" name="voice" value="${v.name}" class="sr-only" />
           <div class="vc">
-            <button type="button" class="vc-play" data-src="${v.src}" aria-label="Hear ${v.name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+            ${voicePlayBtn(v)}
             <div class="min-w-0"><p class="font-700 text-claret leading-tight">${v.name}</p><p class="text-sm text-ink-soft">${v.desc}</p></div>
             <span class="vc-check">✓</span>
           </div>
         </label>`).join('');
-      $('voiceGrid').querySelectorAll('.vc-play').forEach(btn => btn.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        if (voiceAudio && voiceBtn === btn && !voiceAudio.paused) { voiceAudio.pause(); setVIcon(btn, false); return; }
-        if (voiceAudio) { voiceAudio.pause(); if (voiceBtn) setVIcon(voiceBtn, false); }
-        voiceAudio = new Audio(btn.dataset.src); voiceBtn = btn; setVIcon(btn, true);
-        voiceAudio.play().catch(()=>{});
-        voiceAudio.addEventListener('ended', () => setVIcon(btn, false));
-      }));
+    }
+    // Wedding preview strip (hear the voices; assign per song via the dropdowns)
+    function buildVoicePreview() {
+      const el = $('voicePreview'); if (!el) return;
+      el.innerHTML = VOICES.map(v => `
+        <div class="vc" style="cursor:default">
+          ${voicePlayBtn(v)}
+          <div class="min-w-0"><p class="font-700 text-claret leading-tight text-[.95rem]">${v.name}</p><p class="text-xs text-ink-soft">${v.desc}</p></div>
+        </div>`).join('');
     }
 
     // ---- Restore saved data (fixes losing details when returning from payment) ----
@@ -387,6 +415,7 @@
 
     // ---- Init ----
     buildVoices();
+    buildVoicePreview();
     // Build enough wedding song blocks for any saved data, before restoring values
     let _saved = {}; try { _saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
     let _sc = WEDDING_BASE;
@@ -428,7 +457,7 @@
         if (!data.recipient) return showErr('Please tell us who the song is for.');
         if (!data.story || data.story.trim().length < 80) return showErr('Please share a bit more of their story so we can make the song personal (a few sentences at least).');
       }
-      if (voiceOn() && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose “No thanks”.');
+      if (currentTier() !== 'wedding' && voiceOn() && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose “No thanks”.');
       if (!data.email) return showErr('Please add a delivery email.');
 
       btn.disabled = true; label.textContent = 'Taking you to secure payment…';

@@ -65,8 +65,10 @@ export default async function handler(req, res) {
         const moment = clip(b[`song${n}_moment`], 200);
         const story = (b[`song${n}_story`] || '').trim();
         const other = (b[`song${n}_other`] || '').trim();
+        const svoice = clip(b[`song${n}_voice`], 80);
         const parts = [];
         if (moment) parts.push(`Moment: ${moment}`);
+        if (svoice) parts.push(`Voice: ${svoice}`);
         if (story) parts.push(`About this song:\n${story}`);
         if (other) parts.push(`Other info:\n${other}`);
         putChunked(metadata, `song${n}`, parts.join('\n\n'), 3000);
@@ -84,14 +86,18 @@ export default async function handler(req, res) {
     }
 
     const line_items = [{ price, quantity: 1 }];
-    if (voiceOn) {
+    // Voice add-on: once for single-song tiers, or per song with a voice for weddings.
+    const voiceQty = tierKey === 'wedding'
+      ? Object.keys(b).filter((k) => /^song\d+_voice$/.test(k) && (b[k] || '').trim()).length
+      : (voiceOn ? 1 : 0);
+    if (voiceQty > 0) {
       line_items.push({
         price_data: {
           currency: 'usd',
           unit_amount: VOICE_ADDON_CENTS,
           product_data: { name: 'Choose your voice (add-on)' },
         },
-        quantity: 1,
+        quantity: voiceQty,
       });
     }
     if (tierKey === 'wedding') {
