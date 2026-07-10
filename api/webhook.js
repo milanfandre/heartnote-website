@@ -140,6 +140,56 @@ async function saveOrder(order) {
   }
 }
 
+// Flatten an order into one readable spreadsheet row (header -> value).
+function orderSheetRow(order) {
+  const wedding = order.tier === 'wedding';
+  let weddingSongs = '';
+  if (wedding) {
+    const keys = Object.keys(order).filter((k) => /^song\d+$/.test(k)).sort((a, b) => parseInt(a.slice(4), 10) - parseInt(b.slice(4), 10));
+    weddingSongs = keys.map((k, i) => `SONG ${i + 1}\n${order[k]}`).join('\n\n-----\n\n');
+  }
+  const occasion = wedding
+    ? 'Wedding'
+    : (order.occasion === 'Other' ? (order.occasion_other || 'Other') : (order.occasion || ''));
+  const map = {
+    'Date': order.paid_at ? new Date(order.paid_at * 1000).toISOString().replace('T', ' ').slice(0, 16) : '',
+    'Package': order.tier || '',
+    'Amount ($)': order.amount_total != null ? order.amount_total / 100 : '',
+    'Customer Email': order.customer_email || '',
+    'Occasion': occasion,
+    'Song For': order.recipient_name || '',
+    'Relationship': order.recipient_relationship || '',
+    'From': order.sender_name || '',
+    'Style': order.music_style || '',
+    'Mood': order.mood || '',
+    'Voice': (!wedding && order.voice_addon === 'yes') ? (order.voice || '') : '',
+    'Story': order.story || '',
+    'Must Include': order.must_include || '',
+    'Other Info': order.other_info || '',
+    'Wedding Songs': weddingSongs,
+    'Order ID': order.stripe_session_id || '',
+  };
+  return { headers: Object.keys(map), values: Object.values(map) };
+}
+
+// Append the order to a Google Sheet (via a little Apps Script web app) so a
+// non-technical client can watch orders in a plain spreadsheet. Safe no-op
+// until GOOGLE_SHEET_WEBHOOK_URL is set.
+async function sendToSheet(order) {
+  const endpoint = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+  if (!endpoint) return;
+  try {
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderSheetRow(order)),
+    });
+    if (!r.ok) console.error('Google Sheet append error', r.status, await r.text());
+  } catch (err) {
+    console.error('Google Sheet append failed:', err);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -173,6 +223,7 @@ export default async function handler(req, res) {
     // Save the full customer input to the database, then email whoever fills
     // the order. Both are safe no-ops until their keys are configured.
     await saveOrder(order);
+    await sendToSheet(order);
     await sendOrderNotification(order);
 
     try {
