@@ -152,17 +152,20 @@ function orderSheetRow(order) {
     ? 'Wedding'
     : (order.occasion === 'Other' ? (order.occasion_other || 'Other') : (order.occasion || ''));
   const map = {
-    'Date': order.paid_at ? new Date(order.paid_at * 1000).toISOString().replace('T', ' ').slice(0, 16) : '',
+    'Date': order.paid_at ? new Date(order.paid_at * 1000).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : '',
+    'Status': 'New',
     'Package': order.tier || '',
     'Amount ($)': order.amount_total != null ? order.amount_total / 100 : '',
     'Customer Email': order.customer_email || '',
     'Occasion': occasion,
     'Song For': order.recipient_name || '',
     'Relationship': order.recipient_relationship || '',
-    'From': order.sender_name || '',
-    'Style': order.music_style || '',
-    'Mood': order.mood || '',
-    'Voice': (!wedding && order.voice_addon === 'yes') ? (order.voice || '') : '',
+    'From (sender)': order.sender_name || '',
+    'Chosen Voice': wedding
+      ? 'See Wedding Songs column (one per song)'
+      : (order.voice_addon === 'yes' && order.voice ? order.voice : 'Not selected (default voice)'),
+    'Style': order.music_style || 'No preference',
+    'Mood': order.mood || 'No preference',
     'Story': order.story || '',
     'Must Include': order.must_include || '',
     'Other Info': order.other_info || '',
