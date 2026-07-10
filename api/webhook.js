@@ -98,6 +98,46 @@ async function sendOrderNotification(order) {
   }
 }
 
+// Store every paid order's full customer input in the database (Supabase).
+// A few columns are broken out for the future admin dashboard to filter/sort
+// on; the complete brief is kept in `brief` so nothing is ever lost.
+// Idempotent: Stripe can retry a webhook, so we upsert on the session id.
+async function saveOrder(order) {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  if (!url || !key) return; // not configured yet — skip quietly
+  const row = {
+    stripe_session_id: order.stripe_session_id,
+    status: 'new',
+    tier: order.tier || null,
+    amount_total: order.amount_total ?? null,
+    currency: order.currency || 'usd',
+    customer_email: order.customer_email || null,
+    customer_name: order.customer_name || null,
+    occasion: order.tier === 'wedding'
+      ? 'Wedding'
+      : (order.occasion === 'Other' ? (order.occasion_other || 'Other') : (order.occasion || null)),
+    recipient_name: order.recipient_name || null,
+    song_count: order.song_count ? (parseInt(order.song_count, 10) || null) : null,
+    brief: order,
+  };
+  try {
+    const r = await fetch(`${url}/rest/v1/orders?on_conflict=stripe_session_id`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(row),
+    });
+    if (!r.ok) console.error('Supabase insert error', r.status, await r.text());
+  } catch (err) {
+    console.error('Saving order to database failed:', err);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -128,8 +168,9 @@ export default async function handler(req, res) {
       paid_at: event.created,
     };
 
-    // Fast path: email the full order to whoever fulfills it, so orders can be
-    // filled by hand today. Safe if Resend isn't configured (does nothing).
+    // Save the full customer input to the database, then email whoever fills
+    // the order. Both are safe no-ops until their keys are configured.
+    await saveOrder(order);
     await sendOrderNotification(order);
 
     try {
