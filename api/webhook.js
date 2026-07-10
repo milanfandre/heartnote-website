@@ -103,8 +103,10 @@ async function sendOrderNotification(order) {
 // on; the complete brief is kept in `brief` so nothing is ever lost.
 // Idempotent: Stripe can retry a webhook, so we upsert on the session id.
 async function saveOrder(order) {
-  const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
+  // Accept the plain project URL, and tolerate a trailing slash or an
+  // accidental "/rest/v1" so we never build a doubled-up path.
+  const url = (process.env.SUPABASE_URL || '').replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
   if (!url || !key) return; // not configured yet — skip quietly
   const row = {
     stripe_session_id: order.stripe_session_id,
