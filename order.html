@@ -97,6 +97,7 @@
             </label>
           </div>
           <p id="weddingNote" class="hidden mt-3 text-sm text-ink-soft bg-blush/30 border border-claret/10 rounded-xl px-4 py-3">Your package includes three songs. Tell us about each one below. Need more than three? Add another for $49.</p>
+          <div id="tierRecap" class="lg:hidden mt-3 rounded-xl bg-blush/20 border border-claret/10 px-4 py-3"></div>
         </fieldset>
 
         <!-- Single-song brief -->
@@ -322,8 +323,9 @@
       $('sumTierPrice').textContent = money(t.price);
       $('sumTierLabel').textContent = t.name;
       $('sumBase').textContent = money(t.price);
-      $('sumIncludes').innerHTML = t.includes.map(i =>
-        `<li class="flex gap-2"><span class="text-gold shrink-0">✓</span>${i}</li>`).join('');
+      const inc = t.includes.map(i => `<li class="flex gap-2"><span class="text-gold shrink-0">✓</span>${i}</li>`).join('');
+      $('sumIncludes').innerHTML = inc;
+      $('tierRecap').innerHTML = `<p class="font-700 text-claret text-sm mb-1.5">${t.name} includes:</p><ul class="space-y-1 text-sm text-ink/85">${inc}</ul>`;
       $('sumExtraRow').classList.toggle('hidden', extra <= 0);
       $('sumExtraLabel').textContent = extra + (extra === 1 ? ' extra song' : ' extra songs');
       $('sumExtraAmt').textContent = '+' + money(extra * EXTRA_SONG);
