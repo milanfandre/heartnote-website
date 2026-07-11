@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/gift/:id", "destination": "/api/gift?id=:id" }
+    { "source": "/gift/:id", "destination": "/api/gift?id=:id" },
+    { "source": "/deliver", "destination": "/deliver.html" }
   ]
 }
