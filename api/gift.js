@@ -34,7 +34,15 @@ function shell(title, body) {
 }
 
 function keepsake({ recipient, sender, occasionLabel, songTitle, songUrl, downloadName }) {
-  return `<div id="card" class="bg-white rounded-[26px] shadow-[0_2px_4px_rgba(54,9,17,.05),0_30px_60px_-24px_rgba(110,20,35,.35)] border border-gold/30 overflow-hidden">
+  return `<div class="mb-5 rounded-2xl bg-blush/25 border border-claret/10 px-5 py-4">
+    <p class="font-700 text-claret text-sm mb-1.5">Sharing this song</p>
+    <ul class="space-y-1 text-sm text-ink/85 list-disc pl-4">
+      <li>Email or text this page's link to your loved one. They can open it right away, with no sign-in needed.</li>
+      <li>It plays on any phone, tablet, or computer.</li>
+      <li>Tap "Download your song" to save the file and keep it forever.</li>
+    </ul>
+  </div>
+  <div id="card" class="bg-white rounded-[26px] shadow-[0_2px_4px_rgba(54,9,17,.05),0_30px_60px_-24px_rgba(110,20,35,.35)] border border-gold/30 overflow-hidden">
     <div class="bg-claret text-ivory px-8 pt-9 pb-8 text-center relative">
       <div class="absolute inset-0 opacity-[.14] pointer-events-none" style="background-image:radial-gradient(50% 70% at 80% 10%, #C6973F 0%, transparent 60%)"></div>
       <p class="relative text-gold-soft tracking-[.16em] uppercase text-[.72rem] font-700">A Heart Note for</p>
