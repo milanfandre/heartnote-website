@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     const safe = String(orderId).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40) || 'order';
     const rand = Math.random().toString(36).slice(2, 8);
     const path = `${safe}-${rand}.mp3`;
-    const { uploadUrl, publicUrl } = await createSignedUpload('songs', path);
+    const bucket = process.env.SONGS_BUCKET || 'Songs';
+    const { uploadUrl, publicUrl } = await createSignedUpload(bucket, path);
     return res.status(200).json({ uploadUrl, publicUrl });
   } catch (err) {
     console.error('upload-url failed:', err);
