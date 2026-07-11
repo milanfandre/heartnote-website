@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Deliver a Heart Note</title>
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' }, gold: { DEFAULT: '#C6973F', soft: '#E4C67F' },
+      ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' }, blush: '#E9CBC0', ink: { DEFAULT: '#2B2019', soft: '#6B5D50' } },
+      fontFamily: { display: ['Fraunces','serif'], body: ['"Nunito Sans"','sans-serif'] } } } };
+  </script>
+  <style>
+    body { background:#F7F1E6; color:#2B2019; font-family:'Nunito Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+    h1,h2,.font-display { font-family:'Fraunces',serif; }
+    .field { width:100%; border:1px solid rgba(110,20,35,.2); border-radius:12px; padding:.7rem .9rem; background:#fff; }
+    .field:focus { outline:2px solid #C6973F; outline-offset:1px; border-color:transparent; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:700; border-radius:999px; padding:.7rem 1.4rem; background:#6E1423; color:#F7F1E6; transition:background-color .15s, transform .15s; }
+    .btn:hover { background:#4E0E1A; } .btn:active { transform:scale(.98); }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .btn:focus-visible { outline:3px solid #C6973F; outline-offset:2px; }
+    dt { color:#6B5D50; font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+    dd { color:#2B2019; margin:.1rem 0 .8rem; white-space:pre-wrap; }
+    .badge { font-size:.72rem; font-weight:700; padding:.18rem .6rem; border-radius:999px; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-claret/10 bg-ivory/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-3xl mx-auto px-5 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" />
+        <span class="font-display text-lg font-500 text-claret">Heart Note</span>
+        <span class="text-ink-soft text-sm hidden sm:inline">· Deliver</span>
+      </div>
+      <button id="refreshBtn" class="text-claret font-700 text-sm hover:text-claret-deep hidden">Refresh</button>
+    </div>
+  </header>
+
+  <!-- Password gate -->
+  <div id="gate" class="max-w-sm mx-auto px-5 py-20">
+    <h1 class="font-display text-claret text-2xl font-500">Deliver a Heart Note</h1>
+    <p class="text-ink-soft mt-2 mb-5">Enter the team password to see waiting orders.</p>
+    <form id="gateForm" class="space-y-3">
+      <input id="pw" type="password" class="field" placeholder="Password" autocomplete="current-password" />
+      <button class="btn w-full" type="submit">Enter</button>
+      <p id="gateError" class="text-claret text-sm hidden">That password didn't work. Try again.</p>
+    </form>
+  </div>
+
+  <!-- Orders -->
+  <main id="app" class="max-w-3xl mx-auto px-5 py-8 hidden">
+    <div id="loading" class="text-ink-soft py-10 text-center">Loading orders…</div>
+    <div id="list" class="space-y-6"></div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const PW_KEY = 'hn_admin_pw';
+    let pw = sessionStorage.getItem(PW_KEY) || '';
+
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const money = (c) => c == null ? '' : '$' + (c / 100).toFixed(0);
+    const when = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso || ''; } };
+
+    function showApp() { $('gate').classList.add('hidden'); $('app').classList.remove('hidden'); $('refreshBtn').classList.remove('hidden'); }
+    function showGate() { $('app').classList.add('hidden'); $('gate').classList.remove('hidden'); $('refreshBtn').classList.add('hidden'); }
+
+    $('gateForm').addEventListener('submit', async (e) => { e.preventDefault(); pw = $('pw').value; sessionStorage.setItem(PW_KEY, pw); await load(); });
+    $('refreshBtn').addEventListener('click', load);
+
+    async function load() {
+      $('gateError').classList.add('hidden');
+      try {
+        const r = await fetch('/api/admin-orders', { headers: { 'x-admin-password': pw } });
+        if (r.status === 401) { sessionStorage.removeItem(PW_KEY); $('gateError').classList.remove('hidden'); showGate(); return; }
+        if (!r.ok) throw new Error((await r.json()).error || r.statusText);
+        const { orders } = await r.json();
+        showApp();
+        render(orders);
+      } catch (err) { $('list').innerHTML = ''; $('loading').textContent = 'Could not load orders: ' + err.message; showApp(); }
+    }
+
+    function briefRows(b, tier) {
+      if (!b) return '';
+      const row = (label, val) => (val && String(val).trim()) ? `<dt>${esc(label)}</dt><dd>${esc(val)}</dd>` : '';
+      if (tier === 'wedding') {
+        const keys = Object.keys(b).filter((k) => /^song\d+$/.test(k)).sort((a, z) => parseInt(a.slice(4)) - parseInt(z.slice(4)));
+        return row('From', b.sender_name) + keys.map((k, i) => `<dt>Song ${i + 1}</dt><dd>${esc(b[k])}</dd>`).join('');
+      }
+      const occ = b.occasion === 'Other' ? (b.occasion_other || 'Other') : b.occasion;
+      return row('Occasion', occ) + row('Song for', b.recipient_name) + row('Relationship', b.recipient_relationship)
+        + row('From', b.sender_name) + row('Style', b.music_style) + row('Mood', b.mood)
+        + row('Chosen voice', b.voice_addon === 'yes' ? b.voice : 'Not selected (default voice)')
+        + row('Story', b.story) + row('Must include', b.must_include) + row('Other info', b.other_info);
+    }
+
+    function card(o) {
+      const delivered = o.status === 'delivered';
+      const el = document.createElement('div');
+      el.className = 'bg-white rounded-2xl border border-claret/12 shadow-[0_14px_36px_-22px_rgba(110,20,35,.35)] p-5 sm:p-6';
+      el.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="font-display text-claret text-xl">${esc(o.recipient_name || o.occasion || o.tier || 'Order')}</p>
+            <p class="text-ink-soft text-sm">${esc(o.tier || '')} · ${money(o.amount_total)} · ${esc(o.customer_email || '')}</p>
+            <p class="text-ink-soft text-xs mt-0.5">${when(o.created_at)}</p>
+          </div>
+          <span class="badge ${delivered ? 'bg-gold/20 text-gold' : 'bg-claret/10 text-claret'}">${delivered ? 'Delivered' : 'New'}</span>
+        </div>
+        <dl class="mt-4 text-sm">${briefRows(o.brief, o.tier)}</dl>
+      `;
+
+      if (delivered) {
+        const link = location.origin + '/gift/' + o.id;
+        const done = document.createElement('div');
+        done.className = 'mt-3 rounded-xl bg-ivory-deep/60 border border-claret/10 px-4 py-3 text-sm';
+        done.innerHTML = `<p class="text-ink-soft">Delivered as <strong class="text-ink">${esc(o.song_title || 'song')}</strong>.</p>
+          <a href="${esc(link)}" target="_blank" class="text-claret font-700 hover:text-claret-deep break-all">Open gift page →</a>`;
+        el.appendChild(done);
+        return el;
+      }
+
+      // Deliver form
+      const form = document.createElement('div');
+      form.className = 'mt-4 border-t border-claret/10 pt-4 space-y-3';
+      form.innerHTML = `
+        <label class="block text-sm font-600">Song title</label>
+        <input class="field title" type="text" placeholder="e.g. Eighty Years of Love" />
+        <label class="block text-sm font-600 mt-2">Finished song (MP3)</label>
+        <input class="field file" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
+        <div class="flex items-center gap-3 pt-1">
+          <button class="btn go" type="button">Send to customer</button>
+          <span class="status text-sm text-ink-soft"></span>
+        </div>`;
+      const titleEl = form.querySelector('.title'), fileEl = form.querySelector('.file'), goEl = form.querySelector('.go'), statusEl = form.querySelector('.status');
+      goEl.addEventListener('click', () => deliver(o, titleEl, fileEl, goEl, statusEl, el));
+      el.appendChild(form);
+      return el;
+    }
+
+    async function deliver(o, titleEl, fileEl, goEl, statusEl, cardEl) {
+      const songTitle = titleEl.value.trim();
+      const file = fileEl.files[0];
+      if (!songTitle) { statusEl.textContent = 'Add a song title first.'; return; }
+      if (!file) { statusEl.textContent = 'Choose the MP3 file first.'; return; }
+      goEl.disabled = true;
+      try {
+        statusEl.textContent = 'Getting upload link…';
+        const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId: o.id }) });
+        if (!u.ok) throw new Error((await u.json()).error || 'upload link failed');
+        const { uploadUrl, publicUrl } = await u.json();
+
+        statusEl.textContent = 'Uploading song…';
+        const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'audio/mpeg', 'x-upsert': 'true' }, body: file });
+        if (!up.ok) throw new Error('upload failed (' + up.status + ')');
+
+        statusEl.textContent = 'Sending to customer…';
+        const d = await fetch('/api/deliver', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId: o.id, songTitle, songUrl: publicUrl }) });
+        if (!d.ok) throw new Error((await d.json()).error || 'deliver failed');
+        const res = await d.json();
+
+        const note = res.emailed ? 'Emailed the customer.' : 'Delivered — but email not sent (' + (res.emailError || 'email not configured') + ').';
+        cardEl.outerHTML = `<div class="bg-white rounded-2xl border border-gold/40 p-5 sm:p-6">
+          <p class="font-display text-claret text-xl">Delivered ✓</p>
+          <p class="text-ink-soft text-sm mt-1">${note}</p>
+          <a href="${res.giftUrl}" target="_blank" class="text-claret font-700 hover:text-claret-deep break-all">Open gift page →</a></div>`;
+      } catch (err) {
+        statusEl.textContent = 'Error: ' + err.message;
+        goEl.disabled = false;
+      }
+    }
+
+    function render(orders) {
+      $('loading').classList.add('hidden');
+      const waiting = orders.filter((o) => o.status !== 'delivered');
+      const done = orders.filter((o) => o.status === 'delivered');
+      const list = $('list');
+      list.innerHTML = '';
+      if (!orders.length) { list.innerHTML = '<p class="text-ink-soft text-center py-10">No orders yet.</p>'; return; }
+      if (waiting.length) { const h = document.createElement('h2'); h.className = 'font-display text-claret text-lg'; h.textContent = 'Waiting to deliver (' + waiting.length + ')'; list.appendChild(h); }
+      waiting.forEach((o) => list.appendChild(card(o)));
+      if (done.length) { const h = document.createElement('h2'); h.className = 'font-display text-ink-soft text-lg pt-4'; h.textContent = 'Delivered (' + done.length + ')'; list.appendChild(h); }
+      done.forEach((o) => list.appendChild(card(o)));
+    }
+
+    // Auto-load if we already have a password this session.
+    if (pw) load();
+  </script>
+</body>
+</html>

@@ -21,9 +21,10 @@ create table if not exists public.orders (
   amount_total       integer,          -- amount paid, in cents
   currency           text default 'usd',
 
-  -- fulfillment tracking (used by the admin dashboard later)
+  -- fulfillment tracking (used by the Deliver tool)
   status             text not null default 'new',  -- new | in_progress | delivered
-  song_file_url      text,             -- the finished song, once uploaded
+  song_title         text,             -- the finished song's title
+  song_file_url      text,             -- the finished song file, once uploaded
   delivered_at       timestamptz,
   notes              text,             -- internal notes for whoever fulfills it
 
@@ -44,7 +45,13 @@ create table if not exists public.orders (
 create index if not exists orders_created_at_idx on public.orders (created_at desc);
 create index if not exists orders_status_idx     on public.orders (status);
 
+-- Safe to re-run: brings an already-created table up to date with newer columns.
+alter table public.orders add column if not exists song_title  text;
+alter table public.orders add column if not exists song_file_url text;
+alter table public.orders add column if not exists delivered_at timestamptz;
+alter table public.orders add column if not exists notes        text;
+
 -- Lock the table down: only the server (using the service key, which bypasses
--- these rules) can read or write. The public/anon key gets nothing. The admin
--- dashboard will authenticate separately.
+-- these rules) can read or write. The public/anon key gets nothing. The Deliver
+-- tool authenticates separately with a shared password.
 alter table public.orders enable row level security;
