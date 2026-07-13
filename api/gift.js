@@ -66,7 +66,7 @@ function keepsake({ recipient, sender, occasionLabel, songTitle, songUrl, downlo
           <div class="flex justify-between text-ink-soft text-sm mt-2"><span id="cur">0:00</span><span id="dur">0:00</span></div>
         </div>
       </div>
-      <a id="download" href="${esc(songUrl)}" download="${esc(downloadName)}" class="mt-7 w-full inline-flex items-center justify-center gap-2.5 rounded-full border border-claret/25 text-claret font-700 py-3.5 hover:bg-claret/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
+      <a id="download" data-src="${esc(songUrl)}" href="${esc(songUrl)}?download=${encodeURIComponent(downloadName)}" download="${esc(downloadName)}" class="mt-7 w-full inline-flex items-center justify-center gap-2.5 rounded-full border border-claret/25 text-claret font-700 py-3.5 hover:bg-claret/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download your song
       </a>
@@ -74,7 +74,7 @@ function keepsake({ recipient, sender, occasionLabel, songTitle, songUrl, downlo
     </div>
   </div>
   <script>
-    const audio=new Audio(document.getElementById('download').getAttribute('href'));audio.preload='metadata';
+    const audio=new Audio(document.getElementById('download').dataset.src);audio.preload='metadata';
     const card=document.getElementById('card'),icon=document.getElementById('icon').querySelector('path');
     const fill=document.getElementById('fill'),bar=document.getElementById('bar'),cur=document.getElementById('cur'),dur=document.getElementById('dur');
     const fmt=s=>isFinite(s)?Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'):'0:00';
