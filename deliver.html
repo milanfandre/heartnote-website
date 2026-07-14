@@ -124,18 +124,24 @@
         return el;
       }
 
-      // Deliver form. Deluxe and Experience also include a WAV + multitrack zip.
+      // Deliver form. Up to 6 songs; fill only what you're sending. Deluxe and
+      // Experience also include a WAV + multitrack zip.
       const wantsExtras = o.tier === 'deluxe' || o.tier === 'experience';
+      const SLOTS = 6;
+      const slotHTML = Array.from({ length: SLOTS }, (_, i) => `
+        <div class="song-slot rounded-xl border border-claret/10 bg-ivory/60 p-3">
+          <p class="text-xs font-700 text-claret mb-1.5">Song ${i + 1}${i === 0 ? '' : ' <span class="text-ink-soft font-400">(optional)</span>'}</p>
+          <input class="field s-title mb-2" type="text" placeholder="Title, e.g. Eighty Years of Love" />
+          <input class="field s-file" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
+        </div>`).join('');
+
       const form = document.createElement('div');
       form.className = 'mt-4 border-t border-claret/10 pt-4 space-y-3';
       form.innerHTML = `
-        <label class="block text-sm font-600">Song title</label>
-        <input class="field title" type="text" placeholder="e.g. Eighty Years of Love" />
+        <p class="text-sm font-600">Songs <span class="text-ink-soft font-400">fill in only the ones you're delivering, empty slots are skipped</span></p>
+        <div class="space-y-2">${slotHTML}</div>
 
-        <label class="block text-sm font-600 mt-2">Finished song (MP3) <span class="text-ink-soft font-400">required</span></label>
-        <input class="field f-mp3" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
-
-        ${wantsExtras ? '<p class="text-sm text-claret font-600 pt-1">This package includes a studio-quality WAV and the multitrack files.</p>' : ''}
+        ${wantsExtras ? '<p class="text-sm text-claret font-600 pt-1">This package also includes a studio-quality WAV and the multitrack files.</p>' : ''}
 
         <label class="block text-sm font-600 mt-2">Studio-quality WAV <span class="text-ink-soft font-400">${wantsExtras ? 'included in this package' : 'optional'}</span></label>
         <input class="field f-wav" type="file" accept="audio/wav,audio/x-wav,.wav" />
@@ -152,15 +158,14 @@
           <option value="24" selected>In 24 hours</option>
           <option value="48">In 2 days</option>
         </select>
-        <p class="text-xs text-ink-soft">The song is uploaded right away. Only the customer's email waits, so it never looks rushed.</p>
+        <p class="text-xs text-ink-soft">The songs upload right away. Only the customer's email waits, so it never looks rushed.</p>
 
         <div class="flex items-center gap-3 pt-1">
           <button class="btn go" type="button">Deliver</button>
           <span class="status text-sm text-ink-soft"></span>
         </div>`;
       const els = {
-        title: form.querySelector('.title'),
-        mp3: form.querySelector('.f-mp3'),
+        slots: form.querySelectorAll('.song-slot'),
         wav: form.querySelector('.f-wav'),
         zip: form.querySelector('.f-zip'),
         when: form.querySelector('.when'),
@@ -172,30 +177,38 @@
       return el;
     }
 
-    async function uploadOne(orderId, kind, file, statusEl) {
-      statusEl.textContent = 'Uploading the ' + kind.toUpperCase() + '…';
+    async function uploadOne(orderId, kind, file, label, statusEl) {
+      statusEl.textContent = 'Uploading ' + label + '…';
       const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId, kind }) });
       if (!u.ok) throw new Error((await u.json()).error || 'could not get an upload link');
       const { uploadUrl, publicUrl } = await u.json();
       const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'application/octet-stream', 'x-upsert': 'true' }, body: file });
-      if (!up.ok) throw new Error(kind.toUpperCase() + ' upload failed (' + up.status + '). Large files may exceed the storage limit.');
-      return { kind, url: publicUrl };
+      if (!up.ok) throw new Error(label + ' upload failed (' + up.status + '). Large files may exceed the storage limit.');
+      return { url: publicUrl };
     }
 
     async function deliver(o, els, cardEl) {
-      const songTitle = els.title.value.trim();
       const statusEl = els.status;
-      if (!songTitle) { statusEl.textContent = 'Add a song title first.'; return; }
-      if (!els.mp3.files[0]) { statusEl.textContent = 'Choose the MP3 file first.'; return; }
 
-      const queue = [{ kind: 'mp3', file: els.mp3.files[0] }];
-      if (els.wav.files[0]) queue.push({ kind: 'wav', file: els.wav.files[0] });
-      if (els.zip.files[0]) queue.push({ kind: 'zip', file: els.zip.files[0] });
+      // Collect only the slots that actually have a file.
+      const queue = [];
+      els.slots.forEach((slot, i) => {
+        const file = slot.querySelector('.s-file').files[0];
+        if (!file) return;
+        const title = slot.querySelector('.s-title').value.trim() || ('Song ' + (i + 1));
+        queue.push({ kind: 'mp3', file, title });
+      });
+      if (!queue.length) { statusEl.textContent = 'Add at least one song file.'; return; }
+      if (els.wav.files[0]) queue.push({ kind: 'wav', file: els.wav.files[0], title: 'the WAV' });
+      if (els.zip.files[0]) queue.push({ kind: 'zip', file: els.zip.files[0], title: 'the multitrack files' });
 
       els.go.disabled = true;
       try {
         const files = [];
-        for (const item of queue) files.push(await uploadOne(o.id, item.kind, item.file, statusEl));
+        for (const item of queue) {
+          const { url } = await uploadOne(o.id, item.kind, item.file, item.title, statusEl);
+          files.push(item.kind === 'mp3' ? { kind: 'mp3', url, title: item.title } : { kind: item.kind, url });
+        }
 
         const hours = parseInt(els.when.value, 10) || 0;
         const scheduledAt = hours > 0 ? new Date(Date.now() + hours * 3600 * 1000).toISOString() : null;
@@ -204,7 +217,7 @@
         const d = await fetch('/api/deliver', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
-          body: JSON.stringify({ orderId: o.id, songTitle, files, scheduledAt }),
+          body: JSON.stringify({ orderId: o.id, files, scheduledAt }),
         });
         if (!d.ok) throw new Error((await d.json()).error || 'deliver failed');
         const res = await d.json();
@@ -214,10 +227,11 @@
         else if (res.scheduledAt) note = 'Email scheduled for ' + new Date(res.scheduledAt).toLocaleString() + '.';
         else note = 'Emailed the customer.';
 
+        const songCount = files.filter((f) => f.kind === 'mp3').length;
         const extras = files.filter((f) => f.kind !== 'mp3').map((f) => f.kind.toUpperCase()).join(' + ');
         cardEl.outerHTML = `<div class="bg-white rounded-2xl border border-gold/40 p-5 sm:p-6">
           <p class="font-display text-claret text-xl">Delivered ✓</p>
-          <p class="text-ink-soft text-sm mt-1">${note}${extras ? ' Included ' + extras + '.' : ''}</p>
+          <p class="text-ink-soft text-sm mt-1">${songCount} song${songCount === 1 ? '' : 's'} sent. ${note}${extras ? ' Included ' + extras + '.' : ''}</p>
           <a href="${res.giftUrl}" target="_blank" class="text-claret font-700 hover:text-claret-deep break-all">Open gift page →</a></div>`;
       } catch (err) {
         statusEl.textContent = 'Error: ' + err.message;

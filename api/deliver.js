@@ -11,22 +11,31 @@ export default async function handler(req, res) {
   if (!supabaseReady()) return res.status(500).json({ error: 'Database not configured' });
   try {
     const { orderId, songTitle, songUrl, files, scheduledAt } = req.body || {};
-    if (!orderId || !songTitle) return res.status(400).json({ error: 'orderId and songTitle are required' });
+    if (!orderId) return res.status(400).json({ error: 'orderId is required' });
 
-    // files: [{ kind: 'mp3' | 'wav' | 'zip', url }]. songUrl is the older
-    // single-file form, kept working.
+    // files: [{ kind: 'mp3', url, title }, { kind: 'wav' | 'zip', url }]. An
+    // order can carry up to 6 songs. songUrl is the older single-file form.
     const KINDS = ['mp3', 'wav', 'zip'];
     let list = Array.isArray(files) ? files.filter((f) => f && f.url && KINDS.includes(f.kind)) : [];
-    if (!list.length && songUrl) list = [{ kind: 'mp3', url: songUrl }];
-    const mp3 = list.find((f) => f.kind === 'mp3');
-    if (!mp3) return res.status(400).json({ error: 'An MP3 of the song is required.' });
+    if (!list.length && songUrl) list = [{ kind: 'mp3', url: songUrl, title: songTitle }];
+
+    let n = 0;
+    list = list.map((f) => {
+      if (f.kind !== 'mp3') return { kind: f.kind, url: f.url };
+      n += 1;
+      return { kind: 'mp3', url: f.url, title: String(f.title || '').trim() || `Song ${n}` };
+    });
+
+    const songs = list.filter((f) => f.kind === 'mp3');
+    if (!songs.length) return res.status(400).json({ error: 'At least one song file is required.' });
+    const songTitles = songs.map((s) => s.title);
 
     const order = await getOrder(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
     await updateOrder(orderId, {
-      song_title: songTitle,
-      song_file_url: mp3.url,   // the player's single source
+      song_title: songTitles[0],   // first song, for the email subject and lists
+      song_file_url: songs[0].url,
       song_files: list,
       status: 'delivered',
       delivered_at: new Date().toISOString(),
@@ -47,7 +56,7 @@ export default async function handler(req, res) {
           subject: `${displayName}'s Heart Note is ready`,
           html: deliveryEmailHTML({
             displayName,
-            songTitle,
+            songTitles,
             giftUrl,
             extras: list.filter((f) => f.kind !== 'mp3').map((f) => f.kind),
           }),
