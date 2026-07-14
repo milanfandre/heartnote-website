@@ -50,6 +50,11 @@ alter table public.orders add column if not exists song_title  text;
 alter table public.orders add column if not exists song_file_url text;
 alter table public.orders add column if not exists delivered_at timestamptz;
 alter table public.orders add column if not exists notes        text;
+-- Every delivered file: [{ kind: 'mp3' | 'wav' | 'zip', url }]. The mp3 is also
+-- kept in song_file_url so the gift page player has a single source.
+alter table public.orders add column if not exists song_files jsonb not null default '[]'::jsonb;
+-- When the customer's delivery email is scheduled to go out (null = sent now).
+alter table public.orders add column if not exists scheduled_send_at timestamptz;
 
 -- Lock the table down: only the server (using the service key, which bypasses
 -- these rules) can read or write. The public/anon key gets nothing. The Deliver

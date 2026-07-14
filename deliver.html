@@ -124,53 +124,104 @@
         return el;
       }
 
-      // Deliver form
+      // Deliver form. Deluxe and Experience also include a WAV + multitrack zip.
+      const wantsExtras = o.tier === 'deluxe' || o.tier === 'experience';
       const form = document.createElement('div');
       form.className = 'mt-4 border-t border-claret/10 pt-4 space-y-3';
       form.innerHTML = `
         <label class="block text-sm font-600">Song title</label>
         <input class="field title" type="text" placeholder="e.g. Eighty Years of Love" />
-        <label class="block text-sm font-600 mt-2">Finished song (MP3)</label>
-        <input class="field file" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
+
+        <label class="block text-sm font-600 mt-2">Finished song (MP3) <span class="text-ink-soft font-400">required</span></label>
+        <input class="field f-mp3" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
+
+        ${wantsExtras ? '<p class="text-sm text-claret font-600 pt-1">This package includes a studio-quality WAV and the multitrack files.</p>' : ''}
+
+        <label class="block text-sm font-600 mt-2">Studio-quality WAV <span class="text-ink-soft font-400">${wantsExtras ? 'included in this package' : 'optional'}</span></label>
+        <input class="field f-wav" type="file" accept="audio/wav,audio/x-wav,.wav" />
+
+        <label class="block text-sm font-600 mt-2">Multitrack files (.zip) <span class="text-ink-soft font-400">${wantsExtras ? 'included in this package' : 'optional'}</span></label>
+        <input class="field f-zip" type="file" accept=".zip,application/zip,application/x-zip-compressed" />
+
+        <label class="block text-sm font-600 mt-2">When should the customer's email go out?</label>
+        <select class="field when">
+          <option value="0">Send now</option>
+          <option value="2">In 2 hours</option>
+          <option value="6">In 6 hours</option>
+          <option value="12">In 12 hours</option>
+          <option value="24" selected>In 24 hours</option>
+          <option value="48">In 2 days</option>
+        </select>
+        <p class="text-xs text-ink-soft">The song is uploaded right away. Only the customer's email waits, so it never looks rushed.</p>
+
         <div class="flex items-center gap-3 pt-1">
-          <button class="btn go" type="button">Send to customer</button>
+          <button class="btn go" type="button">Deliver</button>
           <span class="status text-sm text-ink-soft"></span>
         </div>`;
-      const titleEl = form.querySelector('.title'), fileEl = form.querySelector('.file'), goEl = form.querySelector('.go'), statusEl = form.querySelector('.status');
-      goEl.addEventListener('click', () => deliver(o, titleEl, fileEl, goEl, statusEl, el));
+      const els = {
+        title: form.querySelector('.title'),
+        mp3: form.querySelector('.f-mp3'),
+        wav: form.querySelector('.f-wav'),
+        zip: form.querySelector('.f-zip'),
+        when: form.querySelector('.when'),
+        go: form.querySelector('.go'),
+        status: form.querySelector('.status'),
+      };
+      els.go.addEventListener('click', () => deliver(o, els, el));
       el.appendChild(form);
       return el;
     }
 
-    async function deliver(o, titleEl, fileEl, goEl, statusEl, cardEl) {
-      const songTitle = titleEl.value.trim();
-      const file = fileEl.files[0];
+    async function uploadOne(orderId, kind, file, statusEl) {
+      statusEl.textContent = 'Uploading the ' + kind.toUpperCase() + '…';
+      const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId, kind }) });
+      if (!u.ok) throw new Error((await u.json()).error || 'could not get an upload link');
+      const { uploadUrl, publicUrl } = await u.json();
+      const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'application/octet-stream', 'x-upsert': 'true' }, body: file });
+      if (!up.ok) throw new Error(kind.toUpperCase() + ' upload failed (' + up.status + '). Large files may exceed the storage limit.');
+      return { kind, url: publicUrl };
+    }
+
+    async function deliver(o, els, cardEl) {
+      const songTitle = els.title.value.trim();
+      const statusEl = els.status;
       if (!songTitle) { statusEl.textContent = 'Add a song title first.'; return; }
-      if (!file) { statusEl.textContent = 'Choose the MP3 file first.'; return; }
-      goEl.disabled = true;
+      if (!els.mp3.files[0]) { statusEl.textContent = 'Choose the MP3 file first.'; return; }
+
+      const queue = [{ kind: 'mp3', file: els.mp3.files[0] }];
+      if (els.wav.files[0]) queue.push({ kind: 'wav', file: els.wav.files[0] });
+      if (els.zip.files[0]) queue.push({ kind: 'zip', file: els.zip.files[0] });
+
+      els.go.disabled = true;
       try {
-        statusEl.textContent = 'Getting upload link…';
-        const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId: o.id }) });
-        if (!u.ok) throw new Error((await u.json()).error || 'upload link failed');
-        const { uploadUrl, publicUrl } = await u.json();
+        const files = [];
+        for (const item of queue) files.push(await uploadOne(o.id, item.kind, item.file, statusEl));
 
-        statusEl.textContent = 'Uploading song…';
-        const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'audio/mpeg', 'x-upsert': 'true' }, body: file });
-        if (!up.ok) throw new Error('upload failed (' + up.status + ')');
+        const hours = parseInt(els.when.value, 10) || 0;
+        const scheduledAt = hours > 0 ? new Date(Date.now() + hours * 3600 * 1000).toISOString() : null;
 
-        statusEl.textContent = 'Sending to customer…';
-        const d = await fetch('/api/deliver', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId: o.id, songTitle, songUrl: publicUrl }) });
+        statusEl.textContent = hours > 0 ? 'Scheduling the email…' : 'Sending to customer…';
+        const d = await fetch('/api/deliver', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+          body: JSON.stringify({ orderId: o.id, songTitle, files, scheduledAt }),
+        });
         if (!d.ok) throw new Error((await d.json()).error || 'deliver failed');
         const res = await d.json();
 
-        const note = res.emailed ? 'Emailed the customer.' : 'Delivered — but email not sent (' + (res.emailError || 'email not configured') + ').';
+        let note;
+        if (!res.emailed) note = 'Delivered, but the email did not send (' + (res.emailError || 'email not configured') + ').';
+        else if (res.scheduledAt) note = 'Email scheduled for ' + new Date(res.scheduledAt).toLocaleString() + '.';
+        else note = 'Emailed the customer.';
+
+        const extras = files.filter((f) => f.kind !== 'mp3').map((f) => f.kind.toUpperCase()).join(' + ');
         cardEl.outerHTML = `<div class="bg-white rounded-2xl border border-gold/40 p-5 sm:p-6">
           <p class="font-display text-claret text-xl">Delivered ✓</p>
-          <p class="text-ink-soft text-sm mt-1">${note}</p>
+          <p class="text-ink-soft text-sm mt-1">${note}${extras ? ' Included ' + extras + '.' : ''}</p>
           <a href="${res.giftUrl}" target="_blank" class="text-claret font-700 hover:text-claret-deep break-all">Open gift page →</a></div>`;
       } catch (err) {
         statusEl.textContent = 'Error: ' + err.message;
-        goEl.disabled = false;
+        els.go.disabled = false;
       }
     }
 

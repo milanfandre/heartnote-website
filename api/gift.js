@@ -3,6 +3,15 @@
 import { getOrder, supabaseReady } from '../lib/db.js';
 import { esc } from '../lib/mail.js';
 
+// Each deliverable the customer can download. Deluxe/Experience add wav + zip.
+const FILES = {
+  mp3: { label: 'Download your song', name: (t) => `${t} - Heart Note.mp3` },
+  wav: { label: 'Download studio-quality WAV', name: (t) => `${t} - Heart Note (studio quality).wav` },
+  zip: { label: 'Download multitrack files', name: (t) => `${t} - Heart Note (multitrack).zip` },
+};
+
+const DL_ICON = (n) => `<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+
 function shell(title, body) {
   return `<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,7 +42,28 @@ function shell(title, body) {
 </div></body></html>`;
 }
 
-function keepsake({ recipient, sender, occasionLabel, songTitle, songUrl, downloadName }) {
+// Cross-origin storage ignores the HTML download attribute, so we ask Supabase
+// to send the file as an attachment. iOS honours that and saves the file.
+function downloadLink({ url, name, label, primary, dataSrc }) {
+  const href = `${esc(url)}?download=${encodeURIComponent(name)}`;
+  const cls = primary
+    ? 'mt-7 w-full inline-flex items-center justify-center gap-2.5 rounded-full border border-claret/25 text-claret font-700 py-3.5 hover:bg-claret/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold'
+    : 'mt-2.5 w-full inline-flex items-center justify-center gap-2 rounded-full bg-ivory-deep/70 text-ink-soft font-600 text-sm py-3 hover:text-claret hover:bg-ivory-deep transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold';
+  const attrs = primary ? ` id="download" data-src="${esc(dataSrc)}"` : '';
+  return `<a${attrs} href="${href}" download="${esc(name)}" class="${cls}">${DL_ICON(primary ? 18 : 16)}${esc(label)}</a>`;
+}
+
+function keepsake({ recipient, sender, occasionLabel, songTitle, files }) {
+  const mp3 = files.find((f) => f.kind === 'mp3') || files[0];
+  const extras = files.filter((f) => f !== mp3 && FILES[f.kind]);
+  const downloads = downloadLink({
+    url: mp3.url, dataSrc: mp3.url, primary: true,
+    name: FILES.mp3.name(songTitle), label: FILES.mp3.label,
+  }) + extras.map((f) => downloadLink({
+    url: f.url, primary: false,
+    name: FILES[f.kind].name(songTitle), label: FILES[f.kind].label,
+  })).join('');
+
   return `<div class="mb-5 rounded-2xl bg-blush/25 border border-claret/10 px-5 py-4">
     <p class="font-700 text-claret text-sm mb-1.5">Sharing this song</p>
     <ul class="space-y-1 text-sm text-ink/85 list-disc pl-4">
@@ -66,10 +96,7 @@ function keepsake({ recipient, sender, occasionLabel, songTitle, songUrl, downlo
           <div class="flex justify-between text-ink-soft text-sm mt-2"><span id="cur">0:00</span><span id="dur">0:00</span></div>
         </div>
       </div>
-      <a id="download" data-src="${esc(songUrl)}" href="${esc(songUrl)}?download=${encodeURIComponent(downloadName)}" download="${esc(downloadName)}" class="mt-7 w-full inline-flex items-center justify-center gap-2.5 rounded-full border border-claret/25 text-claret font-700 py-3.5 hover:bg-claret/5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download your song
-      </a>
+      ${downloads}
       <p class="text-center text-ink-soft text-sm mt-4">Yours to keep, play, and share forever.</p>
     </div>
   </div>
@@ -118,20 +145,23 @@ export default async function handler(req, res) {
     return res.status(404).send(shell('Heart Note', message('Not found', "We couldn't find that Heart Note. Please check the link.")));
   }
 
-  const brief = order.brief || {};
-  if (!order.song_file_url) {
+  // Newer orders carry every deliverable in song_files; older ones just the mp3.
+  const stored = Array.isArray(order.song_files) ? order.song_files.filter((f) => f && f.url && FILES[f.kind]) : [];
+  const files = stored.length ? stored : (order.song_file_url ? [{ kind: 'mp3', url: order.song_file_url }] : []);
+
+  if (!files.length) {
     return res.status(200).send(shell('Your Heart Note', message('Your Heart Note is being composed', 'It will appear right here as soon as it is ready. We will email you the moment it is finished.')));
   }
 
+  const brief = order.brief || {};
   const recipient = brief.recipient_name || 'someone special';
   const sender = brief.sender_name || '';
   const occRaw = brief.occasion === 'Other' ? (brief.occasion_other || '') : (brief.occasion || '');
   const occasionLabel = occRaw ? `For their ${occRaw.toLowerCase()}` : '';
   const songTitle = order.song_title || 'Your song';
-  const downloadName = `${songTitle} - Heart Note.mp3`;
 
   return res.status(200).send(shell(
     `A Heart Note for ${recipient}`,
-    keepsake({ recipient, sender, occasionLabel, songTitle, songUrl: order.song_file_url, downloadName })
+    keepsake({ recipient, sender, occasionLabel, songTitle, files })
   ));
 }
