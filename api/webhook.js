@@ -4,9 +4,25 @@
 // IMPORTANT: Stripe signature verification needs the RAW request body, so we
 // disable Vercel's automatic body parsing below.
 import Stripe from 'stripe';
-import { orderNotificationHTML } from '../lib/emails.js';
+import { orderNotificationHTML, orderConfirmationHTML } from '../lib/emails.js';
+import { sendEmail, mailReady } from '../lib/mail.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Confirmation email to the customer, right after payment.
+async function sendOrderConfirmation(order) {
+  if (!mailReady() || !order.customer_email) return;
+  try {
+    await sendEmail({
+      to: order.customer_email,
+      subject: 'Your Heart Note order is confirmed',
+      html: orderConfirmationHTML({ recipient: order.recipient_name || order.brief?.recipient_name, tier: order.tier }),
+      replyTo: process.env.ORDER_NOTIFY_EMAIL,
+    });
+  } catch (err) {
+    console.error('Order confirmation email failed:', err);
+  }
+}
 
 export const config = { api: { bodyParser: false } };
 
@@ -190,6 +206,7 @@ export default async function handler(req, res) {
     await saveOrder(order);
     await sendToSheet(order);
     await sendOrderNotification(order);
+    await sendOrderConfirmation(order);
 
     try {
       if (process.env.AI_WORKFLOW_URL) {

@@ -124,9 +124,11 @@
         return el;
       }
 
-      // Deliver form. Up to 6 songs; fill only what you're sending. Deluxe and
-      // Experience also include a WAV + multitrack zip.
-      const wantsExtras = o.tier === 'deluxe' || o.tier === 'experience';
+      // Deliver form. Up to 6 songs; fill only what you're sending.
+      // Deluxe = WAV. Experience/Wedding = WAV + multitrack. Single = neither.
+      const incWav = ['deluxe', 'experience', 'wedding'].includes(o.tier);
+      const incZip = ['experience', 'wedding'].includes(o.tier);
+      const inclusions = [incWav && 'a studio-quality WAV', incZip && 'the multitrack files'].filter(Boolean);
       const SLOTS = 6;
       const slotHTML = Array.from({ length: SLOTS }, (_, i) => `
         <div class="song-slot rounded-xl border border-claret/10 bg-ivory/60 p-3">
@@ -141,12 +143,12 @@
         <p class="text-sm font-600">Songs <span class="text-ink-soft font-400">fill in only the ones you're delivering, empty slots are skipped</span></p>
         <div class="space-y-2">${slotHTML}</div>
 
-        ${wantsExtras ? '<p class="text-sm text-claret font-600 pt-1">This package also includes a studio-quality WAV and the multitrack files.</p>' : ''}
+        ${inclusions.length ? `<p class="text-sm text-claret font-600 pt-1">This package also includes ${inclusions.join(' and ')}.</p>` : ''}
 
-        <label class="block text-sm font-600 mt-2">Studio-quality WAV <span class="text-ink-soft font-400">${wantsExtras ? 'included in this package' : 'optional'}</span></label>
+        <label class="block text-sm font-600 mt-2">Studio-quality WAV <span class="text-ink-soft font-400">${incWav ? 'included in this package' : 'optional'}</span></label>
         <input class="field f-wav" type="file" accept="audio/wav,audio/x-wav,.wav" />
 
-        <label class="block text-sm font-600 mt-2">Multitrack files (.zip) <span class="text-ink-soft font-400">${wantsExtras ? 'included in this package' : 'optional'}</span></label>
+        <label class="block text-sm font-600 mt-2">Multitrack files (.zip) <span class="text-ink-soft font-400">${incZip ? 'included in this package' : 'optional'}</span></label>
         <input class="field f-zip" type="file" accept=".zip,application/zip,application/x-zip-compressed" />
 
         <label class="block text-sm font-600 mt-2">When should the customer's email go out?</label>
