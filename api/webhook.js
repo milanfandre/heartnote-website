@@ -12,11 +12,27 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Confirmation email to the customer, right after payment.
 async function sendOrderConfirmation(order) {
   if (!mailReady() || !order.customer_email) return;
+
+  // Pull the actual line items from Stripe for an accurate itemized receipt.
+  let receipt = [];
+  try {
+    const items = await stripe.checkout.sessions.listLineItems(order.stripe_session_id, { limit: 20 });
+    receipt = (items.data || []).map((it) => ({ description: it.description, amount: it.amount_total, quantity: it.quantity }));
+  } catch (err) {
+    console.error('Could not fetch line items for receipt:', err);
+  }
+
   try {
     await sendEmail({
       to: order.customer_email,
       subject: 'Your Heart Note order is confirmed',
-      html: orderConfirmationHTML({ recipient: order.recipient_name || order.brief?.recipient_name, tier: order.tier }),
+      html: orderConfirmationHTML({
+        recipient: order.recipient_name || order.brief?.recipient_name,
+        tier: order.tier,
+        receipt,
+        total: order.amount_total,
+        currency: order.currency,
+      }),
       replyTo: process.env.ORDER_NOTIFY_EMAIL,
     });
   } catch (err) {
