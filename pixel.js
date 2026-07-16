@@ -2,7 +2,7 @@
 // Replace the ID below with your Pixel / Dataset ID. It is PUBLIC (visible in
 // the browser), so it's fine to hardcode here. The Conversions API token is the
 // secret half and lives only in Vercel env vars, never here.
-var HN_PIXEL_ID = '__META_PIXEL_ID__';
+var HN_PIXEL_ID = '1049149630784983';
 
 !function (f, b, e, v, n, t, s) {
   if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) };
