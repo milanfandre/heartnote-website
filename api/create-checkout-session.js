@@ -112,6 +112,21 @@ export default async function handler(req, res) {
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
 
+    // Meta tracking: one event id shared by the browser Pixel (on success.html)
+    // and the server Conversions API (in the webhook) so Meta dedupes them.
+    // fbp/fbc/ip/ua improve match quality. Packed into one metadata value to
+    // stay well under Stripe's 50-key limit even on large wedding orders.
+    const metaEventId = (globalThis.crypto?.randomUUID?.() || `evt_${Date.now()}`);
+    const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    putChunked(metadata, 'meta', JSON.stringify({
+      eid: metaEventId,
+      fbp: clip(b.fbp, 120),
+      fbc: clip(b.fbc, 200),
+      ip: clientIp,
+      ua: clip(req.headers['user-agent'], 300),
+    }), 4000);
+    metadata.meta_event_id = metaEventId; // also stored flat for session-info
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
@@ -119,7 +134,7 @@ export default async function handler(req, res) {
       metadata,
       payment_intent_data: { metadata },
       allow_promotion_codes: true,
-      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&eid=${metaEventId}`,
       cancel_url: `${origin}/order.html?tier=${tierKey}&canceled=1`,
     });
 

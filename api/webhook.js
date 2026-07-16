@@ -6,6 +6,7 @@
 import Stripe from 'stripe';
 import { orderNotificationHTML, orderConfirmationHTML } from '../lib/emails.js';
 import { sendEmail, mailReady } from '../lib/mail.js';
+import { sendMetaPurchase } from '../lib/meta.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -223,6 +224,22 @@ export default async function handler(req, res) {
     await sendToSheet(order);
     await sendOrderNotification(order);
     await sendOrderConfirmation(order);
+
+    // Server-side Purchase to Meta (Conversions API), deduped with the browser
+    // Pixel via the shared event id packed into the `meta` metadata value.
+    try {
+      const m = order.meta ? JSON.parse(order.meta) : {};
+      await sendMetaPurchase({
+        eventId: m.eid,
+        email: order.customer_email,
+        fbp: m.fbp, fbc: m.fbc, ip: m.ip, userAgent: m.ua,
+        value: order.amount_total,
+        currency: order.currency,
+        eventSourceUrl: `${process.env.SITE_URL || 'https://heartnote.music'}/success.html`,
+      });
+    } catch (err) {
+      console.error('Meta purchase event failed:', err);
+    }
 
     try {
       if (process.env.AI_WORKFLOW_URL) {

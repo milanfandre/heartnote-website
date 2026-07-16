@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thank you | Heart Note</title>
   <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <script src="/pixel.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <script>
@@ -34,5 +35,24 @@
       <a href="index.html" class="inline-flex items-center justify-center font-700 rounded-full px-7 py-3.5 bg-claret text-ivory hover:bg-claret-deep transition-colors">Back to home</a>
     </div>
   </div>
+
+  <script>
+    // Browser Purchase event, matched to the server event by the shared id so
+    // Meta counts it once. Value/currency come from the real Stripe session.
+    (async function () {
+      if (typeof fbq === 'undefined') return;
+      var params = new URLSearchParams(location.search);
+      var sid = params.get('session_id');
+      var eid = params.get('eid');
+      if (!sid) return;
+      try {
+        var r = await fetch('/api/session-info?session_id=' + encodeURIComponent(sid));
+        if (!r.ok) return;
+        var d = await r.json();
+        if (!d.paid) return;
+        fbq('track', 'Purchase', { value: d.value, currency: d.currency }, { eventID: eid || d.eventId });
+      } catch (e) { /* pixel is best-effort; the server event is the reliable one */ }
+    })();
+  </script>
 </body>
 </html>

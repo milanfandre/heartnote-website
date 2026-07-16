@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create your Heart Note</title>
   <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <script src="/pixel.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -463,6 +464,17 @@
       if (!data.email) return showErr('Please add a delivery email.');
 
       btn.disabled = true; label.textContent = 'Taking you to secure payment…';
+
+      // Meta: attach browser identifiers, and fire InitiateCheckout.
+      try {
+        const fb = (window.HN_META && window.HN_META.data()) || {};
+        data.fbp = fb.fbp; data.fbc = fb.fbc;
+        if (typeof fbq !== 'undefined') {
+          const t = TIERS[currentTier()];
+          fbq('track', 'InitiateCheckout', { value: t ? t.price : undefined, currency: 'USD' });
+        }
+      } catch (e) { /* tracking is best-effort */ }
+
       try {
         const r = await fetch('/api/create-checkout-session', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
