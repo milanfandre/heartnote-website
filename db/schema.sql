@@ -56,6 +56,15 @@ alter table public.orders add column if not exists song_files jsonb not null def
 -- When the customer's delivery email is scheduled to go out (null = sent now).
 alter table public.orders add column if not exists scheduled_send_at timestamptz;
 
+-- Deluxe/Experience only: the 2-3 versions of the song the customer picks from.
+-- [{ title, mp3, wav, multitrack, remastered }] (urls; extras vary by tier).
+alter table public.orders add column if not exists versions jsonb not null default '[]'::jsonb;
+-- Which version the customer chose (0-based index). Final once set: it's what
+-- keeps the "unlock the others" upsell meaningful.
+alter table public.orders add column if not exists selected_version integer;
+-- True once they've paid the upsell to unlock every version.
+alter table public.orders add column if not exists versions_unlocked boolean not null default false;
+
 -- Lock the table down: only the server (using the service key, which bypasses
 -- these rules) can read or write. The public/anon key gets nothing. The Deliver
 -- tool authenticates separately with a shared password.

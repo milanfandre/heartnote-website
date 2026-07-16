@@ -7,6 +7,7 @@ import Stripe from 'stripe';
 import { orderNotificationHTML, orderConfirmationHTML } from '../lib/emails.js';
 import { sendEmail, mailReady } from '../lib/mail.js';
 import { sendMetaPurchase } from '../lib/meta.js';
+import { updateOrder } from '../lib/db.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -206,6 +207,22 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
+
+    // Upsell: unlock every version on an existing order. Not a new order, so
+    // handle it and stop before any of the new-order side effects.
+    if (session.metadata?.type === 'unlock_all') {
+      const orderId = session.metadata.order_id;
+      try {
+        if (orderId) {
+          await updateOrder(orderId, { versions_unlocked: true });
+          console.log('Unlocked all versions for order', orderId);
+        }
+      } catch (err) {
+        console.error('Unlocking versions failed:', err);
+        return res.status(500).json({ error: 'unlock failed' }); // let Stripe retry
+      }
+      return res.status(200).json({ received: true });
+    }
 
     // The full brief to hand to the AI workflow.
     const order = {

@@ -10,8 +10,60 @@ export default async function handler(req, res) {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Wrong password' });
   if (!supabaseReady()) return res.status(500).json({ error: 'Database not configured' });
   try {
-    const { orderId, songTitle, songUrl, files, scheduledAt } = req.body || {};
+    const { orderId, songTitle, songUrl, files, versions, scheduledAt } = req.body || {};
     if (!orderId) return res.status(400).json({ error: 'orderId is required' });
+
+    // Deluxe/Experience: 2-3 versions the customer picks from. Each needs an
+    // mp3; wav/multitrack/remastered vary by tier.
+    if (Array.isArray(versions) && versions.length) {
+      const list = versions
+        .filter((v) => v && v.mp3)
+        .map((v, i) => ({
+          title: String(v.title || '').trim() || `Version ${i + 1}`,
+          mp3: v.mp3,
+          ...(v.wav ? { wav: v.wav } : {}),
+          ...(v.multitrack ? { multitrack: v.multitrack } : {}),
+          ...(v.remastered ? { remastered: v.remastered } : {}),
+        }));
+      if (!list.length) return res.status(400).json({ error: 'Each version needs at least an MP3.' });
+
+      const order = await getOrder(orderId);
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+
+      await updateOrder(orderId, {
+        versions: list,
+        song_title: list[0].title,
+        song_file_url: list[0].mp3,
+        selected_version: null,       // customer chooses on the gift page
+        versions_unlocked: false,
+        status: 'delivered',
+        delivered_at: new Date().toISOString(),
+        scheduled_send_at: scheduledAt || null,
+      });
+
+      const origin = process.env.SITE_URL || req.headers.origin || `https://${req.headers.host}`;
+      const giftUrl = `${origin.replace(/\/+$/, '')}/gift/${orderId}`;
+      let emailed = false;
+      let emailError = null;
+      const to = order.customer_email;
+      const displayName = order.brief?.recipient_name || 'Your loved one';
+      if (mailReady() && to) {
+        try {
+          await sendEmail({
+            to,
+            subject: `${displayName}'s Heart Note is ready`,
+            html: deliveryEmailHTML({ displayName, songTitles: [], giftUrl, chooseVersions: list.length }),
+            replyTo: process.env.ORDER_NOTIFY_EMAIL,
+            scheduledAt: scheduledAt || undefined,
+          });
+          emailed = true;
+        } catch (e) {
+          emailError = String(e.message || e);
+          console.error('delivery email failed:', e);
+        }
+      }
+      return res.status(200).json({ ok: true, giftUrl, emailed, emailError, scheduledAt: scheduledAt || null, versions: list.length });
+    }
 
     // files: [{ kind: 'mp3', url, title }, { kind: 'wav' | 'zip', url }]. An
     // order can carry up to 6 songs. songUrl is the older single-file form.

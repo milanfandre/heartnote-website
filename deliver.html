@@ -62,6 +62,10 @@
     const PW_KEY = 'hn_admin_pw';
     let pw = sessionStorage.getItem(PW_KEY) || '';
 
+    // Mirrors lib/pricing.js. Deluxe/Experience deliver as versions to pick from.
+    const VERSIONS_PER_TIER = { deluxe: 2, experience: 3 };
+    const VERSION_EXTRAS = { deluxe: ['wav'], experience: ['wav', 'multitrack', 'remastered'] };
+
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const money = (c) => c == null ? '' : '$' + (c / 100).toFixed(0);
     const when = (iso) => { try { return new Date(iso).toLocaleString(); } catch { return iso || ''; } };
@@ -124,10 +128,14 @@
         return el;
       }
 
+      // Deluxe/Experience deliver as 2-3 VERSIONS of one song (the customer
+      // picks a favourite on the gift page). Everything else is plain songs.
+      if (VERSIONS_PER_TIER[o.tier]) { el.appendChild(versionForm(o, el)); return el; }
+
       // Deliver form. Up to 6 songs; fill only what you're sending.
-      // Deluxe = WAV. Experience/Wedding = WAV + multitrack. Single = neither.
-      const incWav = ['deluxe', 'experience', 'wedding'].includes(o.tier);
-      const incZip = ['experience', 'wedding'].includes(o.tier);
+      // Wedding = WAV + multitrack. Single = neither.
+      const incWav = ['wedding'].includes(o.tier);
+      const incZip = ['wedding'].includes(o.tier);
       const inclusions = [incWav && 'a studio-quality WAV', incZip && 'the multitrack files'].filter(Boolean);
       const SLOTS = 6;
       const slotHTML = Array.from({ length: SLOTS }, (_, i) => `
@@ -181,12 +189,98 @@
 
     async function uploadOne(orderId, kind, file, label, statusEl) {
       statusEl.textContent = 'Uploading ' + label + '…';
-      const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId, kind }) });
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const u = await fetch('/api/upload-url', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw }, body: JSON.stringify({ orderId, kind, ext }) });
       if (!u.ok) throw new Error((await u.json()).error || 'could not get an upload link');
       const { uploadUrl, publicUrl } = await u.json();
       const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'application/octet-stream', 'x-upsert': 'true' }, body: file });
       if (!up.ok) throw new Error(label + ' upload failed (' + up.status + '). Large files may exceed the storage limit.');
       return { url: publicUrl };
+    }
+
+    // ---- Deluxe / Experience: versions the customer picks from ----
+    function versionForm(o, cardEl) {
+      const count = VERSIONS_PER_TIER[o.tier];
+      const kinds = VERSION_EXTRAS[o.tier];
+      const labels = { wav: 'Studio-quality WAV', multitrack: 'Multitrack files (.zip)', remastered: 'Remastered version' };
+      const accepts = { wav: 'audio/wav,audio/x-wav,.wav', multitrack: '.zip,application/zip,application/x-zip-compressed', remastered: 'audio/mpeg,audio/wav,.mp3,.wav' };
+
+      const blocks = Array.from({ length: count }, (_, i) => `
+        <div class="version rounded-xl border border-claret/12 bg-ivory/60 p-3.5">
+          <p class="text-xs font-700 text-claret mb-2">Version ${i + 1}</p>
+          <input class="field v-title mb-2" type="text" placeholder="Title, e.g. Eighty Years of Love" />
+          <label class="block text-xs font-600 mb-1">Song (MP3) <span class="text-ink-soft font-400">required</span></label>
+          <input class="field v-mp3 mb-2" type="file" accept="audio/mpeg,audio/mp3,.mp3" />
+          ${kinds.map((k) => `
+            <label class="block text-xs font-600 mb-1">${labels[k]}</label>
+            <input class="field v-${k} mb-2" type="file" accept="${accepts[k]}" />`).join('')}
+        </div>`).join('');
+
+      const form = document.createElement('div');
+      form.className = 'mt-4 border-t border-claret/10 pt-4 space-y-3';
+      form.innerHTML = `
+        <p class="text-sm font-600">${count} versions <span class="text-ink-soft font-400">the customer listens to a 30-second preview of each, then picks one to keep</span></p>
+        <div class="space-y-2">${blocks}</div>
+        <label class="block text-sm font-600 mt-2">When should the customer's email go out?</label>
+        <select class="field when">
+          <option value="0">Send now</option>
+          <option value="2">In 2 hours</option>
+          <option value="6">In 6 hours</option>
+          <option value="12">In 12 hours</option>
+          <option value="24" selected>In 24 hours</option>
+          <option value="48">In 2 days</option>
+        </select>
+        <div class="flex items-center gap-3 pt-1">
+          <button class="btn go" type="button">Deliver</button>
+          <span class="status text-sm text-ink-soft"></span>
+        </div>`;
+
+      const goEl = form.querySelector('.go'), statusEl = form.querySelector('.status'), whenEl = form.querySelector('.when');
+      goEl.addEventListener('click', async () => {
+        const blocksEls = [...form.querySelectorAll('.version')];
+        const queue = [];
+        for (let i = 0; i < blocksEls.length; i++) {
+          const b = blocksEls[i];
+          const mp3 = b.querySelector('.v-mp3').files[0];
+          if (!mp3) { statusEl.textContent = `Version ${i + 1} needs an MP3.`; return; }
+          const v = { title: b.querySelector('.v-title').value.trim() || `Version ${i + 1}`, files: { mp3 } };
+          kinds.forEach((k) => { const f = b.querySelector('.v-' + k).files[0]; if (f) v.files[k] = f; });
+          queue.push(v);
+        }
+        goEl.disabled = true;
+        try {
+          const versions = [];
+          for (let i = 0; i < queue.length; i++) {
+            const out = { title: queue[i].title };
+            for (const [kind, file] of Object.entries(queue[i].files)) {
+              const { url } = await uploadOne(o.id, kind, file, `version ${i + 1} ${kind.toUpperCase()}`, statusEl);
+              out[kind] = url;
+            }
+            versions.push(out);
+          }
+          const hours = parseInt(whenEl.value, 10) || 0;
+          const scheduledAt = hours > 0 ? new Date(Date.now() + hours * 3600 * 1000).toISOString() : null;
+          statusEl.textContent = hours > 0 ? 'Scheduling the email…' : 'Sending to customer…';
+          const d = await fetch('/api/deliver', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+            body: JSON.stringify({ orderId: o.id, versions, scheduledAt }),
+          });
+          if (!d.ok) throw new Error((await d.json()).error || 'deliver failed');
+          const res = await d.json();
+          let note;
+          if (!res.emailed) note = 'Delivered, but the email did not send (' + (res.emailError || 'email not configured') + ').';
+          else if (res.scheduledAt) note = 'Email scheduled for ' + new Date(res.scheduledAt).toLocaleString() + '.';
+          else note = 'Emailed the customer.';
+          cardEl.outerHTML = `<div class="bg-white rounded-2xl border border-gold/40 p-5 sm:p-6">
+            <p class="font-display text-claret text-xl">Delivered ✓</p>
+            <p class="text-ink-soft text-sm mt-1">${versions.length} versions sent for the customer to choose from. ${note}</p>
+            <a href="${res.giftUrl}" target="_blank" class="text-claret font-700 hover:text-claret-deep break-all">Open gift page →</a></div>`;
+        } catch (err) {
+          statusEl.textContent = 'Error: ' + err.message;
+          goEl.disabled = false;
+        }
+      });
+      return form;
     }
 
     async function deliver(o, els, cardEl) {
