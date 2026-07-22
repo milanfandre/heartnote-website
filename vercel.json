@@ -1,6 +1,11 @@
 {
   "rewrites": [
     { "source": "/gift/:id", "destination": "/api/gift?id=:id" },
+    { "source": "/lp", "destination": "/funnel.html" },
+    { "source": "/lp/wedding", "destination": "/lp-wedding.html" },
+    { "source": "/lp/birthday", "destination": "/lp-birthday.html" },
+    { "source": "/lp/anniversary", "destination": "/lp-anniversary.html" },
+    { "source": "/lp/faith", "destination": "/lp-faith.html" },
     { "source": "/deliver", "destination": "/deliver.html" }
   ]
 }
