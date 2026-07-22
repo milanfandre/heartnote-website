@@ -30,3 +30,8 @@ brand_assets/source/
 .env*.local
 .vercel
 env/heartnote.env
+
+# heavy original review photos — the cropped review-*.jpg versions are committed
+brand_assets/grandma(2).png
+brand_assets/lady-on-beach.png
+brand_assets/old-couple.png
