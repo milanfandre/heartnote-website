@@ -469,9 +469,13 @@
       try {
         const fb = (window.HN_META && window.HN_META.data()) || {};
         data.fbp = fb.fbp; data.fbc = fb.fbc;
+        const t = TIERS[currentTier()];
         if (typeof fbq !== 'undefined') {
-          const t = TIERS[currentTier()];
           fbq('track', 'InitiateCheckout', { value: t ? t.price : undefined, currency: 'USD' });
+        }
+        // First-party: checkout intent = pressing the purchase button (our "add to cart").
+        if (typeof hnTrack === 'function') {
+          hnTrack('add_to_cart', { tier: currentTier(), value_cents: t ? Math.round(t.price * 100) : null, label: 'Continue to secure payment' });
         }
       } catch (e) { /* tracking is best-effort */ }
 

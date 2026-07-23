@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Heart Note · Metrics</title>
+  <link rel="icon" type="image/png" href="/brand_assets/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' }, gold: { DEFAULT: '#C6973F', soft: '#E4C67F' },
+      ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' }, blush: '#E9CBC0', ink: { DEFAULT: '#2B2019', soft: '#6B5D50' } },
+      fontFamily: { display: ['Fraunces','serif'], body: ['"Nunito Sans"','sans-serif'] } } } };
+  </script>
+  <style>
+    /* Chart palette — validated categorical trio (rose/gold/teal) for the one
+       multi-series chart; claret/gold single-hue everywhere else. */
+    :root {
+      --c1:#C0485C; --c2:#A8842C; --c3:#0E9488;
+      --claret:#6E1423; --gold:#C6973F; --ink:#2B2019; --muted:#6B5D50;
+      --surface:#FBF7EE; --grid:rgba(110,20,35,.10);
+    }
+    body { background:#F7F1E6; color:#2B2019; font-family:'Nunito Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+    h1,h2,h3,.font-display { font-family:'Fraunces',serif; }
+    .field { width:100%; border:1px solid rgba(110,20,35,.2); border-radius:12px; padding:.7rem .9rem; background:#fff; }
+    .field:focus { outline:2px solid #C6973F; outline-offset:1px; border-color:transparent; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:700; border-radius:999px; padding:.7rem 1.4rem; background:#6E1423; color:#F7F1E6; transition:background-color .15s, transform .15s; cursor:pointer; }
+    .btn:hover { background:#4E0E1A; } .btn:active { transform:scale(.98); }
+    .btn:focus-visible { outline:3px solid #C6973F; outline-offset:2px; }
+    .card { background:var(--surface); border:1px solid rgba(110,20,35,.10); border-radius:18px; }
+    .range-btn { padding:.4rem .85rem; border-radius:999px; font-weight:700; font-size:.85rem; color:var(--muted); cursor:pointer; border:1px solid transparent; }
+    .range-btn[aria-pressed="true"] { background:#6E1423; color:#F7F1E6; }
+    .range-btn:not([aria-pressed="true"]):hover { background:rgba(110,20,35,.07); }
+    .tnum { font-variant-numeric: tabular-nums; }
+    .tip { position:fixed; z-index:50; pointer-events:none; background:#360911; color:#F7F1E6; border-radius:10px; padding:.55rem .7rem; font-size:.8rem; line-height:1.35; box-shadow:0 10px 30px -10px rgba(54,9,17,.6); opacity:0; transition:opacity .1s; white-space:nowrap; }
+    .swatch { width:10px; height:10px; border-radius:3px; display:inline-block; }
+    .bartrack { background:rgba(110,20,35,.08); border-radius:6px; overflow:hidden; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-claret/10 bg-ivory/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="/brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" />
+        <span class="font-display text-lg font-500 text-claret">Heart Note</span>
+        <span class="text-ink-soft text-sm hidden sm:inline">· Metrics</span>
+      </div>
+      <div id="rangeWrap" class="items-center gap-1 hidden">
+        <button class="range-btn" data-days="7">7d</button>
+        <button class="range-btn" data-days="30" aria-pressed="true">30d</button>
+        <button class="range-btn" data-days="90">90d</button>
+        <button id="refreshBtn" class="text-claret font-700 text-sm ml-2 hover:text-claret-deep">Refresh</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Password gate -->
+  <div id="gate" class="max-w-sm mx-auto px-5 py-20">
+    <h1 class="font-display text-claret text-2xl font-500">Heart Note metrics</h1>
+    <p class="text-ink-soft mt-2 mb-5">Enter the team password to see the numbers.</p>
+    <form id="gateForm" class="space-y-3">
+      <input id="pw" type="password" class="field" placeholder="Password" autocomplete="current-password" />
+      <button class="btn w-full" type="submit">Enter</button>
+      <p id="gateError" class="text-claret text-sm hidden">That password didn't work. Try again.</p>
+    </form>
+  </div>
+
+  <main id="app" class="max-w-6xl mx-auto px-5 py-8 hidden">
+    <div id="loading" class="text-ink-soft py-16 text-center">Loading metrics…</div>
+    <div id="content" class="hidden space-y-6">
+
+      <!-- KPI tiles -->
+      <section>
+        <div class="flex items-baseline justify-between mb-3">
+          <h2 class="font-display text-claret text-xl">Overview</h2>
+          <p id="rangeLabel" class="text-ink-soft text-sm"></p>
+        </div>
+        <div id="kpis" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+      </section>
+
+      <!-- Funnel + timeseries -->
+      <div class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
+        <section class="card p-5">
+          <h3 class="font-display text-claret text-lg mb-1">The funnel</h3>
+          <p class="text-ink-soft text-sm mb-4">Visit → clicked a CTA → pressed purchase → paid.</p>
+          <div id="funnel" class="space-y-3"></div>
+        </section>
+
+        <section class="card p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+            <h3 class="font-display text-claret text-lg">Over time</h3>
+            <div id="tsLegend" class="flex items-center gap-3 text-xs text-ink-soft"></div>
+          </div>
+          <p class="text-ink-soft text-sm mb-3">Daily traffic and customer intent.</p>
+          <div id="tsChart"></div>
+        </section>
+      </div>
+
+      <!-- Landing page performance -->
+      <section class="card p-5">
+        <h3 class="font-display text-claret text-lg mb-1">Landing pages</h3>
+        <p class="text-ink-soft text-sm mb-4">Which page turns visits into intent.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm tnum" id="angleTable"></table>
+        </div>
+      </section>
+
+      <!-- Sources + tiers + buttons -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section class="card p-5">
+          <h3 class="font-display text-claret text-lg mb-1">Traffic sources</h3>
+          <p class="text-ink-soft text-sm mb-4">Where visits came from.</p>
+          <div id="sources" class="space-y-2.5"></div>
+        </section>
+        <section class="card p-5">
+          <h3 class="font-display text-claret text-lg mb-1">Revenue by package</h3>
+          <p class="text-ink-soft text-sm mb-4">Paid orders in this window.</p>
+          <div id="tiers" class="space-y-2.5"></div>
+        </section>
+        <section class="card p-5">
+          <h3 class="font-display text-claret text-lg mb-1">Most-clicked buttons</h3>
+          <p class="text-ink-soft text-sm mb-4">Every CTA press across the site.</p>
+          <div id="buttons" class="space-y-2.5"></div>
+        </section>
+      </div>
+
+      <!-- Meta ad spend -->
+      <section class="card p-5">
+        <h3 class="font-display text-claret text-lg mb-1">Meta ad spend</h3>
+        <div id="metaPanel"></div>
+      </section>
+
+      <p class="text-center text-ink-soft/70 text-xs pt-2">Traffic, clicks and intent are counted first-party. Purchases and revenue come from paid orders.</p>
+    </div>
+  </main>
+
+  <div id="tooltip" class="tip"></div>
+
+  <script>
+    var PAL = { c1:'#C0485C', c2:'#A8842C', c3:'#0E9488', claret:'#6E1423', gold:'#C6973F' };
+    var pw = sessionStorage.getItem('hn_pw') || '';
+    var days = 30, DATA = null;
+
+    var $ = function (id) { return document.getElementById(id); };
+    var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]; }); };
+    var fInt = function (n) { return (n || 0).toLocaleString('en-US'); };
+    var fMoney = function (cents) { return '$' + ((cents || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); };
+    var fPct = function (x) { return (x == null ? '—' : (x * 100).toFixed(x >= 0.1 ? 0 : 1) + '%'); };
+    var fDay = function (s) { var d = new Date(s + 'T00:00'); return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+
+    // ── Auth / load ─────────────────────────────────────────────────────────
+    $('gateForm').addEventListener('submit', function (e) { e.preventDefault(); pw = $('pw').value; sessionStorage.setItem('hn_pw', pw); load(); });
+    $('refreshBtn').addEventListener('click', load);
+    document.querySelectorAll('.range-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        days = +b.dataset.days;
+        document.querySelectorAll('.range-btn').forEach(function (x) { x.removeAttribute('aria-pressed'); });
+        b.setAttribute('aria-pressed', 'true');
+        load();
+      });
+    });
+
+    async function load() {
+      $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
+      $('rangeWrap').classList.remove('hidden'); $('rangeWrap').classList.add('flex');
+      $('content').classList.add('hidden'); $('loading').classList.remove('hidden');
+      try {
+        var r = await fetch('/api/metrics?days=' + days, { headers: { 'x-admin-password': pw } });
+        if (r.status === 401) { throw { gate: true }; }
+        if (!r.ok) throw new Error((await r.json()).error || 'Could not load metrics.');
+        DATA = await r.json();
+        render();
+        $('loading').classList.add('hidden'); $('content').classList.remove('hidden');
+      } catch (err) {
+        if (err && err.gate) {
+          $('app').classList.add('hidden'); $('rangeWrap').classList.add('hidden'); $('rangeWrap').classList.remove('flex');
+          $('gate').classList.remove('hidden'); $('gateError').classList.remove('hidden');
+          sessionStorage.removeItem('hn_pw');
+        } else {
+          $('loading').textContent = (err && err.message) || 'Something went wrong.';
+        }
+      }
+    }
+    if (pw) load();
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    function render() {
+      var t = DATA.totals;
+      $('rangeLabel').textContent = 'Last ' + DATA.range.days + ' days · since ' + fDay(DATA.range.start);
+
+      // KPIs
+      var kpis = [
+        { label: 'Visits', v: fInt(t.visits), sub: fInt(t.pageviews) + ' pageviews' },
+        { label: 'CTA clicks', v: fInt(t.cta_clicks), sub: fPct(t.cta_rate) + ' of visits' },
+        { label: 'Checkout intent', v: fInt(t.add_to_cart), sub: fPct(t.intent_rate) + ' of clicks' },
+        { label: 'Purchases', v: fInt(t.purchases), sub: fPct(t.purchase_rate) + ' of intent' },
+        { label: 'Revenue', v: fMoney(t.revenue_cents), sub: fPct(t.visit_to_purchase) + ' visit→sale' },
+        { label: 'Avg order', v: t.purchases ? fMoney(Math.round(t.revenue_cents / t.purchases)) : '—', sub: 'per paid order' },
+      ];
+      $('kpis').innerHTML = kpis.map(function (k) {
+        return '<div class="card p-4"><p class="text-ink-soft text-xs uppercase tracking-wide font-700">' + esc(k.label) +
+          '</p><p class="font-display text-claret text-3xl leading-none mt-2 tnum">' + k.v +
+          '</p><p class="text-ink-soft text-xs mt-1.5">' + esc(k.sub) + '</p></div>';
+      }).join('');
+
+      renderFunnel(t);
+      renderTimeseries(DATA.timeseries);
+      renderAngles(DATA.angles);
+      renderBars('sources', DATA.sources.map(function (s) { return { label: s.source, value: s.pageviews }; }), PAL.claret, fInt);
+      renderBars('tiers', DATA.tiers.map(function (s) { return { label: (s.tier || 'unknown'), value: s.revenue_cents, note: s.orders + ' order' + (s.orders === 1 ? '' : 's') }; }), PAL.gold, fMoney);
+      renderBars('buttons', DATA.buttons.map(function (b) { return { label: b.label, value: b.count }; }), PAL.claret, fInt);
+      renderMeta(DATA.meta);
+    }
+
+    function renderFunnel(t) {
+      var steps = [
+        { label: 'Visits', v: t.visits, rate: null },
+        { label: 'Clicked a CTA', v: t.cta_clicks, rate: t.cta_rate },
+        { label: 'Pressed purchase', v: t.add_to_cart, rate: t.intent_rate },
+        { label: 'Paid', v: t.purchases, rate: t.purchase_rate },
+      ];
+      var max = Math.max(1, t.visits);
+      $('funnel').innerHTML = steps.map(function (s) {
+        var w = Math.max(s.v > 0 ? 3 : 0, Math.round((s.v / max) * 100));
+        return '<div>' +
+          '<div class="flex items-baseline justify-between mb-1"><span class="text-sm font-600 text-ink">' + esc(s.label) + '</span>' +
+          '<span class="text-sm tnum"><span class="font-700 text-claret">' + fInt(s.v) + '</span>' +
+          (s.rate != null ? '<span class="text-ink-soft"> · ' + fPct(s.rate) + '</span>' : '') + '</span></div>' +
+          '<div class="bartrack h-3"><div style="width:' + w + '%;height:100%;background:' + PAL.claret + ';border-radius:6px"></div></div></div>';
+      }).join('');
+    }
+
+    // Single-hue horizontal bar list
+    function renderBars(id, rows, color, fmt) {
+      if (!rows.length) { $(id).innerHTML = '<p class="text-ink-soft text-sm">No data yet.</p>'; return; }
+      var max = Math.max.apply(null, rows.map(function (r) { return r.value; }).concat([1]));
+      $(id).innerHTML = rows.map(function (r) {
+        var w = Math.max(r.value > 0 ? 3 : 0, Math.round((r.value / max) * 100));
+        return '<div><div class="flex items-baseline justify-between gap-2 mb-1">' +
+          '<span class="text-sm text-ink truncate" title="' + esc(r.label) + '">' + esc(r.label) + '</span>' +
+          '<span class="text-sm tnum font-700 text-ink shrink-0">' + fmt(r.value) + (r.note ? ' <span class="text-ink-soft font-400">· ' + esc(r.note) + '</span>' : '') + '</span></div>' +
+          '<div class="bartrack h-2.5"><div style="width:' + w + '%;height:100%;background:' + color + ';border-radius:6px"></div></div></div>';
+      }).join('');
+    }
+
+    function renderAngles(angles) {
+      if (!angles.length) { $('angleTable').innerHTML = '<tbody><tr><td class="text-ink-soft py-2">No data yet.</td></tr></tbody>'; return; }
+      var head = '<thead><tr class="text-ink-soft text-left text-xs uppercase tracking-wide">' +
+        '<th class="py-2 pr-3 font-700">Page</th><th class="py-2 px-3 font-700 text-right">Visits</th>' +
+        '<th class="py-2 px-3 font-700 text-right">CTA clicks</th><th class="py-2 px-3 font-700 text-right">Intent</th>' +
+        '<th class="py-2 pl-3 font-700 text-right">Click→intent</th></tr></thead>';
+      var rows = angles.map(function (a) {
+        var rate = a.cta_click ? a.add_to_cart / a.cta_click : null;
+        return '<tr class="border-t border-claret/10"><td class="py-2 pr-3 font-600 text-claret">' + esc(a.angle) + '</td>' +
+          '<td class="py-2 px-3 text-right">' + fInt(a.pageview) + '</td>' +
+          '<td class="py-2 px-3 text-right">' + fInt(a.cta_click) + '</td>' +
+          '<td class="py-2 px-3 text-right">' + fInt(a.add_to_cart) + '</td>' +
+          '<td class="py-2 pl-3 text-right font-700 text-claret">' + fPct(rate) + '</td></tr>';
+      }).join('');
+      $('angleTable').innerHTML = head + '<tbody>' + rows + '</tbody>';
+    }
+
+    // ── Timeseries line chart (Visits / Intent / Purchases) + hover ───────────
+    function renderTimeseries(ts) {
+      var series = [
+        { key: 'visits', name: 'Visits', color: PAL.c1 },
+        { key: 'add_to_cart', name: 'Checkout intent', color: PAL.c2 },
+        { key: 'purchases', name: 'Purchases', color: PAL.c3 },
+      ];
+      $('tsLegend').innerHTML = series.map(function (s) {
+        return '<span class="inline-flex items-center gap-1.5"><span class="swatch" style="background:' + s.color + '"></span>' + s.name + '</span>';
+      }).join('');
+
+      var W = 720, H = 240, padL = 34, padR = 12, padT = 12, padB = 24;
+      var n = ts.length;
+      var maxY = Math.max(1, Math.max.apply(null, ts.map(function (d) { return Math.max(d.visits, d.add_to_cart, d.purchases); })));
+      var x = function (i) { return padL + (n <= 1 ? 0 : (i / (n - 1)) * (W - padL - padR)); };
+      var y = function (v) { return H - padB - (v / maxY) * (H - padT - padB); };
+
+      // y gridlines (4)
+      var grid = '', ticks = 4;
+      for (var g = 0; g <= ticks; g++) {
+        var gv = Math.round((maxY / ticks) * g), gy = y(gv);
+        grid += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="var(--grid)" stroke-width="1"/>' +
+          '<text x="' + (padL - 6) + '" y="' + (gy + 3) + '" text-anchor="end" font-size="10" fill="var(--muted)">' + fInt(gv) + '</text>';
+      }
+      // x labels (about 6)
+      var xlab = '', step = Math.max(1, Math.round(n / 6));
+      for (var i = 0; i < n; i += step) {
+        xlab += '<text x="' + x(i) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="10" fill="var(--muted)">' + fDay(ts[i].day) + '</text>';
+      }
+      // series paths
+      var paths = series.map(function (s) {
+        var d = ts.map(function (row, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(row[s.key]).toFixed(1); }).join(' ');
+        return '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+      }).join('');
+
+      var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily visits, checkout intent and purchases">' +
+        grid + xlab + paths +
+        '<line id="tsCross" x1="0" y1="' + padT + '" x2="0" y2="' + (H - padB) + '" stroke="var(--claret)" stroke-width="1" opacity="0"/>' +
+        '<g id="tsDots"></g>' +
+        '<rect id="tsHit" x="' + padL + '" y="' + padT + '" width="' + (W - padL - padR) + '" height="' + (H - padT - padB) + '" fill="transparent"/>' +
+        '</svg>';
+      $('tsChart').innerHTML = svg;
+
+      // Hover: nearest-day crosshair + dots + tooltip
+      var svgEl = $('tsChart').querySelector('svg');
+      var hit = $('tsChart').querySelector('#tsHit');
+      var cross = $('tsChart').querySelector('#tsCross');
+      var dots = $('tsChart').querySelector('#tsDots');
+      var tip = $('tooltip');
+      function move(ev) {
+        var pt = ev.touches ? ev.touches[0] : ev;
+        var box = svgEl.getBoundingClientRect();
+        var px = (pt.clientX - box.left) / box.width * W;
+        var i = Math.round((px - padL) / ((W - padL - padR) / Math.max(1, n - 1)));
+        i = Math.max(0, Math.min(n - 1, i));
+        var row = ts[i], cx = x(i);
+        cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('opacity', '.5');
+        dots.innerHTML = series.map(function (s) {
+          return '<circle cx="' + cx + '" cy="' + y(row[s.key]) + '" r="3.5" fill="' + s.color + '" stroke="#FBF7EE" stroke-width="1.5"/>';
+        }).join('');
+        tip.innerHTML = '<div style="font-weight:700;margin-bottom:2px">' + fDay(row.day) + '</div>' +
+          series.map(function (s) { return '<div><span class="swatch" style="background:' + s.color + ';margin-right:5px"></span>' + s.name + ': <b>' + fInt(row[s.key]) + '</b></div>'; }).join('') +
+          '<div style="margin-top:2px;opacity:.8">Revenue: ' + fMoney(row.revenue_cents) + '</div>';
+        tip.style.opacity = '1';
+        tip.style.left = Math.min(pt.clientX + 14, window.innerWidth - tip.offsetWidth - 8) + 'px';
+        tip.style.top = (pt.clientY + 14) + 'px';
+      }
+      function leave() { cross.setAttribute('opacity', '0'); dots.innerHTML = ''; tip.style.opacity = '0'; }
+      hit.addEventListener('mousemove', move); hit.addEventListener('mouseleave', leave);
+      hit.addEventListener('touchmove', move, { passive: true }); hit.addEventListener('touchend', leave);
+    }
+
+    function renderMeta(m) {
+      var el = $('metaPanel');
+      if (!m || !m.configured) {
+        el.innerHTML = '<p class="text-ink-soft text-sm">Ad spend, impressions and ROAS show here once a Meta Marketing API token is added. ' +
+          'Set <code class="text-claret">META_ADS_TOKEN</code> (needs <b>ads_read</b>) and <code class="text-claret">META_AD_ACCOUNT_ID</code> in Vercel.</p>';
+        return;
+      }
+      if (m.error) { el.innerHTML = '<p class="text-claret text-sm">Meta said: ' + esc(m.error) + '</p>'; return; }
+      var tiles = [
+        { label: 'Spend', v: '$' + (m.spend || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+        { label: 'Impressions', v: fInt(m.impressions) },
+        { label: 'Clicks', v: fInt(m.clicks) },
+        { label: 'CTR', v: (m.ctr || 0).toFixed(2) + '%' },
+        { label: 'CPC', v: '$' + (m.cpc || 0).toFixed(2) },
+        { label: 'ROAS', v: m.roas == null ? '—' : m.roas.toFixed(2) + '×' },
+      ];
+      el.innerHTML = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">' + tiles.map(function (k) {
+        return '<div class="card p-4"><p class="text-ink-soft text-xs uppercase tracking-wide font-700">' + k.label +
+          '</p><p class="font-display text-claret text-2xl leading-none mt-2 tnum">' + k.v + '</p></div>';
+      }).join('') + '</div>';
+    }
+  </script>
+</body>
+</html>

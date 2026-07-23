@@ -40,7 +40,6 @@
     // Browser Purchase event, matched to the server event by the shared id so
     // Meta counts it once. Value/currency come from the real Stripe session.
     (async function () {
-      if (typeof fbq === 'undefined') return;
       var params = new URLSearchParams(location.search);
       var sid = params.get('session_id');
       var eid = params.get('eid');
@@ -50,7 +49,14 @@
         if (!r.ok) return;
         var d = await r.json();
         if (!d.paid) return;
-        fbq('track', 'Purchase', { value: d.value, currency: d.currency }, { eventID: eid || d.eventId });
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'Purchase', { value: d.value, currency: d.currency }, { eventID: eid || d.eventId });
+        }
+        // First-party mirror. The dashboard counts revenue off the orders table
+        // (server-side, can't be blocked), so this is just for a complete stream.
+        if (typeof hnTrack === 'function') {
+          hnTrack('purchase', { value_cents: Math.round((d.value || 0) * 100), meta: { session: sid } });
+        }
       } catch (e) { /* pixel is best-effort; the server event is the reliable one */ }
     })();
   </script>
