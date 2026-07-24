@@ -5,11 +5,17 @@
 import { sbSelect, supabaseReady } from '../lib/db.js';
 import { adminAuthed } from '../lib/auth.js';
 import { getAdInsights } from '../lib/meta-insights.js';
+import metaDiagnose from '../lib/meta-diagnose.js';
 
 const dayStr = (d) => d.toISOString().slice(0, 10);
 
 export default async function handler(req, res) {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Wrong password' });
+
+  // Conversion-tracking diagnostic shares this endpoint because Vercel's Hobby
+  // plan caps the project at 12 serverless functions and api/ is full.
+  if (req.query.diag === 'meta') return metaDiagnose(req, res);
+
   if (!supabaseReady()) return res.status(500).json({ error: 'Database not configured' });
 
   const days = Math.min(Math.max(parseInt(req.query.days, 10) || 30, 1), 365);
