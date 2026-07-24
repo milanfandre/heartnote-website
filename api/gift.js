@@ -148,6 +148,31 @@ function chooseScreen({ recipient, sender, versions, tier, orderId, justPaid }) 
 }
 
 // After a choice (or after unlocking): chosen version in full, others locked.
+// The little line above the song on the keepsake page. Written per occasion
+// rather than poured into one "For their {occasion}" template, which produced
+// "For their christmas" (lowercasing a proper noun) and "For their just
+// because" (not a sentence). Free text from the "Other" box is used as the
+// customer wrote it — we don't force grammar onto words we didn't choose.
+const OCCASION_LABELS = {
+  'birthday': 'For their birthday',
+  'proposal': 'For the proposal',
+  'wedding': 'For their wedding day',
+  'anniversary': 'For their anniversary',
+  'christmas': 'For Christmas',
+  'faith & blessings': 'With love and blessings',
+  'new baby': 'For the new arrival',
+  'graduation': 'For their graduation',
+  'retirement': 'For their retirement',
+  'celebration of life': 'A celebration of a life',
+  'just because': 'Just because',
+};
+
+function occasionLabelFor(raw) {
+  const t = String(raw || '').trim();
+  if (!t) return '';
+  return OCCASION_LABELS[t.toLowerCase()] || `For ${t}`;
+}
+
 function keepsakeVersions({ recipient, sender, versions, tier, orderId, selected, unlocked, occasionLabel, justPaid }) {
   const open = (i) => unlocked || i === selected;
   const ordered = versions.map((v, i) => ({ v, i })).sort((a, b) => (open(b.i) ? 1 : 0) - (open(a.i) ? 1 : 0));
@@ -325,7 +350,7 @@ export default async function handler(req, res) {
   const recipient = brief.recipient_name || 'someone special';
   const sender = brief.sender_name || '';
   const occRaw = brief.occasion === 'Other' ? (brief.occasion_other || '') : (brief.occasion || '');
-  const occasionLabel = occRaw ? `For their ${occRaw.toLowerCase()}` : '';
+  const occasionLabel = occasionLabelFor(occRaw);
   const justPaid = req.query.unlocked === '1';
 
   // Deluxe/Experience: pick-a-version flow.

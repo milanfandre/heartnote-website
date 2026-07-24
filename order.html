@@ -432,8 +432,11 @@
     } else if (!form.querySelector('input[name=tier]:checked')) {
       form.querySelector('input[name=tier][value="deluxe"]').checked = true;
     }
-    const occ = params.get('occasion');
-    if (occ) { [...$('occasion').options].forEach(o => { if (o.value.toLowerCase() === occ.toLowerCase()) o.selected = true; }); }
+    // NOTE: the ?occasion= an ad link carries is a guess about why someone
+    // clicked, not something the customer told us. It used to preselect this
+    // dropdown, so a wedding ad recorded "Wedding" on a birthday song whenever
+    // the customer didn't notice — and the keepsake page then said so. The
+    // occasion is theirs to choose; the parameter is kept only for reporting.
     if (params.get('canceled')) $('canceledNote').classList.remove('hidden');
 
     refreshSummary(); refreshConditional(); refreshCounts();
