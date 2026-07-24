@@ -121,7 +121,7 @@ async function saveOrder(order) {
     brief: order,
   };
   try {
-    const r = await fetch(`${url}/rest/v1/orders?on_conflict=stripe_session_id`, {
+    const post = (body) => fetch(`${url}/rest/v1/orders?on_conflict=stripe_session_id`, {
       method: 'POST',
       headers: {
         apikey: key,
@@ -129,9 +129,26 @@ async function saveOrder(order) {
         'Content-Type': 'application/json',
         Prefer: 'resolution=merge-duplicates,return=minimal',
       },
-      body: JSON.stringify(row),
+      body: JSON.stringify(body),
     });
-    if (!r.ok) console.error('Supabase insert error', r.status, await r.text());
+
+    let r = await post(row);
+
+    // A newer column the database hasn't been migrated for yet (PostgREST
+    // PGRST204) must never cost us a paid order: drop the unknown column and
+    // save the rest. The full payload still lives in `brief` either way.
+    if (!r.ok) {
+      const text = await r.text();
+      const missing = text.match(/Could not find the '(\w+)' column/);
+      if (missing && missing[1] in row) {
+        console.error(`Supabase is missing the "${missing[1]}" column — saving the order without it. Re-run db/schema.sql to capture it.`);
+        const { [missing[1]]: _dropped, ...fallback } = row;
+        r = await post(fallback);
+        if (!r.ok) console.error('Supabase insert error', r.status, await r.text());
+      } else {
+        console.error('Supabase insert error', r.status, text);
+      }
+    }
   } catch (err) {
     console.error('Saving order to database failed:', err);
   }
