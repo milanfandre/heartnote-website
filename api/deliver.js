@@ -72,15 +72,21 @@ export default async function handler(req, res) {
     if (!list.length && songUrl) list = [{ kind: 'mp3', url: songUrl, title: songTitle }];
 
     let n = 0;
+    const typedTitles = []; // only what the fulfiller actually wrote, in song order
     list = list.map((f) => {
       if (f.kind !== 'mp3') return { kind: f.kind, url: f.url };
       n += 1;
-      return { kind: 'mp3', url: f.url, title: String(f.title || '').trim() || `Song ${n}` };
+      const typed = String(f.title || '').trim();
+      typedTitles.push(typed);
+      // "Song 2" is a fine label for a track in a list on the gift page, but it
+      // is not a name — the delivery email must never call it one.
+      return { kind: 'mp3', url: f.url, title: typed || `Song ${n}` };
     });
 
     const songs = list.filter((f) => f.kind === 'mp3');
     if (!songs.length) return res.status(400).json({ error: 'At least one song file is required.' });
     const songTitles = songs.map((s) => s.title);
+    const realTitles = typedTitles.filter(Boolean);
 
     const order = await getOrder(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
@@ -108,7 +114,8 @@ export default async function handler(req, res) {
           subject: `${displayName}'s Heart Note is ready`,
           html: deliveryEmailHTML({
             displayName,
-            songTitles,
+            songTitles: realTitles,      // never the "Song N" placeholders
+            songCount: songs.length,
             giftUrl,
             extras: list.filter((f) => f.kind !== 'mp3').map((f) => f.kind),
           }),
