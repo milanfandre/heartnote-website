@@ -349,7 +349,14 @@ export default async function handler(req, res) {
   const brief = order.brief || {};
   const recipient = brief.recipient_name || 'someone special';
   const sender = brief.sender_name || '';
-  const occRaw = brief.occasion === 'Other' ? (brief.occasion_other || '') : (brief.occasion || '');
+  // Only ever what the customer told us. The Wedding Package doesn't ask for an
+  // occasion because the package is the occasion — and choosing that package is
+  // itself the customer's statement. Everything else comes from their dropdown,
+  // so a birthday song ordered from a wedding ad says birthday. If we don't have
+  // it, we say nothing rather than guess.
+  const occRaw = order.tier === 'wedding'
+    ? 'Wedding'
+    : (brief.occasion === 'Other' ? (brief.occasion_other || '') : (brief.occasion || ''));
   const occasionLabel = occasionLabelFor(occRaw);
   const justPaid = req.query.unlocked === '1';
 
