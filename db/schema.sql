@@ -65,6 +65,11 @@ alter table public.orders add column if not exists selected_version integer;
 -- True once they've paid the upsell to unlock every version.
 alter table public.orders add column if not exists versions_unlocked boolean not null default false;
 
+-- Which ad/campaign earned this order: {utm_source, utm_campaign, utm_content,
+-- fbclid, ad_id, landing, ...}, captured on the landing page and carried
+-- through checkout. Null for orders placed before this was added.
+alter table public.orders add column if not exists attribution jsonb;
+
 -- Lock the table down: only the server (using the service key, which bypasses
 -- these rules) can read or write. The public/anon key gets nothing. The Deliver
 -- tool authenticates separately with a shared password.

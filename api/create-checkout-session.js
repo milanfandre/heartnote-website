@@ -127,6 +127,17 @@ export default async function handler(req, res) {
     }), 4000);
     metadata.meta_event_id = metaEventId; // also stored flat for session-info
 
+    // Campaign attribution: which ad/campaign this order came from, captured on
+    // the landing page and carried here by the order form. Whitelisted so only
+    // known marketing parameters ever reach the order record.
+    const ATTR_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id',
+      'fbclid', 'gclid', 'ttclid', 'ad_id', 'adset_id', 'campaign_id', 'placement', 'site_source_name',
+      'src', 'landing', 'angle', 'source', 'referrer', 'landed_at'];
+    const rawAttr = (b.attr && typeof b.attr === 'object') ? b.attr : {};
+    const attr = {};
+    for (const k of ATTR_KEYS) if (rawAttr[k]) attr[k] = clip(String(rawAttr[k]), 200);
+    if (Object.keys(attr).length) putChunked(metadata, 'attr', JSON.stringify(attr), 2000);
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,

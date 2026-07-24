@@ -469,6 +469,8 @@
       try {
         const fb = (window.HN_META && window.HN_META.data()) || {};
         data.fbp = fb.fbp; data.fbc = fb.fbc;
+        // Which ad/campaign brought them here, remembered from the landing hit.
+        if (typeof hnAttribution === 'function') data.attr = hnAttribution();
         const t = TIERS[currentTier()];
         if (typeof fbq !== 'undefined') {
           fbq('track', 'InitiateCheckout', { value: t ? t.price : undefined, currency: 'USD' });

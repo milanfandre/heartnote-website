@@ -117,6 +117,7 @@ async function saveOrder(order) {
       : (order.occasion === 'Other' ? (order.occasion_other || 'Other') : (order.occasion || null)),
     recipient_name: order.recipient_name || null,
     song_count: order.song_count ? (parseInt(order.song_count, 10) || null) : null,
+    attribution: order.attribution || null,
     brief: order,
   };
   try {
@@ -147,9 +148,22 @@ function orderSheetRow(order) {
   const occasion = wedding
     ? 'Wedding'
     : (order.occasion === 'Other' ? (order.occasion_other || 'Other') : (order.occasion || ''));
+  // Where the order came from, as plain spreadsheet columns.
+  const a = order.attribution || {};
+  const aSrc = String(a.utm_source || a.source || '').toLowerCase();
+  const cameFrom = (a.fbclid || /facebook|instagram|^fb$|^ig$|meta/.test(aSrc)) ? 'Meta ad'
+    : (a.gclid || aSrc === 'google') ? 'Google ad'
+    : (aSrc && aSrc !== 'direct') ? `Referral (${a.utm_source || a.source})`
+    : (Object.keys(a).length ? 'Direct / organic' : '');
+
   const map = {
     'Date': order.paid_at ? new Date(order.paid_at * 1000).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : '',
     'Status': 'New',
+    'Came From': cameFrom,
+    'Campaign': a.utm_campaign || '',
+    'Ad': a.utm_content || '',
+    'Ad Set': a.utm_term || '',
+    'Landing Page': a.landing || '',
     'Package': order.tier || '',
     'Amount ($)': order.amount_total != null ? order.amount_total / 100 : '',
     'Customer Email': order.customer_email || '',
@@ -234,6 +248,11 @@ export default async function handler(req, res) {
       customer_name: session.customer_details?.name || '',
       paid_at: event.created,
     };
+
+    // Which ad/campaign earned this order (captured on the landing page).
+    // Parsed once here so the email, the sheet and the database all agree.
+    try { order.attribution = order.attr ? JSON.parse(order.attr) : null; }
+    catch { order.attribution = null; }
 
     // Save the full customer input to the database, then email whoever fills
     // the order. Both are safe no-ops until their keys are configured.

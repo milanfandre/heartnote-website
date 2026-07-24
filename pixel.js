@@ -78,6 +78,41 @@ window.HN_META = {
     return 'direct';
   }
 
+  // ── Campaign attribution ──────────────────────────────────────────────────
+  // Remembered across the visit so the ORDER can say which ad paid for it —
+  // the order form is a different page from the one the ad landed on, and by
+  // then the campaign parameters are long gone from the URL.
+  //
+  // "Last non-direct touch": a fresh ad click overwrites what we stored, but
+  // simply browsing on (or coming back directly) keeps the ad that earned it.
+  var ATTR_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id',
+    'fbclid', 'gclid', 'ttclid', 'ad_id', 'adset_id', 'campaign_id', 'placement', 'site_source_name', 'src'];
+
+  function attribution() {
+    var current = {}, hasCampaign = false, i, k, v;
+    for (i = 0; i < ATTR_KEYS.length; i++) {
+      k = ATTR_KEYS[i]; v = params.get(k);
+      if (v) { current[k] = String(v).slice(0, 200); if (k !== 'src') hasCampaign = true; }
+    }
+    var stored = null;
+    try { stored = JSON.parse(localStorage.getItem('hn_attr') || 'null'); } catch (e) { /* ignore */ }
+
+    // Keep the stored one unless this hit is itself a fresh campaign click.
+    if (stored && !hasCampaign) return stored;
+
+    current.landing = location.pathname;
+    current.angle = angle();
+    current.source = source();
+    current.referrer = document.referrer || '';
+    current.landed_at = new Date().toISOString();
+    try { localStorage.setItem('hn_attr', JSON.stringify(current)); } catch (e) { /* private mode */ }
+    return current;
+  }
+
+  // The order page reads this and sends it to checkout with the brief.
+  window.hnAttribution = attribution;
+  attribution(); // capture on the landing hit, before any navigation loses it
+
   var BASE = {
     page: location.pathname,
     angle: angle(),
