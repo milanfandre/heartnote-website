@@ -74,13 +74,13 @@ function trackBlock({ title, url, eyebrow, locked, downloads = [], first }) {
       <div class="flex items-start justify-between gap-3">
         <div>
           ${eyebrow ? `<p class="text-gold text-[.72rem] font-700 tracking-[.12em] uppercase">${esc(eyebrow)}</p>` : ''}
-          <p class="font-display text-claret text-2xl leading-tight mt-1">${esc(title)}</p>
+          ${title ? `<p class="font-display text-claret text-2xl leading-tight mt-1">${esc(title)}</p>` : ''}
           ${locked ? `<p class="inline-flex items-center gap-1.5 text-ink-soft text-xs font-600 mt-1.5">${LOCK_ICON} 30-second preview</p>` : ''}
         </div>
         <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
       </div>
       <div class="mt-5 flex items-center gap-4">
-        <button type="button" class="play grid place-items-center w-16 h-16 rounded-full bg-claret text-ivory shrink-0 shadow-[0_10px_24px_-10px_rgba(110,20,35,.6)] transition-transform hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" aria-label="Play ${esc(title)}">
+        <button type="button" class="play grid place-items-center w-16 h-16 rounded-full bg-claret text-ivory shrink-0 shadow-[0_10px_24px_-10px_rgba(110,20,35,.6)] transition-transform hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold" aria-label="Play ${esc(title || 'your song')}">
           <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         </button>
         <div class="flex-1">
@@ -285,16 +285,20 @@ function chooseScript(orderId) {
 }
 
 // Single/Wedding: every delivered song, in full.
-function keepsakeSongs({ recipient, sender, occasionLabel, songs, extras }) {
+function keepsakeSongs({ recipient, sender, occasionLabel, songs, extras, fallbackTitle }) {
   const many = songs.length > 1;
+  // The on-screen heading is the song's real title, or nothing when there
+  // isn't one (better a clean card than a vague "Song 1"). The download
+  // filename always needs a name, so it uses the recipient-based fallback.
+  const fileBase = (s) => s.title || fallbackTitle;
   const blocks = songs.map((s, i) => trackBlock({
     title: s.title, url: s.url, eyebrow: i === 0 ? occasionLabel : '', locked: false, first: i === 0,
-    downloads: [downloadLink(s.url, `${s.title} - Heart Note.mp3`, many ? 'Download this song' : 'Download your song', true)],
+    downloads: [downloadLink(s.url, `${fileBase(s)} - Heart Note.mp3`, many ? 'Download this song' : 'Download your song', true)],
   })).join('');
 
   const extraBlock = extras.length ? `<div class="mt-8 pt-6 border-t border-claret/10">
       <p class="text-ink-soft text-sm font-600 mb-1">Also included in your package</p>
-      ${extras.map((f) => downloadLink(f.url, EXTRAS[f.kind].name(songs[0].title), EXTRAS[f.kind].label, false)).join('')}
+      ${extras.map((f) => downloadLink(f.url, EXTRAS[f.kind].name(fileBase(songs[0])), EXTRAS[f.kind].label, false)).join('')}
     </div>` : '';
 
   return `<div class="mb-5 rounded-2xl bg-blush/25 border border-claret/10 px-5 py-4">
@@ -372,10 +376,19 @@ export default async function handler(req, res) {
   }
 
   // Single/Wedding: straight to the songs.
+  // Titles like "Song 1" / "Your song" are placeholders the fulfilment step
+  // fills in when no name was given — never show them as if they were the
+  // song's name. An unnamed song simply has no heading; downloads fall back to
+  // a name built from the recipient, which is specific to this order.
+  const isPlaceholder = (t) => /^(song\s*\d+|your song|untitled)$/i.test(String(t || '').trim());
+  const realTitle = (t) => (isPlaceholder(t) ? '' : String(t || '').trim());
+  // Used only for download filenames (which follow "<base> - Heart Note.mp3"),
+  // never shown on screen. Plain so the name doesn't read "Heart Note" twice.
+  const fallbackTitle = brief.recipient_name || 'Your song';
   const stored = Array.isArray(order.song_files) ? order.song_files.filter((f) => f && f.url) : [];
-  const songs = stored.filter((f) => f.kind === 'mp3').map((f, i) => ({ url: f.url, title: f.title || order.song_title || `Song ${i + 1}` }));
+  const songs = stored.filter((f) => f.kind === 'mp3').map((f) => ({ url: f.url, title: realTitle(f.title || order.song_title) }));
   const extras = stored.filter((f) => f.kind !== 'mp3' && EXTRAS[f.kind]);
-  if (!songs.length && order.song_file_url) songs.push({ url: order.song_file_url, title: order.song_title || 'Your song' });
+  if (!songs.length && order.song_file_url) songs.push({ url: order.song_file_url, title: realTitle(order.song_title) });
 
   if (!songs.length) {
     return res.status(200).send(shell('Your Heart Note', message('Your Heart Note is being composed', 'It will appear right here as soon as it is ready. We will email you the moment it is finished.')));
@@ -383,6 +396,6 @@ export default async function handler(req, res) {
 
   return res.status(200).send(shell(
     `A Heart Note for ${recipient}`,
-    keepsakeSongs({ recipient, sender, occasionLabel, songs, extras })
+    keepsakeSongs({ recipient, sender, occasionLabel, songs, extras, fallbackTitle })
   ));
 }
