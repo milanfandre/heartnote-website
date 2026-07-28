@@ -2,14 +2,13 @@
 // URL: /gift/<order_id>  (rewritten to /api/gift?id=<order_id>)
 //
 // Single/Wedding: every delivered song, playable and downloadable.
-// Deluxe/Experience: 2-3 versions. Until one is chosen, each is a 30-second
-// preview. Choosing unlocks that version's full files; the rest stay previews
-// behind the "unlock every version" upsell.
+// Deluxe/Experience: 2-3 versions. Every version plays in full so the customer
+// can judge them properly. Downloads stay locked until one is chosen; choosing
+// unlocks that version's files, the rest sit behind the "unlock every version"
+// upsell.
 import { getOrder, supabaseReady } from '../lib/db.js';
 import { esc } from '../lib/mail.js';
 import { VERSIONS_PER_TIER, UPSELL_CENTS, dollars, upsellCopy } from '../lib/pricing.js';
-
-const PREVIEW_SECONDS = 30;
 
 // Extra downloads that ride along with a song/version.
 const EXTRAS = {
@@ -68,14 +67,14 @@ function header(recipient, sender) {
     </div>`;
 }
 
-// One playable track. `locked` caps playback at 30s and hides the downloads.
+// One playable track. `locked` hides the downloads; playback always runs full.
 function trackBlock({ title, url, eyebrow, locked, downloads = [], first }) {
-  return `<div class="song ${first ? '' : 'mt-8 pt-8 border-t border-claret/10'}" data-src="${esc(url)}" data-locked="${locked ? '1' : ''}">
+  return `<div class="song ${first ? '' : 'mt-8 pt-8 border-t border-claret/10'}" data-src="${esc(url)}">
       <div class="flex items-start justify-between gap-3">
         <div>
           ${eyebrow ? `<p class="text-gold text-[.72rem] font-700 tracking-[.12em] uppercase">${esc(eyebrow)}</p>` : ''}
           ${title ? `<p class="font-display text-claret text-2xl leading-tight mt-1">${esc(title)}</p>` : ''}
-          ${locked ? `<p class="inline-flex items-center gap-1.5 text-ink-soft text-xs font-600 mt-1.5">${LOCK_ICON} 30-second preview</p>` : ''}
+          ${locked ? `<p class="inline-flex items-center gap-1.5 text-ink-soft text-xs font-600 mt-1.5">${LOCK_ICON} Full song &middot; download unlocks when you choose</p>` : ''}
         </div>
         <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
       </div>
@@ -218,17 +217,14 @@ function paidNotice() {
 function playerScript() {
   return `<script>
     var players = [];
-    var PREVIEW = ${PREVIEW_SECONDS};
     document.querySelectorAll('.song').forEach(function (block) {
       var audio = new Audio(block.dataset.src); audio.preload = 'metadata';
-      var locked = block.dataset.locked === '1';
       var icon = block.querySelector('.icon path'), fill = block.querySelector('.fill'), bar = block.querySelector('.bar');
       var cur = block.querySelector('.cur'), dur = block.querySelector('.dur'), play = block.querySelector('.play');
       var fmt = function (s) { return isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '0:00'; };
-      var span = function () { return locked ? Math.min(PREVIEW, audio.duration || PREVIEW) : audio.duration; };
+      var span = function () { return audio.duration; };
       audio.addEventListener('loadedmetadata', function () { dur.textContent = fmt(span()); });
       audio.addEventListener('timeupdate', function () {
-        if (locked && audio.currentTime >= PREVIEW) { audio.pause(); audio.currentTime = 0; fill.style.width = '0%'; cur.textContent = '0:00'; return; }
         var total = span() || 0;
         fill.style.width = (total ? Math.min(audio.currentTime / total * 100, 100) : 0) + '%';
         cur.textContent = fmt(audio.currentTime);
