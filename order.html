@@ -517,8 +517,8 @@
         label.textContent = 'Uploading your photo…';
         try {
           const ext = (photo.name.split('.').pop() || '').toLowerCase();
-          const u = await fetch('/api/photo-upload-url', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ext }),
+          const u = await fetch('/api/upload-url', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cover: true, ext }),
           });
           if (!u.ok) throw new Error((await u.json()).error || 'Could not prepare the upload.');
           const { uploadUrl, publicUrl } = await u.json();

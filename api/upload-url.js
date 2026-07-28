@@ -3,8 +3,35 @@
 import { createSignedUpload, supabaseReady } from '../lib/db.js';
 import { adminAuthed } from '../lib/auth.js';
 
+// Customer CD cover photos. This branch is PUBLIC — the photo is chosen before
+// checkout, so there is no order and no credential to check yet. It stays safe
+// by being narrow, and must never be widened to the songs bucket:
+//   * writes only to COVERS_BUCKET, nowhere near customer masters
+//   * image extensions only, and the bucket itself enforces an image-only MIME
+//     allowlist and a size cap, so a forged request still cannot store anything
+//     other than a reasonably sized image
+//   * the filename is generated here; nothing the caller sends reaches the path
+const COVER_EXTS = { jpg: 'jpg', jpeg: 'jpg', png: 'png', heic: 'heic', webp: 'webp' };
+
+async function coverUpload(req, res) {
+  const e = COVER_EXTS[String((req.body || {}).ext || '').toLowerCase().replace(/^\./, '')];
+  if (!e) return res.status(400).json({ error: 'Please upload a JPG, PNG, HEIC or WEBP image.' });
+  const rand = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  const bucket = process.env.COVERS_BUCKET || 'Covers';
+  const { uploadUrl, publicUrl } = await createSignedUpload(bucket, `cover-${rand}.${e}`);
+  return res.status(200).json({ uploadUrl, publicUrl });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
+  if (!supabaseReady()) return res.status(500).json({ error: 'Storage not configured' });
+
+  // Public branch, before the admin gate. Deliberately cannot reach the songs bucket.
+  if ((req.body || {}).cover) {
+    try { return await coverUpload(req, res); }
+    catch (err) { console.error('cover upload-url failed:', err); return res.status(500).json({ error: 'Could not prepare the upload.' }); }
+  }
+
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Wrong password' });
   if (!supabaseReady()) return res.status(500).json({ error: 'Database not configured' });
   try {

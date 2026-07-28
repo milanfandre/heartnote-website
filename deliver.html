@@ -271,10 +271,10 @@
         if (lyrics.length < 20) { status.textContent = 'Paste the lyrics first.'; return; }
         btn.disabled = true; status.textContent = 'Sending…';
         try {
-          const r = await fetch('/api/send-lyrics', {
+          const r = await fetch('/api/deliver', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
-            body: JSON.stringify({ orderId: o.id, lyrics }),
+            body: JSON.stringify({ action: 'send-lyrics', orderId: o.id, lyrics }),
           });
           const j = await r.json();
           if (!r.ok) throw new Error(j.error || 'Could not send the lyrics.');

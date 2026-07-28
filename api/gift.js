@@ -6,7 +6,7 @@
 // can judge them properly. Downloads stay locked until one is chosen; choosing
 // unlocks that version's files, the rest sit behind the "unlock every version"
 // upsell.
-import { getOrder, supabaseReady } from '../lib/db.js';
+import { getOrder, updateOrder, supabaseReady } from '../lib/db.js';
 import { esc } from '../lib/mail.js';
 import { VERSIONS_PER_TIER, UPSELL_CENTS, dollars, upsellCopy } from '../lib/pricing.js';
 
@@ -268,7 +268,7 @@ function chooseScript(orderId) {
         if (!confirm('Choose "' + title + '" as your version?\\n\\nThis is the version you\\'ll keep, and it can\\'t be changed afterwards. You can still unlock the others at any time.')) return;
         btn.disabled = true; btn.textContent = 'Saving your choice…';
         try {
-          var r = await fetch('/api/choose-version', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: '${esc(orderId)}', version: Number(btn.dataset.i) }) });
+          var r = await fetch('/api/gift', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ orderId: '${esc(orderId)}', version: Number(btn.dataset.i) }) });
           var d = await r.json();
           if (!r.ok) throw new Error(d.error || 'Could not save your choice.');
           window.location.reload();
@@ -323,7 +323,39 @@ function message(title, text) {
   </div>`;
 }
 
+// The customer picks which version their package includes. Deliberately
+// ONE-TIME: once chosen it cannot be swapped, otherwise you could cycle through
+// every version and download them all for free, which is what the upsell sells.
+async function chooseVersion(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const { orderId, version } = req.body || {};
+    const idx = Number(version);
+    if (!orderId || !Number.isInteger(idx) || idx < 0) return res.status(400).json({ error: 'orderId and a version index are required' });
+
+    const order = await getOrder(orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    const versions = Array.isArray(order.versions) ? order.versions : [];
+    if (!versions.length) return res.status(400).json({ error: 'This order has no versions to choose from.' });
+    if (idx >= versions.length) return res.status(400).json({ error: 'That version does not exist.' });
+    if (order.selected_version !== null && order.selected_version !== undefined) {
+      return res.status(409).json({ error: 'A version has already been chosen for this order.', selected: order.selected_version });
+    }
+
+    await updateOrder(orderId, { selected_version: idx });
+    return res.status(200).json({ ok: true, selected: idx });
+  } catch (err) {
+    console.error('choose-version failed:', err);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+}
+
 export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    if (!supabaseReady()) return res.status(500).json({ error: 'Not configured' });
+    return chooseVersion(req, res);
+  }
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store'); // state changes as they choose/unlock
   const id = req.query.id;
