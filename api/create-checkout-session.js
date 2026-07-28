@@ -10,10 +10,15 @@ const TIERS = {
   single: process.env.PRICE_SINGLE,
   deluxe: process.env.PRICE_DELUXE,
   experience: process.env.PRICE_EXPERIENCE,
-  wedding: process.env.PRICE_WEDDING,
 };
 
 const VOICE_ADDON_CENTS = 1000; // $10
+const LYRIC_ADDON_CENTS = 2000; // $20
+const CD_ADDON_CENTS = 3000;    // $30
+
+// Add-ons already priced into a tier, so they are never charged again.
+const INCLUDED_ADDONS = { single: [], deluxe: [], experience: ['voice', 'lyrics'] };
+const includesAddon = (tier, addon) => (INCLUDED_ADDONS[tier] || []).includes(addon);
 
 // Short metadata value: Stripe caps each value at 500 chars.
 const clip = (v, n = 500) => (typeof v === 'string' ? v : '').trim().slice(0, n);
@@ -43,79 +48,47 @@ export default async function handler(req, res) {
 
     if (!b.email) return res.status(400).json({ error: 'A delivery email is required.' });
 
-    const voiceOn = b.voiceAddon === 'yes';
+    const voiceOn = b.voiceAddon === 'yes' || includesAddon(tierKey, 'voice');
+    const lyricOn = b.lyricAddon === 'yes' || includesAddon(tierKey, 'lyrics');
+    const cdOn = b.cdAddon === 'yes';
 
     // Build the brief metadata. Stripe caps each value at 500 chars and 50 keys
-    // per object, so long text is chunked. For weddings, each song's fields are
-    // combined into one chunked value so several songs stay within the key limit.
+    // per object, so the long free-text fields are chunked.
     const metadata = {
       tier: tierKey,
       sender_name: clip(b.sender, 120),
       voice_addon: voiceOn ? 'yes' : 'no',      // applied once per order, not per song
       voice: voiceOn ? clip(b.voice, 80) : '',
+      lyric_addon: lyricOn ? 'yes' : 'no',      // lyrics emailed for approval before recording
+      cd_addon: cdOn ? 'yes' : 'no',            // pressed CD, ships separately
+      cd_photo_url: cdOn ? clip(b.cdPhotoUrl, 400) : '',  // cover photo, uploaded before checkout
       delivery_email: clip(b.email, 200),
+      occasion: clip(b.occasion, 120),
+      occasion_other: clip(b.occasionOther, 120),
+      recipient_name: clip(b.recipient, 120),
+      recipient_relationship: clip(b.relationship, 120),
+      music_style: clip(b.style, 80),
+      mood: clip(b.mood, 80),
     };
-
-    if (tierKey === 'wedding') {
-      const nums = [...new Set(
-        Object.keys(b).filter((k) => /^song\d+_/.test(k)).map((k) => parseInt(k.match(/^song(\d+)_/)[1], 10))
-      )].sort((a, z) => a - z);
-      metadata.song_count = clip(String(b.songCount || nums.length || 3), 10);
-      for (const n of nums) {
-        const moment = clip(b[`song${n}_moment`], 200);
-        const story = (b[`song${n}_story`] || '').trim();
-        const other = (b[`song${n}_other`] || '').trim();
-        const svoice = clip(b[`song${n}_voice`], 80);
-        const parts = [];
-        if (moment) parts.push(`Moment: ${moment}`);
-        if (svoice) parts.push(`Voice: ${svoice}`);
-        if (story) parts.push(`About this song:\n${story}`);
-        if (other) parts.push(`Other info:\n${other}`);
-        putChunked(metadata, `song${n}`, parts.join('\n\n'), 3000);
-      }
-    } else {
-      metadata.occasion = clip(b.occasion, 120);
-      metadata.occasion_other = clip(b.occasionOther, 120);
-      metadata.recipient_name = clip(b.recipient, 120);
-      metadata.recipient_relationship = clip(b.relationship, 120);
-      metadata.music_style = clip(b.style, 80);
-      metadata.mood = clip(b.mood, 80);
-      putChunked(metadata, 'story', b.story);
-      putChunked(metadata, 'must_include', b.details);
-      putChunked(metadata, 'other_info', b.other);
-    }
+    putChunked(metadata, 'story', b.story);
+    putChunked(metadata, 'must_include', b.details);
+    putChunked(metadata, 'other_info', b.other);
 
     const line_items = [{ price, quantity: 1 }];
-    // Voice add-on: once for single-song tiers, or per song with a voice for weddings.
-    const voiceQty = tierKey === 'wedding'
-      ? Object.keys(b).filter((k) => /^song\d+_voice$/.test(k) && (b[k] || '').trim()).length
-      : (voiceOn ? 1 : 0);
-    if (voiceQty > 0) {
-      line_items.push({
-        price_data: {
-          currency: 'usd',
-          unit_amount: VOICE_ADDON_CENTS,
-          product_data: { name: 'Choose your voice (add-on)' },
-        },
-        quantity: voiceQty,
-      });
-    }
-    if (tierKey === 'wedding') {
-      const extra = Math.max(0, parseInt(b.extraSongs, 10) || 0);
-      if (extra > 0) {
-        line_items.push({
-          price_data: { currency: 'usd', unit_amount: 4900, product_data: { name: 'Additional wedding song' } },
-          quantity: extra,
-        });
-      }
-    }
+    const addon = (cents, name) => line_items.push({
+      price_data: { currency: 'usd', unit_amount: cents, product_data: { name } },
+      quantity: 1,
+    });
+    if (voiceOn && !includesAddon(tierKey, 'voice')) addon(VOICE_ADDON_CENTS, 'Choose your voice (add-on)');
+    if (lyricOn && !includesAddon(tierKey, 'lyrics')) addon(LYRIC_ADDON_CENTS, 'Lyric review before recording (add-on)');
+    if (cdOn) addon(CD_ADDON_CENTS, 'Keepsake CD with your photo (add-on)');
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
 
     // Meta tracking: one event id shared by the browser Pixel (on success.html)
     // and the server Conversions API (in the webhook) so Meta dedupes them.
     // fbp/fbc/ip/ua improve match quality. Packed into one metadata value to
-    // stay well under Stripe's 50-key limit even on large wedding orders.
+    // stay well under Stripe's 50-key limit.
     const metaEventId = (globalThis.crypto?.randomUUID?.() || `evt_${Date.now()}`);
     const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
     putChunked(metadata, 'meta', JSON.stringify({

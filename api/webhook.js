@@ -118,6 +118,7 @@ async function saveOrder(order) {
     recipient_name: order.recipient_name || null,
     song_count: order.song_count ? (parseInt(order.song_count, 10) || null) : null,
     attribution: order.attribution || null,
+    cd_photo_url: order.cd_photo_url || null,
     brief: order,
   };
   try {

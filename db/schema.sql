@@ -70,6 +70,17 @@ alter table public.orders add column if not exists versions_unlocked boolean not
 -- through checkout. Null for orders placed before this was added.
 alter table public.orders add column if not exists attribution jsonb;
 
+-- CD add-on: the cover photo the customer uploaded on the order form.
+alter table public.orders add column if not exists cd_photo_url text;
+
+-- Lyric review add-on. The lyrics are sent for approval before recording;
+-- status is null (not sent) | sent | approved | changes.
+alter table public.orders add column if not exists lyrics              text;
+alter table public.orders add column if not exists lyrics_status       text;
+alter table public.orders add column if not exists lyrics_feedback     text;
+alter table public.orders add column if not exists lyrics_sent_at      timestamptz;
+alter table public.orders add column if not exists lyrics_responded_at timestamptz;
+
 -- Lock the table down: only the server (using the service key, which bypasses
 -- these rules) can read or write. The public/anon key gets nothing. The Deliver
 -- tool authenticates separately with a shared password.

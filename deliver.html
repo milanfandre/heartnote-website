@@ -64,7 +64,7 @@
 
     // Mirrors lib/pricing.js. Deluxe/Experience deliver as versions to pick from.
     const VERSIONS_PER_TIER = { deluxe: 2, experience: 3 };
-    const VERSION_EXTRAS = { deluxe: ['wav'], experience: ['wav', 'multitrack', 'remastered'] };
+    const VERSION_EXTRAS = { deluxe: ['wav'], experience: ['wav'] };
 
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
     const money = (c) => c == null ? '' : '$' + (c / 100).toFixed(0);
@@ -102,6 +102,15 @@
         + row('Story', b.story) + row('Must include', b.must_include) + row('Other info', b.other_info);
     }
 
+    // Add-ons that change what has to happen before or after delivery.
+    function addonBadges(b) {
+      b = b || {};
+      const out = [];
+      if (b.lyric_addon === 'yes') out.push('<span class="badge bg-blush/60 text-claret">Lyrics to approve first</span>');
+      if (b.cd_addon === 'yes') out.push('<span class="badge bg-gold/20 text-gold">Ship a CD</span>');
+      return out.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${out.join('')}</div>` : '';
+    }
+
     function card(o) {
       const delivered = o.status === 'delivered';
       const el = document.createElement('div');
@@ -112,6 +121,7 @@
             <p class="font-display text-claret text-xl">${esc(o.recipient_name || o.occasion || o.tier || 'Order')}</p>
             <p class="text-ink-soft text-sm">${esc(o.tier || '')} · ${money(o.amount_total)} · ${esc(o.customer_email || '')}</p>
             <p class="text-ink-soft text-xs mt-0.5">${when(o.created_at)}</p>
+            ${addonBadges(o.brief)}
           </div>
           <span class="badge ${delivered ? 'bg-gold/20 text-gold' : 'bg-claret/10 text-claret'}">${delivered ? 'Delivered' : 'New'}</span>
         </div>
@@ -127,6 +137,10 @@
         el.appendChild(done);
         return el;
       }
+
+      // Lyric review add-on: the words go out for approval before anything is
+      // recorded, so this panel sits above the delivery form.
+      if ((o.brief || {}).lyric_addon === 'yes') el.appendChild(lyricPanel(o));
 
       // Deluxe/Experience deliver as 2-3 VERSIONS of one song (the customer
       // picks a favourite on the gift page). Everything else is plain songs.
@@ -196,6 +210,83 @@
       const up = await fetch(uploadUrl, { method: 'PUT', headers: { 'content-type': file.type || 'application/octet-stream', 'x-upsert': 'true' }, body: file });
       if (!up.ok) throw new Error(label + ' upload failed (' + up.status + '). Large files may exceed the storage limit.');
       return { url: publicUrl };
+    }
+
+    // ---- Lyric review: send the words, then wait for the customer ----
+    const LYRIC_STATES = {
+      approved: { badge: 'bg-gold/20 text-gold', label: 'Lyrics approved' },
+      sent:     { badge: 'bg-blush/60 text-claret', label: 'Waiting on the customer' },
+      changes:  { badge: 'bg-claret/10 text-claret', label: 'Changes requested' },
+    };
+
+    function lyricPanel(o) {
+      const state = o.lyrics_status || 'none';
+      const meta = LYRIC_STATES[state];
+      const el = document.createElement('div');
+      el.className = 'mt-4 rounded-xl border border-claret/12 bg-blush/15 p-4';
+
+      const feedback = state === 'changes' && o.lyrics_feedback
+        ? `<div class="mt-2 rounded-lg bg-white/70 border border-claret/10 px-3 py-2.5 text-sm">
+             <p class="font-700 text-claret text-xs uppercase tracking-[.1em] mb-1">What they want changed</p>
+             <p class="whitespace-pre-wrap text-ink/85">${esc(o.lyrics_feedback)}</p>
+           </div>` : '';
+
+      // Approved lyrics are final: show them, and stop offering to resend.
+      if (state === 'approved') {
+        el.innerHTML = `
+          <div class="flex items-center justify-between gap-3">
+            <p class="font-700 text-claret">Lyric review</p>
+            <span class="badge ${meta.badge}">${meta.label}</span>
+          </div>
+          <p class="text-sm text-ink-soft mt-1">Approved by the customer. You're clear to record.</p>
+          <details class="mt-2"><summary class="text-sm text-claret font-600 cursor-pointer">Read the approved lyrics</summary>
+            <p class="whitespace-pre-wrap text-sm text-ink/85 mt-2">${esc(o.lyrics || '')}</p></details>`;
+        return el;
+      }
+
+      el.innerHTML = `
+        <div class="flex items-center justify-between gap-3">
+          <p class="font-700 text-claret">Lyric review <span class="font-400 text-ink-soft text-sm">(this order paid for it)</span></p>
+          ${meta ? `<span class="badge ${meta.badge}">${meta.label}</span>` : ''}
+        </div>
+        <p class="text-sm text-ink-soft mt-1">
+          ${state === 'none'
+            ? 'Paste the lyrics and send them. Nothing gets recorded until the customer approves.'
+            : state === 'changes'
+              ? 'They asked for changes. Edit below and send the revised lyrics.'
+              : 'Sent. They can approve or ask for changes; you will get an email either way.'}
+        </p>
+        ${feedback}
+        <textarea class="field l-text mt-2.5" style="min-height:170px" placeholder="Verse 1&#10;...">${esc(o.lyrics || '')}</textarea>
+        <div class="flex items-center gap-3 mt-2">
+          <button class="btn l-send" type="button">${state === 'none' ? 'Send lyrics for approval' : 'Send revised lyrics'}</button>
+          <span class="l-status text-sm text-ink-soft"></span>
+        </div>`;
+
+      const ta = el.querySelector('.l-text');
+      const btn = el.querySelector('.l-send');
+      const status = el.querySelector('.l-status');
+      btn.addEventListener('click', async () => {
+        const lyrics = ta.value.trim();
+        if (lyrics.length < 20) { status.textContent = 'Paste the lyrics first.'; return; }
+        btn.disabled = true; status.textContent = 'Sending…';
+        try {
+          const r = await fetch('/api/send-lyrics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+            body: JSON.stringify({ orderId: o.id, lyrics }),
+          });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.error || 'Could not send the lyrics.');
+          status.textContent = j.emailed ? 'Sent to the customer.' : 'Saved, but the email did not go out: ' + (j.emailError || 'email is not configured');
+          if (j.emailed) setTimeout(load, 900);
+        } catch (e) {
+          status.textContent = e.message;
+        } finally {
+          btn.disabled = false;
+        }
+      });
+      return el;
     }
 
     // ---- Deluxe / Experience: versions the customer picks from ----
