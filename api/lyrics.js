@@ -126,24 +126,24 @@ export default async function handler(req, res) {
     ? `<div class="card">
         <div class="head"><p class="eyebrow">Approved</p><h1>These words are final</h1></div>
         <div class="body">
-          <p class="muted" style="margin:0 0 1.2rem">Thank you — we're recording ${name}'s song now. You'll get an email as soon as it's ready.</p>
+          <p class="muted" style="margin:0 0 1.2rem">Thank you. We're recording ${name}'s song now. You'll get an email as soon as it's ready.</p>
           <div class="lyrics">${esc(order.lyrics)}</div>
         </div>
       </div>`
     : `<div class="card">
         <div class="head"><p class="eyebrow">Before we record</p><h1>The words to ${name}'s song</h1></div>
         <div class="body">
-          <p class="muted" style="margin:0 0 1.4rem">Read them over. If anything isn't right — a name, a date, a line that doesn't sound like them — tell us and we'll rewrite it. Nothing is recorded until you're happy.</p>
+          <p class="muted" style="margin:0 0 1.4rem">Read them over. If a name, a date, or a line doesn't sound like them, tell us and we'll rewrite it. Nothing is recorded until you're happy.</p>
           <div class="lyrics">${esc(order.lyrics)}</div>
 
           <div id="choice" style="margin-top:1.8rem;display:grid;gap:.75rem">
-            <button type="button" class="btn primary" id="approveBtn">These are perfect — start recording</button>
+            <button type="button" class="btn primary" id="approveBtn">These are perfect, start recording</button>
             <button type="button" class="btn ghost" id="changeBtn">I'd like some changes</button>
           </div>
 
           <div id="changeForm" class="hidden" style="margin-top:1.5rem">
             <label for="feedback" style="font-weight:700;display:block;margin-bottom:.5rem">What would you like changed?</label>
-            <p class="muted" style="margin:0 0 .7rem;font-size:.95rem">Be as specific as you like — quote the line and tell us what it should say.</p>
+            <p class="muted" style="margin:0 0 .7rem;font-size:.95rem">Be as specific as you like. Quote the line and tell us what it should say.</p>
             <textarea id="feedback" maxlength="4000" placeholder="Verse 2 says 'thirty years' but it should be forty. And could the chorus mention her garden?"></textarea>
             <div style="display:grid;gap:.6rem;margin-top:.9rem">
               <button type="button" class="btn primary" id="sendChanges">Send these changes</button>

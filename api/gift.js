@@ -151,7 +151,7 @@ function chooseScreen({ recipient, sender, versions, tier, orderId, justPaid }) 
 // rather than poured into one "For their {occasion}" template, which produced
 // "For their christmas" (lowercasing a proper noun) and "For their just
 // because" (not a sentence). Free text from the "Other" box is used as the
-// customer wrote it — we don't force grammar onto words we didn't choose.
+// customer wrote it. We don't force grammar onto words we didn't choose.
 const OCCASION_LABELS = {
   'birthday': 'For their birthday',
   'proposal': 'For the proposal',
@@ -382,7 +382,7 @@ export default async function handler(req, res) {
   const recipient = brief.recipient_name || 'someone special';
   const sender = brief.sender_name || '';
   // Only ever what the customer told us. The Wedding Package doesn't ask for an
-  // occasion because the package is the occasion — and choosing that package is
+  // occasion because the package is the occasion, and choosing that package is
   // itself the customer's statement. Everything else comes from their dropdown,
   // so a birthday song ordered from a wedding ad says birthday. If we don't have
   // it, we say nothing rather than guess.
@@ -405,7 +405,7 @@ export default async function handler(req, res) {
 
   // Single/Wedding: straight to the songs.
   // Titles like "Song 1" / "Your song" are placeholders the fulfilment step
-  // fills in when no name was given — never show them as if they were the
+  // fills in when no name was given. Never show them as if they were the
   // song's name. An unnamed song simply has no heading; downloads fall back to
   // a name built from the recipient, which is specific to this order.
   const isPlaceholder = (t) => /^(song\s*\d+|your song|untitled)$/i.test(String(t || '').trim());
