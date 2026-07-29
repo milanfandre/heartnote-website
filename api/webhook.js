@@ -264,6 +264,11 @@ export default async function handler(req, res) {
       currency: session.currency,
       customer_email: session.customer_details?.email || session.metadata?.delivery_email,
       customer_name: session.customer_details?.name || '',
+      // Present only on CD orders. Newer API versions moved this under
+      // collected_information, so read both.
+      shipping_address: session.collected_information?.shipping_details
+        || session.shipping_details
+        || null,
       paid_at: event.created,
     };
 

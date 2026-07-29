@@ -13,6 +13,9 @@ const TIERS = {
 };
 
 const VOICE_ADDON_CENTS = 1000; // $10
+
+// Where we will post a CD. Add countries here as the shipping side allows.
+const SHIP_TO = ['US', 'CA', 'GB', 'IE', 'AU', 'NZ'];
 const LYRIC_ADDON_CENTS = 2000; // $20
 const CD_ADDON_CENTS = 3000;    // $30
 
@@ -111,9 +114,16 @@ export default async function handler(req, res) {
     for (const k of ATTR_KEYS) if (rawAttr[k]) attr[k] = clip(String(rawAttr[k]), 200);
     if (Object.keys(attr).length) putChunked(metadata, 'attr', JSON.stringify(attr), 2000);
 
+    // A CD has to be posted, so Stripe collects and validates the address at
+    // payment. Digital-only orders are never asked for one.
+    const shipping = cdOn
+      ? { shipping_address_collection: { allowed_countries: SHIP_TO } }
+      : {};
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
+      ...shipping,
       customer_email: b.email,
       metadata,
       payment_intent_data: { metadata },
