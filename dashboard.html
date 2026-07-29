@@ -194,7 +194,8 @@
       var kpis = [
         { label: 'Visits', v: fInt(t.visits), sub: fInt(t.pageviews) + ' pageviews' },
         { label: 'CTA clicks', v: fInt(t.cta_clicks), sub: fPct(t.cta_rate) + ' of visits' },
-        { label: 'Checkout intent', v: fInt(t.add_to_cart), sub: fPct(t.intent_rate) + ' of clicks' },
+        { label: 'Reached the form', v: fInt(t.reached_form), sub: fPct(t.reach_rate) + ' of clicks' },
+        { label: 'Checkout intent', v: fInt(t.add_to_cart), sub: fPct(t.intent_rate) + ' of form visits' },
         { label: 'Purchases', v: fInt(t.purchases), sub: fPct(t.purchase_rate) + ' of intent' },
         { label: 'Revenue', v: fMoney(t.revenue_cents), sub: fPct(t.visit_to_purchase) + ' visit→sale' },
         { label: 'Avg order', v: t.purchases ? fMoney(Math.round(t.revenue_cents / t.purchases)) : '—', sub: 'per paid order' },
@@ -218,6 +219,7 @@
       var steps = [
         { label: 'Visits', v: t.visits, rate: null },
         { label: 'Clicked a CTA', v: t.cta_clicks, rate: t.cta_rate },
+        { label: 'Reached the form', v: t.reached_form, rate: t.reach_rate },
         { label: 'Pressed purchase', v: t.add_to_cart, rate: t.intent_rate },
         { label: 'Paid', v: t.purchases, rate: t.purchase_rate },
       ];

@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     const sum = (rows, type) => rows.filter((r) => r.type === type).reduce((n, r) => n + Number(r.count), 0);
     const pageviews = sum(eventDaily, 'pageview');
     const ctaClicks = sum(eventDaily, 'cta_click');
+    const reachedForm = sum(eventDaily, 'reached_form');
     const addToCart = sum(eventDaily, 'add_to_cart');
     const visits = visitsDaily.reduce((n, r) => n + Number(r.sessions), 0);
 
@@ -47,7 +48,7 @@ export default async function handler(req, res) {
     // ── By-angle funnel (which landing page turns traffic into intent) ──────
     const byAngle = {};
     for (const r of eventDaily) {
-      const a = (byAngle[r.angle] ||= { angle: r.angle, pageview: 0, cta_click: 0, add_to_cart: 0 });
+      const a = (byAngle[r.angle] ||= { angle: r.angle, pageview: 0, cta_click: 0, reached_form: 0, add_to_cart: 0 });
       a[r.type] = (a[r.type] || 0) + Number(r.count);
     }
     const angles = Object.values(byAngle).sort((x, y) => y.pageview - x.pageview);
@@ -78,13 +79,14 @@ export default async function handler(req, res) {
     const byDay = {};
     for (let i = 0; i < days; i++) {
       const d = dayStr(new Date(start.getTime() + i * 864e5));
-      byDay[d] = { day: d, visits: 0, pageviews: 0, cta_click: 0, add_to_cart: 0, purchases: 0, revenue_cents: 0 };
+      byDay[d] = { day: d, visits: 0, pageviews: 0, cta_click: 0, reached_form: 0, add_to_cart: 0, purchases: 0, revenue_cents: 0 };
     }
     for (const r of visitsDaily) if (byDay[r.day]) byDay[r.day].visits = Number(r.sessions);
     for (const r of eventDaily) {
       if (!byDay[r.day]) continue;
       if (r.type === 'pageview') byDay[r.day].pageviews += Number(r.count);
       if (r.type === 'cta_click') byDay[r.day].cta_click += Number(r.count);
+      if (r.type === 'reached_form') byDay[r.day].reached_form += Number(r.count);
       if (r.type === 'add_to_cart') byDay[r.day].add_to_cart += Number(r.count);
     }
     for (const o of orders) {
@@ -99,11 +101,12 @@ export default async function handler(req, res) {
     return res.status(200).json({
       range: { days, start: startDay },
       totals: {
-        visits, pageviews, cta_clicks: ctaClicks, add_to_cart: addToCart,
+        visits, pageviews, cta_clicks: ctaClicks, reached_form: reachedForm, add_to_cart: addToCart,
         purchases, revenue_cents: revenueCents,
         // Conversion rates across the funnel, guarded against divide-by-zero.
         cta_rate: visits ? ctaClicks / visits : 0,
-        intent_rate: ctaClicks ? addToCart / ctaClicks : 0,
+        reach_rate: ctaClicks ? reachedForm / ctaClicks : 0,
+        intent_rate: reachedForm ? addToCart / reachedForm : 0,
         purchase_rate: addToCart ? purchases / addToCart : 0,
         visit_to_purchase: visits ? purchases / visits : 0,
       },

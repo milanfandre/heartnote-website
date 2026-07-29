@@ -16,7 +16,9 @@ create table if not exists public.events (
   id            bigint generated always as identity primary key,
   created_at    timestamptz not null default now(),
 
-  -- what happened: 'pageview' | 'cta_click' | 'add_to_cart' | 'purchase'
+  -- what happened: 'pageview' | 'cta_click' | 'reached_form' | 'add_to_cart' | 'purchase'
+  -- 'reached_form' is landing on the order form, reported to Meta as AddToCart.
+  -- 'add_to_cart' predates it and means the pay button was pressed.
   type          text not null,
 
   -- where / which campaign, so we can slice the funnel by angle and source

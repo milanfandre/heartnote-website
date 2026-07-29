@@ -414,6 +414,44 @@
     const counters = [['story','storyCount'],['details','detailsCount'],['other','otherCount']];
     function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
 
+    // ---- Add to Cart: reaching this form ----
+    // The CTA on the home and landing pages sends people here, so arriving is
+    // the closest thing this checkout has to adding something to a basket.
+    // Fires once per session so a reload or a trip back from Stripe does not
+    // count twice. The same event id goes to the Pixel and to the Conversions
+    // API, which is how Meta collapses the two into one event.
+    (function trackReachedForm() {
+      var KEY = 'hn_atc_sent';
+      try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (e) { /* private mode: fire anyway */ }
+
+      var eid = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+
+      var key = currentTier();
+      var t = TIERS[key];
+      var cents = t ? Math.round(t.price * 100) : null;
+
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'AddToCart', {
+          value: t ? t.price : undefined,
+          currency: 'USD',
+          content_name: t ? t.name : key,
+        }, { eventID: eid });
+      }
+      if (typeof hnTrack === 'function') {
+        var fb = (window.HN_META && HN_META.data()) || {};
+        hnTrack('reached_form', {
+          tier: key,
+          value_cents: cents,
+          label: 'Reached the order form',
+          fbp: fb.fbp,
+          fbc: fb.fbc,
+          meta: { eid: eid },
+        });
+      }
+    })();
+
     // Voice picker with audio previews
     const VOICES = [
       { name:'Brett',   desc:'Male · country',     src:'audio/voices/voice-brett.mp3' },
@@ -552,7 +590,8 @@
         if (typeof fbq !== 'undefined') {
           fbq('track', 'InitiateCheckout', { value: t ? t.price : undefined, currency: 'USD' });
         }
-        // First-party: checkout intent = pressing the purchase button (our "add to cart").
+        // Pressing the purchase button. Reaching the form is tracked separately
+        // as reached_form / AddToCart; this is the rung below Purchase.
         if (typeof hnTrack === 'function') {
           hnTrack('add_to_cart', { tier: currentTier(), value_cents: t ? Math.round(t.price * 100) : null, label: 'Continue to secure payment' });
         }
