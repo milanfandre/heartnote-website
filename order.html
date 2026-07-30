@@ -283,7 +283,7 @@
             <div id="sumLyricRow" class="hidden flex justify-between text-ink/80"><span>Lyric review</span><span id="sumLyricAmt">+$20</span></div>
             <div id="sumCdRow" class="hidden flex justify-between text-ink/80"><span>Keepsake CD</span><span id="sumCdAmt">+$30</span></div>
             <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$69</span></div>
-            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="line-through">$99</span> <span class="text-claret font-700">You save $30</span></p>
+            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="line-through">$99</span> <span class="text-claret font-700">You save <span id="sumSave">$30</span></span></p>
           </div>
 
           <button type="submit" id="submitBtn" class="btn-primary w-full mt-6 flex items-center justify-center gap-2">
@@ -368,6 +368,7 @@
       $('sumTotal').textContent = money(total);
       // Strike-through carries whatever saving the chosen package has.
       $('sumCompare').textContent = money(total + (t.compare - t.price));
+      $('sumSave').textContent = money(t.compare - t.price);
 
       refreshUpsell(key);
     }
