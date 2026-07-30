@@ -39,6 +39,7 @@ export default async function handler(req, res) {
         quantity: 1,
       }],
       ...(order.customer_email ? { customer_email: order.customer_email } : {}),
+      allow_promotion_codes: true,   // same promo codes as the main checkout
       // type marks this as an upsell so the webhook doesn't treat it as a new order.
       metadata: { type: 'unlock_all', order_id: String(orderId) },
       payment_intent_data: { metadata: { type: 'unlock_all', order_id: String(orderId) } },
