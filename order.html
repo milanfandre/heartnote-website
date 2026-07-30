@@ -581,16 +581,18 @@
         label.textContent = 'Taking you to secure payment…';
       }
 
-      // Meta: attach browser identifiers, and fire InitiateCheckout.
+      // Meta: attach browser identifiers. InitiateCheckout is not fired yet,
+      // because pressing the button is not the same as reaching Stripe. It goes
+      // out below, once the session actually exists.
       try {
         const fb = (window.HN_META && window.HN_META.data()) || {};
         data.fbp = fb.fbp; data.fbc = fb.fbc;
         // Which ad/campaign brought them here, remembered from the landing hit.
         if (typeof hnAttribution === 'function') data.attr = hnAttribution();
+        // Shared with the server so its Conversions API copy is deduped.
+        data.checkoutEventId = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID() : 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
         const t = TIERS[currentTier()];
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'InitiateCheckout', { value: t ? t.price : undefined, currency: 'USD' });
-        }
         // Pressing the purchase button. Reaching the form is tracked separately
         // as reached_form / AddToCart; this is the rung below Purchase.
         if (typeof hnTrack === 'function') {
@@ -604,6 +606,18 @@
         });
         const out = await r.json();
         if (!r.ok || !out.url) throw new Error(out.error || 'Could not start checkout.');
+
+        // Stripe has a session, so the customer really is reaching payment.
+        // Same event id as the server's copy, so Meta counts one event.
+        try {
+          if (typeof fbq !== 'undefined') {
+            const t = TIERS[currentTier()];
+            fbq('track', 'InitiateCheckout',
+              { value: t ? totalFor(currentTier()) : undefined, currency: 'USD', content_name: currentTier() },
+              { eventID: out.checkoutEventId || data.checkoutEventId });
+          }
+        } catch (e) { /* tracking is best-effort */ }
+
         window.location.href = out.url;
       } catch (err) {
         btn.disabled = false; label.textContent = 'Continue to secure payment';

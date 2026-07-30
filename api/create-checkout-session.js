@@ -2,6 +2,8 @@
 // The full song brief is attached as metadata so the webhook can hand it
 // to the AI workflow after payment succeeds.
 import Stripe from 'stripe';
+import { sendMetaEvent, metaReady } from '../lib/meta.js';
+import { orderTotalCents } from '../lib/pricing.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -93,6 +95,9 @@ export default async function handler(req, res) {
     // fbp/fbc/ip/ua improve match quality. Packed into one metadata value to
     // stay well under Stripe's 50-key limit.
     const metaEventId = (globalThis.crypto?.randomUUID?.() || `evt_${Date.now()}`);
+    // Separate id: InitiateCheckout and Purchase are different events and must
+    // never share one, or Meta will dedupe them against each other.
+    const checkoutEventId = clip(b.checkoutEventId, 80) || (globalThis.crypto?.randomUUID?.() || `ic_${Date.now()}`);
     const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
     putChunked(metadata, 'meta', JSON.stringify({
       eid: metaEventId,
@@ -132,7 +137,27 @@ export default async function handler(req, res) {
       cancel_url: `${origin}/order.html?tier=${tierKey}&canceled=1`,
     });
 
-    return res.status(200).json({ url: session.url });
+    // InitiateCheckout, sent server-side the moment Stripe actually has a
+    // session. Firing here rather than on the button press means a failed
+    // session never counts, and it survives ad blockers and iOS. The browser
+    // sends the same event id, which is how Meta knows it is one event.
+    if (metaReady()) {
+      await sendMetaEvent({
+        eventName: 'InitiateCheckout',
+        eventId: checkoutEventId,
+        email: b.email,
+        fbp: clip(b.fbp, 120),
+        fbc: clip(b.fbc, 200),
+        ip: clientIp,
+        userAgent: clip(req.headers['user-agent'], 300),
+        value: orderTotalCents(tierKey, { voice: voiceOn, lyrics: lyricOn, cd: cdOn }),
+        currency: 'usd',
+        eventSourceUrl: `${origin}/order.html`,
+        customData: { content_name: tierKey },
+      });
+    }
+
+    return res.status(200).json({ url: session.url, checkoutEventId });
   } catch (err) {
     console.error('create-checkout-session error:', err);
     return res.status(500).json({ error: err.message || 'Something went wrong.' });
