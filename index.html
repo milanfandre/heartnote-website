@@ -25,6 +25,7 @@
   <meta name="twitter:image" content="https://heartnote.music/brand_assets/og-image.jpg" />
 
   <script src="/pixel.js"></script>
+  <script src="/promo-bar.js" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -249,7 +250,19 @@
 <body>
 
   <!-- ============ NAV ============ -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-ivory/85 border-b border-claret/10">
+  <!-- ============ PROMO BANNER ============ -->
+  <div class="sticky top-0 z-50">
+    <div class="bg-claret-deep text-ivory relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-70" style="background-image: radial-gradient(60% 180% at 15% 50%, rgba(198,151,63,.28) 0%, rgba(198,151,63,0) 70%), radial-gradient(50% 160% at 88% 50%, rgba(233,203,192,.16) 0%, rgba(233,203,192,0) 72%);"></div>
+      <p class="relative max-w-6xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0 text-center leading-snug">
+        <span class="text-[.88rem] sm:text-[.95rem] font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</span>
+        <span class="inline-flex items-center gap-1.5 text-[.8rem] sm:text-[.86rem] text-ivory/80">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Ends in <span data-promo-countdown class="font-700 text-ivory tabular-nums tracking-wide">--:--:--</span>
+        </span>
+      </p>
+    </div>
+    <header class="backdrop-blur-md bg-ivory/85 border-b border-claret/10">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
       <a href="#top" class="flex items-center gap-3 shrink-0" aria-label="Heart Note home">
         <!-- Logo (client-provided mark, recolored claret for light backgrounds) -->
@@ -268,6 +281,7 @@
       </div>
     </div>
   </header>
+  </div>
 
   <span id="top"></span>
 
