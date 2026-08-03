@@ -16,13 +16,9 @@ const TIERS = {
 
 const VOICE_ADDON_CENTS = 1000; // $10
 
-// Where we will post a CD. Add countries here as the shipping side allows.
-const SHIP_TO = ['US', 'CA', 'GB', 'IE', 'AU', 'NZ'];
-const LYRIC_ADDON_CENTS = 2000; // $20
-const CD_ADDON_CENTS = 3000;    // $30
 
 // Add-ons already priced into a tier, so they are never charged again.
-const INCLUDED_ADDONS = { single: [], deluxe: [], experience: ['voice', 'lyrics'] };
+const INCLUDED_ADDONS = { single: [], deluxe: [], experience: ['voice'] };
 const includesAddon = (tier, addon) => (INCLUDED_ADDONS[tier] || []).includes(addon);
 
 // Short metadata value: Stripe caps each value at 500 chars.
@@ -51,11 +47,8 @@ export default async function handler(req, res) {
     const price = TIERS[tierKey];
     if (!price) throw new Error(`Missing Stripe price for tier "${tierKey}". Set PRICE_${tierKey.toUpperCase()} in the environment.`);
 
-    if (!b.email) return res.status(400).json({ error: 'A delivery email is required.' });
 
     const voiceOn = b.voiceAddon === 'yes' || includesAddon(tierKey, 'voice');
-    const lyricOn = b.lyricAddon === 'yes' || includesAddon(tierKey, 'lyrics');
-    const cdOn = b.cdAddon === 'yes';
 
     // Build the brief metadata. Stripe caps each value at 500 chars and 50 keys
     // per object, so the long free-text fields are chunked.
@@ -64,10 +57,6 @@ export default async function handler(req, res) {
       sender_name: clip(b.sender, 120),
       voice_addon: voiceOn ? 'yes' : 'no',      // applied once per order, not per song
       voice: voiceOn ? clip(b.voice, 80) : '',
-      lyric_addon: lyricOn ? 'yes' : 'no',      // lyrics emailed for approval before recording
-      cd_addon: cdOn ? 'yes' : 'no',            // pressed CD, ships separately
-      cd_photo_url: cdOn ? clip(b.cdPhotoUrl, 400) : '',  // cover photo, uploaded before checkout
-      delivery_email: clip(b.email, 200),
       occasion: clip(b.occasion, 120),
       occasion_other: clip(b.occasionOther, 120),
       recipient_name: clip(b.recipient, 120),
@@ -85,8 +74,6 @@ export default async function handler(req, res) {
       quantity: 1,
     });
     if (voiceOn && !includesAddon(tierKey, 'voice')) addon(VOICE_ADDON_CENTS, 'Choose your voice (add-on)');
-    if (lyricOn && !includesAddon(tierKey, 'lyrics')) addon(LYRIC_ADDON_CENTS, 'Lyric review before recording (add-on)');
-    if (cdOn) addon(CD_ADDON_CENTS, 'Keepsake CD with your photo (add-on)');
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
 
@@ -121,15 +108,10 @@ export default async function handler(req, res) {
 
     // A CD has to be posted, so Stripe collects and validates the address at
     // payment. Digital-only orders are never asked for one.
-    const shipping = cdOn
-      ? { shipping_address_collection: { allowed_countries: SHIP_TO } }
-      : {};
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
-      ...shipping,
-      customer_email: b.email,
       metadata,
       payment_intent_data: { metadata },
       allow_promotion_codes: true,
@@ -145,12 +127,11 @@ export default async function handler(req, res) {
       await sendMetaEvent({
         eventName: 'InitiateCheckout',
         eventId: checkoutEventId,
-        email: b.email,
         fbp: clip(b.fbp, 120),
         fbc: clip(b.fbc, 200),
         ip: clientIp,
         userAgent: clip(req.headers['user-agent'], 300),
-        value: orderTotalCents(tierKey, { voice: voiceOn, lyrics: lyricOn, cd: cdOn }),
+        value: orderTotalCents(tierKey, { voice: voiceOn }),
         currency: 'usd',
         eventSourceUrl: `${origin}/order.html`,
         customData: { content_name: tierKey },

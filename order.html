@@ -105,7 +105,7 @@
               <div class="tier"><span class="font-700 text-claret block leading-tight">Deluxe</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$69</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$99</span></span><p class="text-sm text-ink-soft mt-1">2 versions &middot; Premium Audio Quality</p></div>
             </label>
             <label><input type="radio" name="tier" value="experience" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$99</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$149</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; voice &amp; lyrics included</p></div>
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$89</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$139</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; voice included</p></div>
             </label>
           </div>
           <div id="tierRecap" class="lg:hidden mt-3 rounded-xl bg-blush/20 border border-claret/10 px-4 py-3"></div>
@@ -133,56 +133,16 @@
               <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" />
             </div>
             <div>
-              <label for="relationship">Your relationship to them</label>
-              <input type="text" id="relationship" name="relationship" class="field" placeholder="e.g. their granddaughter" />
-            </div>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-5">
-            <div>
               <label for="style">Style of music</label>
               <select id="style" name="style" class="field">
                 <option value="">No preference</option>
-                <optgroup label="Most popular">
-                  <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
-                  <option>Singer-songwriter</option><option>Piano ballad</option><option>Soul / R&amp;B</option>
-                </optgroup>
-                <optgroup label="Warm &amp; traditional">
-                  <option>Classical</option><option>Hymn</option><option>Gospel</option><option>Worship</option>
-                  <option>Jazz</option><option>Blues</option><option>Bluegrass</option><option>Americana</option>
-                  <option>Swing / Big band</option>
-                </optgroup>
-                <optgroup label="Upbeat">
-                  <option>Rock</option><option>Indie / Alternative</option><option>Funk</option>
-                  <option>Disco</option><option>Reggae</option><option>Latin</option>
-                  <option>Hip hop / Rap</option><option>Dance / Electronic</option>
-                </optgroup>
-                <optgroup label="Something different">
-                  <option>Children's</option><option>Lullaby</option><option>Musical theatre</option>
-                  <option>Barbershop</option><option>Cinematic</option>
-                </optgroup>
-              </select>
-            </div>
-            <div>
-              <label for="mood">Mood</label>
-              <select id="mood" name="mood" class="field">
-                <option value="">No preference</option>
-                <optgroup label="Warm">
-                  <option>Joyful</option><option>Tender</option><option>Romantic</option>
-                  <option>Heartfelt</option><option>Grateful</option><option>Comforting</option>
-                  <option>Intimate</option><option>Peaceful</option>
-                </optgroup>
-                <optgroup label="Lively">
-                  <option>Upbeat</option><option>Celebratory</option><option>Playful</option>
-                  <option>Funny / lighthearted</option><option>Triumphant</option><option>Proud</option>
-                </optgroup>
-                <optgroup label="Thoughtful">
-                  <option>Reflective</option><option>Nostalgic</option><option>Wistful</option>
-                  <option>Bittersweet</option><option>Hopeful</option><option>Epic / cinematic</option>
-                </optgroup>
+                <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
+                <option>Singer-songwriter</option><option>Piano ballad</option><option>Soul / R&amp;B</option>
+                <option>Rock</option><option>Indie / Alternative</option><option>Hip-hop / Rap</option>
               </select>
             </div>
           </div>
+
 
           <div>
             <label for="story" class="req">Tell us their story</label>
@@ -198,12 +158,6 @@
             <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
           </div>
 
-          <div>
-            <label for="other">Other information that might help <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-            <p class="text-ink-soft text-sm -mt-1 mb-2">Anything else at all. Favorite songs or artists, the vibe you're after, who'll be in the room when it plays. More detail always helps.</p>
-            <textarea id="other" name="other" maxlength="5000" class="field" style="min-height:110px" placeholder="She loves Patsy Cline and old gospel. We'll play it at her 80th with the whole family there…"></textarea>
-            <p class="text-right text-xs text-ink-soft mt-1"><span id="otherCount">0</span>/5000</p>
-          </div>
         </div>
 
         <!-- Shared: your name -->
@@ -227,59 +181,6 @@
           </div>
         </div>
 
-        <!-- Lyric review add-on -->
-        <div id="lyricAddonSection">
-          <label>Lyric review before we record <span class="font-400 text-ink-soft text-sm">(optional, +$20)</span></label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">We email you the finished lyrics first. Approve them, or send back changes and we'll rewrite until they're right.</p>
-          <div class="grid grid-cols-2 gap-3">
-            <label><input type="radio" name="lyricAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
-            <label><input type="radio" name="lyricAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, review the lyrics (+$20)</div></label>
-          </div>
-          <p id="lyricIncluded" class="hidden mt-2 text-sm text-claret font-600">Already included in your Experience Package.</p>
-          <div class="mt-3 rounded-xl bg-blush/25 border border-claret/10 px-4 py-3 text-sm text-ink/80 flex gap-3">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-            <span><strong class="font-700 text-claret">Why this matters:</strong> once a song is recorded, the words are locked in. This is your chance to fix a name, a date, or a detail that isn't quite right, before it's sung. Most people who add it change at least one line.
-              <span class="block mt-1 text-ink-soft">Your first revision is included. Any further revisions are $10 each.</span></span>
-          </div>
-        </div>
-
-        <!-- Delivery method / keepsake CD -->
-        <div id="deliverySection">
-          <label>How would you like it delivered?</label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Every order includes the digital download. You can add a pressed CD as well.</p>
-          <div class="grid gap-3">
-            <label><input type="radio" name="cdAddon" value="no" class="sr-only" checked /><div class="opt"><span class="font-700">Digital download only</span><span class="block text-sm text-ink-soft mt-0.5">Arrives within 24 hours. Included.</span></div></label>
-            <label><input type="radio" name="cdAddon" value="yes" class="sr-only" /><div class="opt"><span class="font-700">Digital download + keepsake CD <span class="text-claret">(+$30)</span></span><span class="block text-sm text-ink-soft mt-0.5">Pressed like a record, with your photo on the cover.</span></div></label>
-          </div>
-          <div id="cdPhotoWrap" class="hidden mt-3">
-            <label for="cdPhoto">Photo for the CD cover <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-            <p class="text-ink-soft text-sm -mt-1 mb-2">A favorite photo of the two of you, or of them. We'll print it on the cover.</p>
-            <input type="file" id="cdPhoto" accept="image/jpeg,image/png,image/heic,image/webp,.jpg,.jpeg,.png,.heic,.webp" class="field" />
-            <p id="cdPhotoNote" class="mt-2 text-sm text-ink-soft">JPG, PNG, HEIC or WEBP, up to 15MB.</p>
-          </div>
-          <div class="mt-3 rounded-xl bg-blush/25 border border-claret/10 px-4 py-3 text-sm text-ink/80 flex gap-3">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.9" class="shrink-0 mt-0.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.6"/></svg>
-            <span><strong class="font-700 text-claret">What arrives:</strong> a personalized CD with your photo printed onto the disc itself, presented in a printed cover with the full lyrics inside. We post it to you in a protective sleeve.
-              <span class="block mt-1 text-ink-soft">CDs ship in about a week. Your song still arrives digitally within 24 hours, so nothing waits on the post.</span></span>
-          </div>
-        </div>
-
-        <!-- Experience upsell: only when voice + lyric review are both on -->
-        <div id="expUpsell" class="hidden rounded-xl border-2 border-gold bg-gold/10 px-5 py-4">
-          <p class="font-700 text-claret" id="expUpsellHeading">Save $10 with the Experience Package</p>
-          <p class="text-sm text-ink/80 mt-1.5" id="expUpsellBody"></p>
-          <button type="button" id="expUpsellBtn" class="mt-3 inline-flex items-center gap-2 bg-claret text-ivory font-700 rounded-full px-5 py-2.5 text-sm transition-transform hover:scale-[1.03] active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
-            Switch to the Experience Package
-          </button>
-        </div>
-
-        <div>
-          <label for="email" class="req">Delivery email</label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Where we'll send the finished song.</p>
-          <input type="email" id="email" name="email" class="field" placeholder="you@email.com" required />
-        </div>
-      </div>
-
       <!-- Right: summary -->
       <aside class="lg:sticky lg:top-28">
         <div class="bg-white rounded-2xl border border-claret/12 shadow-[0_18px_40px_-20px_rgba(110,20,35,.3)] p-6">
@@ -293,8 +194,6 @@
           <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
             <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
             <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span id="sumVoiceLabel">Choose your voice</span><span id="sumVoiceAmt">+$10</span></div>
-            <div id="sumLyricRow" class="hidden flex justify-between text-ink/80"><span>Lyric review</span><span id="sumLyricAmt">+$20</span></div>
-            <div id="sumCdRow" class="hidden flex justify-between text-ink/80"><span>Keepsake CD</span><span id="sumCdAmt">+$30</span></div>
             <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$69</span></div>
             <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="text-[1.05rem] font-600 text-ink-soft/85 line-through decoration-claret/60 decoration-2">$99</span> <span class="text-claret font-700">You save <span id="sumSave">$30</span></span></p>
           </div>
@@ -318,11 +217,11 @@
   <script>
     const STORAGE_KEY = 'heartnote_order_v1';
     const VOICE_ADDON = 10;
-    const ADDONS = { voice: 10, lyric: 20, cd: 30 };
+    const ADDONS = { voice: 10 };
     const TIERS = {
       single:     { name: 'Single',             price: 59, compare: 89,  versions: 1, included: [],                includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
-      deluxe:     { name: 'Deluxe',             price: 69, compare: 99,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
-      experience: { name: 'Experience Package', price: 99, compare: 149, versions: 3, included: ['voice','lyric'], includes: ['Three versions to choose from', 'Premium sound quality files for easy sharing', 'Choose your voice, worth $10 on its own', 'Lyric review before recording, worth $20 on its own', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
+      deluxe:     { name: 'Deluxe',             price: 69, compare: 99,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
+      experience: { name: 'Experience Package', price: 89, compare: 139, versions: 3, included: ['voice'], includes: ['Three versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Choose your voice, worth $10 on its own', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
     };
     const params = new URLSearchParams(location.search);
     const form = document.getElementById('orderForm');
@@ -338,21 +237,11 @@
       return r && r.value === 'yes';
     }
 
-    function lyricOn() {
-      const r = form.querySelector('input[name=lyricAddon]:checked');
-      return r && r.value === 'yes';
-    }
-    function cdOn() {
-      const r = form.querySelector('input[name=cdAddon]:checked');
-      return r && r.value === 'yes';
-    }
     // An add-on baked into the tier price is never charged again.
     const isIncluded = (key, addon) => TIERS[key].included.includes(addon);
     function totalFor(key) {
       let n = TIERS[key].price;
       if (!isIncluded(key,'voice') && voiceOn()) n += ADDONS.voice;
-      if (!isIncluded(key,'lyric') && lyricOn()) n += ADDONS.lyric;
-      if (cdOn()) n += ADDONS.cd;
       return n;
     }
 
@@ -360,9 +249,7 @@
       const key = currentTier();
       const t = TIERS[key];
       const voice = (!isIncluded(key,'voice') && voiceOn()) ? ADDONS.voice : 0;
-      const lyric = (!isIncluded(key,'lyric') && lyricOn()) ? ADDONS.lyric : 0;
-      const cd    = cdOn() ? ADDONS.cd : 0;
-      const total = t.price + voice + lyric + cd;
+      const total = t.price + voice;
 
       $('sumTier').textContent = t.name;
       $('sumTierPrice').textContent = money(t.price);
@@ -374,58 +261,26 @@
 
       $('sumVoiceRow').classList.toggle('hidden', voice === 0);
       $('sumVoiceAmt').textContent = '+' + money(voice);
-      $('sumLyricRow').classList.toggle('hidden', lyric === 0);
-      $('sumLyricAmt').textContent = '+' + money(lyric);
-      $('sumCdRow').classList.toggle('hidden', cd === 0);
-      $('sumCdAmt').textContent = '+' + money(cd);
       $('sumTotal').textContent = money(total);
       // Strike-through carries whatever saving the chosen package has.
       $('sumCompare').textContent = money(total + (t.compare - t.price));
       $('sumSave').textContent = money(t.compare - t.price);
 
-      refreshUpsell(key);
-    }
-
-    // Experience bundles the voice and the lyric review, so it only wins when a
-    // customer has picked both. The CD is $30 on every tier, so it cancels out
-    // of the comparison and is deliberately left out of it.
-    function refreshUpsell(key) {
-      const box = $('expUpsell');
-      const eligible = (key === 'single' || key === 'deluxe') && voiceOn() && lyricOn();
-      box.classList.toggle('hidden', !eligible);
-      if (!eligible) return;
-      const saving = totalFor(key) - totalFor('experience');
-      const v = TIERS[key].versions;
-      const opener = "You've added the voice and the lyric review. Both are already included in the Experience Package";
-      if (saving > 0) {
-        $('expUpsellHeading').textContent = `Save $${saving} with the Experience Package`;
-        $('expUpsellBody').textContent = `${opener}, which also gives you 3 versions instead of ${v}, for $${saving} less than what you have now.`;
-      } else if (saving === 0) {
-        $('expUpsellHeading').textContent = 'The Experience Package costs the same';
-        $('expUpsellBody').textContent = `${opener} for the same total, and it gives you 3 versions to choose from instead of ${v}.`;
-      } else {
-        $('expUpsellHeading').textContent = `Three versions for $${-saving} more`;
-        $('expUpsellBody').textContent = `${opener}, which also gives you 3 versions to choose from instead of ${v}. It comes to $${-saving} more than what you have now.`;
-      }
     }
 
     function refreshConditional() {
       const key = currentTier();
       const voiceIncl = isIncluded(key, 'voice');
-      const lyricIncl = isIncluded(key, 'lyric');
       // Experience includes the voice, so its picker is always open.
       $('voicePicker').classList.toggle('hidden', !(voiceIncl || voiceOn()));
       $('occasionOtherWrap').classList.toggle('hidden', $('occasion').value !== 'Other');
       // An included add-on hides its yes/no choice and says so instead.
       $('voiceAddonSection').querySelector('.grid').classList.toggle('hidden', voiceIncl);
       $('voiceIncluded').classList.toggle('hidden', !voiceIncl);
-      $('lyricAddonSection').querySelector('.grid').classList.toggle('hidden', lyricIncl);
-      $('lyricIncluded').classList.toggle('hidden', !lyricIncl);
-      $('cdPhotoWrap').classList.toggle('hidden', !cdOn());
     }
 
     // Char counters
-    const counters = [['story','storyCount'],['details','detailsCount'],['other','otherCount']];
+    const counters = [['story','storyCount'],['details','detailsCount']];
     function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
 
     // ---- Add to Cart: reaching this form ----
@@ -538,13 +393,6 @@
     // occasion is theirs to choose; the parameter is kept only for reporting.
     if (params.get('canceled')) $('canceledNote').classList.remove('hidden');
 
-    $('expUpsellBtn').addEventListener('click', () => {
-      const r = form.querySelector('input[name=tier][value="experience"]');
-      if (r) r.checked = true;
-      refreshSummary(); refreshConditional(); save();
-      document.getElementById('tiers').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-
     refreshSummary(); refreshConditional(); refreshCounts();
 
     form.addEventListener('change', () => { refreshSummary(); refreshConditional(); save(); });
@@ -564,35 +412,9 @@
       if ((isIncluded(_k,'voice') || voiceOn()) && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose "No thanks".');
       // Included add-ons are not on the form, so state them for the server.
       if (isIncluded(_k,'voice')) data.voiceAddon = 'yes';
-      if (isIncluded(_k,'lyric')) data.lyricAddon = 'yes';
-      if (!data.email) return showErr('Please add a delivery email.');
 
       btn.disabled = true; label.textContent = 'Taking you to secure payment…';
 
-      // Upload the CD cover photo first, so its URL rides along with the order.
-      const photo = $('cdPhoto').files && $('cdPhoto').files[0];
-      if (cdOn() && photo) {
-        if (photo.size > 15 * 1024 * 1024) return showErr('That photo is larger than 15MB. Please choose a smaller one.');
-        label.textContent = 'Uploading your photo…';
-        try {
-          const ext = (photo.name.split('.').pop() || '').toLowerCase();
-          const u = await fetch('/api/upload-url', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cover: true, ext }),
-          });
-          if (!u.ok) throw new Error((await u.json()).error || 'Could not prepare the upload.');
-          const { uploadUrl, publicUrl } = await u.json();
-          const up = await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: { 'content-type': photo.type || 'application/octet-stream', 'x-upsert': 'true' },
-            body: photo,
-          });
-          if (!up.ok) throw new Error('The photo could not be uploaded. Please try a different image.');
-          data.cdPhotoUrl = publicUrl;
-        } catch (e) {
-          return showErr(e.message || 'The photo could not be uploaded.');
-        }
-        label.textContent = 'Taking you to secure payment…';
-      }
 
       // Meta: attach browser identifiers. InitiateCheckout is not fired yet,
       // because pressing the button is not the same as reaching Stripe. It goes
