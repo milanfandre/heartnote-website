@@ -42,8 +42,13 @@ export default async function handler(req, res) {
     const visits = visitsDaily.reduce((n, r) => n + Number(r.sessions), 0);
 
     // Purchases + revenue come from orders (can't be blocked by an ad-blocker).
-    const purchases = orders.length;
-    const revenueCents = orders.reduce((n, o) => n + (o.amount_total || 0), 0);
+    // A row worth $0 is a test order or a 100%-off promo redemption, not a sale,
+    // so it is excluded from the purchase count and from every rate built on it.
+    // `test_orders` is reported separately rather than silently dropped.
+    const paidOrders = orders.filter((o) => (o.amount_total || 0) > 0);
+    const purchases = paidOrders.length;
+    const testOrders = orders.length - purchases;
+    const revenueCents = paidOrders.reduce((n, o) => n + (o.amount_total || 0), 0);
 
     // ── By-angle funnel (which landing page turns traffic into intent) ──────
     const byAngle = {};
@@ -63,7 +68,7 @@ export default async function handler(req, res) {
 
     // ── Purchases + revenue by tier ────────────────────────────────────────
     const byTier = {};
-    for (const o of orders) {
+    for (const o of paidOrders) {
       const t = (byTier[o.tier || 'unknown'] ||= { tier: o.tier || 'unknown', orders: 0, revenue_cents: 0 });
       t.orders += 1; t.revenue_cents += o.amount_total || 0;
     }
@@ -89,7 +94,7 @@ export default async function handler(req, res) {
       if (r.type === 'reached_form') byDay[r.day].reached_form += Number(r.count);
       if (r.type === 'add_to_cart') byDay[r.day].add_to_cart += Number(r.count);
     }
-    for (const o of orders) {
+    for (const o of paidOrders) {
       const d = o.created_at.slice(0, 10);
       if (byDay[d]) { byDay[d].purchases += 1; byDay[d].revenue_cents += o.amount_total || 0; }
     }
@@ -102,7 +107,7 @@ export default async function handler(req, res) {
       range: { days, start: startDay },
       totals: {
         visits, pageviews, cta_clicks: ctaClicks, reached_form: reachedForm, add_to_cart: addToCart,
-        purchases, revenue_cents: revenueCents,
+        purchases, revenue_cents: revenueCents, test_orders: testOrders,
         // Conversion rates across the funnel, guarded against divide-by-zero.
         cta_rate: visits ? ctaClicks / visits : 0,
         reach_rate: ctaClicks ? reachedForm / ctaClicks : 0,

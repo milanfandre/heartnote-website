@@ -260,7 +260,7 @@
       tile('CTA clicks', fInt(t.cta_clicks), fPct(t.cta_rate) + ' of visits'),
       tile('Reached the form', fInt(t.reached_form), fPct(t.reach_rate) + ' of clicks'),
       tile('Pressed pay', fInt(t.add_to_cart), fPct(t.intent_rate) + ' of form visits'),
-      tile('Orders', fInt(t.purchases), fPct(t.visit_to_purchase) + ' visit to sale'),
+      tile('Orders', fInt(t.purchases), (t.test_orders ? t.test_orders + ' free or test excluded' : fPct(t.visit_to_purchase) + ' visit to sale')),
       tile('Revenue', fMoney(t.revenue_cents), 'from our own order records'),
     ].join('');
 
@@ -285,15 +285,19 @@
       return;
     }
 
-    // Width is square-rooted so the narrow end stays visible at these ratios.
-    // The numbers beside each band and the table view are exact.
-    var W = steps.map(function (s) { return Math.max(Math.sqrt(s.v / top) * 100, 7); });
-    var bandH = 100 / steps.length;
+    // A fixed, evenly stepped funnel. The widths are the same on every load,
+    // so the shape always reads as a funnel; the numbers beside it carry the
+    // real magnitudes. Data-driven widths collapsed the tail to slivers and
+    // made the outline lurch about between ranges.
+    var n = steps.length;
+    var TOP = 100, BOTTOM = 26;
+    var W = steps.map(function (_, i) { return TOP - (TOP - BOTTOM) * (i / (n - 1)); });
+    var bandH = 100 / n;
     var svg = '';
     steps.forEach(function (s, i) {
       var wTop = W[i];
-      var wBot = (i < steps.length - 1) ? W[i + 1] : W[i] * 0.82;
-      var y = i * bandH, y2 = y + bandH - 1.2;   // 1.2 unit gap between bands
+      var wBot = (i < n - 1) ? W[i + 1] : BOTTOM - (TOP - BOTTOM) / (n - 1) * 0.55;
+      var y = i * bandH, y2 = y + bandH - 1.1;   // 1.1 unit gap between bands
       var x1 = (100 - wTop) / 2, x2 = (100 + wTop) / 2;
       var x3 = (100 + wBot) / 2, x4 = (100 - wBot) / 2;
       svg += '<path d="M' + x1.toFixed(2) + ' ' + y.toFixed(2)
