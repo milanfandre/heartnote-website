@@ -136,7 +136,7 @@
     <section class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.7rem">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap">
         <h2 style="font-size:1.02rem;margin:0">Funnel</h2>
-        <p class="muted" style="margin:0;font-size:.79rem">Percentages are of website visitors. Step-to-step drop is shown beneath each stage.</p>
+        <p class="muted" style="margin:0;font-size:.79rem">Visitors come from our own tracking. The three conversion stages come from Meta, so they count ad-attributed people only.</p>
       </div>
       <div id="funnelWrap" style="margin-top:1.1rem;display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:1.5rem;align-items:stretch">
         <svg id="funnelSvg" viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:260px;overflow:visible" role="img" aria-label="Conversion funnel"></svg>
@@ -253,7 +253,7 @@
       ].join('');
     }
 
-    renderFunnel(t);
+    renderFunnel(t, m);
 
     $('siteKpis').innerHTML = [
       tile('Visits', fInt(t.visits), fInt(t.pageviews) + ' pageviews'),
@@ -269,18 +269,22 @@
     renderBars('buttons', (DATA.buttons || []).map(function (b) { return { label: b.label, value: b.count }; }), PAL.purple, fInt);
   }
 
-  function renderFunnel(t) {
+  function renderFunnel(t, m) {
+    // Visitors come from our own tracking; the three conversion rungs come from
+    // Meta, so each stage says which source it is. Meta counts ad-attributed
+    // people only, so these rates describe the paid funnel, not all traffic.
+    var f = (m && m.funnel) || {};
     var steps = [
-      { name: 'Website visitors',  v: t.visits,       hint: 'everyone who landed on the site' },
-      { name: 'Add to cart',       v: t.reached_form, hint: 'reached the order form' },
-      { name: 'Initiate checkout', v: t.add_to_cart,  hint: 'pressed pay and reached Stripe' },
-      { name: 'Purchases',         v: t.purchases,    hint: 'paid' },
+      { name: 'Website visitors',  v: t.visits,               src: 'from the site', hint: 'everyone who landed on the site' },
+      { name: 'Add to cart',       v: f.add_to_cart,          src: 'from Meta',     hint: 'reached the order form' },
+      { name: 'Initiate checkout', v: f.initiate_checkout,    src: 'from Meta',     hint: 'reached Stripe' },
+      { name: 'Purchases',         v: f.purchases,            src: 'from Meta',     hint: 'paid' },
     ];
     var top = steps[0].v || 0;
 
     if (!top) {
       $('funnelWrap').innerHTML = '<p class="muted" style="margin:0;grid-column:1/-1">'
-        + 'No website visitors recorded yet. First-party tracking started today, so this fills in as traffic arrives.</p>';
+        + 'No website visitors recorded yet. First-party tracking started on 4 August, so this fills in as traffic arrives.</p>';
       $('funnelTable').innerHTML = '';
       return;
     }
@@ -311,7 +315,8 @@
     $('funnelLabels').innerHTML = steps.map(function (s, i) {
       var prev = i ? steps[i - 1].v : null;
       return '<div style="display:flex;flex-direction:column;justify-content:center;border-left:2px solid ' + RAMP[i] + ';padding-left:.7rem">'
-        + '<p style="margin:0;font-size:.92rem">' + esc(s.name) + '</p>'
+        + '<p style="margin:0;font-size:.92rem">' + esc(s.name)
+        + ' <span class="muted" style="font-size:.74rem">' + esc(s.src) + '</span></p>'
         + '<p style="margin:.1rem 0 0;font-size:.82rem;color:var(--text-2)">'
         + '<b style="font-family:Outfit,sans-serif;color:var(--text)">' + fInt(s.v) + '</b>'
         + ' &middot; ' + fPct(s.v / top) + ' of visitors'
@@ -320,10 +325,10 @@
     }).join('');
 
     $('funnelTable').innerHTML =
-      '<thead><tr><th>Stage</th><th class="num">Count</th><th class="num">% of visitors</th><th class="num">% of previous</th></tr></thead><tbody>'
+      '<thead><tr><th>Stage</th><th>Source</th><th class="num">Count</th><th class="num">% of visitors</th><th class="num">% of previous</th></tr></thead><tbody>'
       + steps.map(function (s, i) {
           var prev = i ? steps[i - 1].v : null;
-          return '<tr><td>' + esc(s.name) + '</td><td class="num">' + fInt(s.v) + '</td>'
+          return '<tr><td>' + esc(s.name) + '</td><td class="muted">' + esc(s.src) + '</td><td class="num">' + fInt(s.v) + '</td>'
             + '<td class="num">' + fPct(s.v / top) + '</td>'
             + '<td class="num">' + (i && prev ? fPct(s.v / prev) : '&mdash;') + '</td></tr>';
         }).join('') + '</tbody>';
