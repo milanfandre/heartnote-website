@@ -119,6 +119,7 @@
       <button class="pill range-btn" data-days="7">7 days</button>
       <button class="pill range-btn" data-days="30" aria-pressed="true">30 days</button>
       <button class="pill range-btn" data-days="90">90 days</button>
+      <button class="pill range-btn" data-days="mtd">Month to date</button>
     </div>
   </div>
 
@@ -184,14 +185,18 @@
   var fDay = function (s) { var d = new Date(s + 'T00:00'); return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
 
   var pw = sessionStorage.getItem('hn_pw') || '';
-  var days = 30, DATA = null;
+  var days = 30, rangeKey = '30', DATA = null;
+  // A trailing window of today's date-of-month is exactly month to date,
+  // so this needs no change on the API side. Uses the viewer's local date.
+  function resolveDays(key) { return key === 'mtd' ? new Date().getDate() : +key; }
 
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault(); pw = $('pw').value; sessionStorage.setItem('hn_pw', pw); load();
   });
   document.querySelectorAll('.range-btn').forEach(function (b) {
     b.addEventListener('click', function () {
-      days = +b.dataset.days;
+      rangeKey = b.dataset.days;
+      days = resolveDays(rangeKey);
       document.querySelectorAll('.range-btn').forEach(function (x) { x.removeAttribute('aria-pressed'); });
       b.setAttribute('aria-pressed', 'true');
       load();
@@ -231,7 +236,9 @@
 
   function render() {
     var t = DATA.totals, m = DATA.meta;
-    $('rangeLabel').textContent = 'Last ' + DATA.range.days + ' days · since ' + fDay(DATA.range.start);
+    $('rangeLabel').textContent = rangeKey === 'mtd'
+      ? 'Month to date · since ' + fDay(DATA.range.start)
+      : 'Last ' + DATA.range.days + ' days · since ' + fDay(DATA.range.start);
 
     if (!m || !m.configured) {
       $('adKpis').innerHTML = '';
