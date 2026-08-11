@@ -359,13 +359,13 @@
     // Order-level selectable picker (single-song tiers)
     function buildVoices() {
       $('voiceGrid').innerHTML = VOICES.map(v => v.unavailable ? `
-        <div class="vc opacity-45 cursor-not-allowed" aria-disabled="true" title="${v.name} is away at the moment">
+        <div class="vc opacity-45 cursor-not-allowed" aria-disabled="true" title="${v.name} is unavailable">
           <span class="grid place-items-center w-11 h-11 rounded-full bg-claret/15 text-claret/50 shrink-0" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </span>
           <div class="min-w-0">
             <p class="font-700 text-claret/70 leading-tight">${v.name}</p>
-            <p class="text-sm text-ink-soft">Away at the moment</p>
+            <p class="text-sm text-ink-soft">Unavailable</p>
           </div>
         </div>` : `
         <label>
