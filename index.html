@@ -210,24 +210,40 @@
       </p>
     </div>
     <header class="backdrop-blur-md bg-ivory/85 border-b border-claret/10">
-    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between gap-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-2 sm:gap-6">
       <a href="#top" class="flex items-center gap-3 shrink-0" aria-label="Heart Note home">
         <!-- Logo (client-provided mark, recolored claret for light backgrounds) -->
-        <img src="brand_assets/heartnote-mark.png" alt="" style="height:46px;width:auto" class="shrink-0" />
-        <span class="font-display text-2xl font-500 text-claret tracking-tight leading-none">Heart&nbsp;Note</span>
+        <img src="brand_assets/heartnote-mark.png" alt="" class="shrink-0 h-9 sm:h-[46px] w-auto" />
+        <span class="font-display text-xl sm:text-2xl font-500 text-claret tracking-tight leading-none">Heart&nbsp;Note</span>
       </a>
 
       <nav class="hidden lg:flex items-center gap-8 text-[1.02rem] font-600 text-ink/80">
-        <a href="#occasions" class="hover:text-claret transition-colors">Occasions</a>
+        <a href="#how" class="hover:text-claret transition-colors">How it works</a>
+        <a href="#pricing" class="hover:text-claret transition-colors">Pricing</a>
         <a href="#listen" class="hover:text-claret transition-colors">Examples</a>
         <a href="#reviews" class="hover:text-claret transition-colors">Reviews</a>
       </nav>
 
-      <div class="flex items-center gap-4 shrink-0">
+      <div class="flex items-center gap-3 shrink-0">
         <a href="order.html" class="btn btn-primary !py-3 !px-5 !text-base"><span class="sm:hidden">Create</span><span class="hidden sm:inline">Create your Heart Note</span></a>
+        <button type="button" id="navToggle" class="lg:hidden grid place-items-center w-11 h-11 rounded-xl border border-claret/20 text-claret"
+                aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+          <svg id="navIconOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg id="navIconClose" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
       </div>
     </div>
   </header>
+  <div id="mobileNav" class="lg:hidden hidden border-b border-claret/10 bg-ivory/97 backdrop-blur-md">
+      <nav class="max-w-6xl mx-auto px-6 py-3 flex flex-col text-[1.05rem] font-600 text-ink/85">
+        <a href="#how"     class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">How it works</a>
+        <a href="#pricing" class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">Pricing</a>
+        <a href="#listen"  class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">Examples</a>
+        <a href="#reviews" class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">Reviews</a>
+        <a href="#faq"     class="py-2.5 hover:text-claret transition-colors">Questions</a>
+      </nav>
+    </div>
+
   </div>
 
   <span id="top"></span>
@@ -263,9 +279,9 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="halfStar"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="currentColor" stop-opacity=".28"/></linearGradient></defs><path fill="url(#halfStar)" d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
           </div>
-          <p class="text-ink-soft font-600">Loved by <span class="text-claret font-700">10,000+ families</span></p>
+          <p class="text-ink-soft font-600"><span class="text-claret font-700">4.5</span> from 1,200+ families</p>
         </div>
       </div>
 
@@ -340,27 +356,27 @@
 
       <div class="grid md:grid-cols-3 gap-10 md:gap-8 mt-10">
         <div class="reveal text-center md:text-left">
-          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
             <span class="font-display text-gold text-[2.6rem] leading-none font-500">01</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 18.4c-1.7-1.1-2.9-2.1-2.9-3.4a1.55 1.55 0 0 1 2.9-.8 1.55 1.55 0 0 1 2.9.8c0 1.3-1.2 2.3-2.9 3.4z"/></svg></span>
             <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
           </div>
-<div class="flex justify-center md:justify-start mb-4" aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 18.4c-1.7-1.1-2.9-2.1-2.9-3.4a1.55 1.55 0 0 1 2.9-.8 1.55 1.55 0 0 1 2.9.8c0 1.3-1.2 2.3-2.9 3.4z"/></svg></div>
           <h3 class="font-display text-claret text-2xl">Choose the occasion</h3>
         </div>
         <div class="reveal text-center md:text-left">
-          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
             <span class="font-display text-gold text-[2.6rem] leading-none font-500">02</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.2C10.2 5.9 8 5.2 5.8 5.2H3v13h2.8c2.2 0 4.4.7 6.2 2 1.8-1.3 4-2 6.2-2H21v-13h-2.8c-2.2 0-4.4.7-6.2 2z"/><path d="M12 7.2v13"/></svg></span>
             <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
           </div>
-<div class="flex justify-center md:justify-start mb-4" aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.2C10.2 5.9 8 5.2 5.8 5.2H3v13h2.8c2.2 0 4.4.7 6.2 2 1.8-1.3 4-2 6.2-2H21v-13h-2.8c-2.2 0-4.4.7-6.2 2z"/><path d="M12 7.2v13"/></svg></div>
           <h3 class="font-display text-claret text-2xl">Share your story</h3>
         </div>
         <div class="reveal text-center md:text-left">
-          <div class="flex items-center gap-4 justify-center md:justify-start mb-5">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
             <span class="font-display text-gold text-[2.6rem] leading-none font-500">03</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12a8.6 8.6 0 1 1-2.7-6.2"/><path d="M20.8 3.1v4.3h-4.3"/><text x="11.6" y="15.1" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="7.6" font-weight="600" fill="#C6973F" stroke="none">24</text></svg></span>
             <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
           </div>
-          <div class="flex justify-center md:justify-start mb-4" aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12a8.6 8.6 0 1 1-2.7-6.2"/><path d="M20.8 3.1v4.3h-4.3"/><text x="11.6" y="15.1" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="7.6" font-weight="600" fill="#C6973F" stroke="none">24</text></svg></div>
           <h3 class="font-display text-claret text-2xl">Receive your song</h3>
         </div>
       </div>
@@ -543,7 +559,7 @@
   </section>
 
   <!-- ============ FAQ ============ -->
-  <section class="py-24 md:py-28">
+  <section id="faq" class="py-24 md:py-28">
     <div class="max-w-3xl mx-auto px-6">
       <div class="text-center mb-12 reveal">
         <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Good to know</p>
@@ -589,45 +605,7 @@
     </div>
   </section>
 
-  <!-- ============ OCCASIONS ============ -->
-  <section id="occasions" class="py-24 md:py-32 bg-ivory-deep">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center max-w-2xl mx-auto reveal">
-        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">For every occasion</p>
-        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
-          A song for the moments that matter most
-        </h2>
-        <p class="mt-5 text-ink/80 text-[1.15rem]">Whatever you're celebrating or remembering, there's a Heart Note for it.</p>
-      </div>
-
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
-        <a href="/lp/birthday-milestone" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-birthday.jpg" alt="Birthday celebration" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Birthdays</h3><p class="text-ivory/85 text-sm">A joyful tune to mark another year.</p></div>
-        </a>
-        <a href="order.html?occasion=Wedding" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/wedding-first-dance.jpg" alt="A couple sharing their first dance" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Weddings</h3><p class="text-ivory/85 text-sm">Their love story, set to music.</p></div>
-        </a>
-        <a href="/lp/anniversary" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-anniversary.jpg" alt="Anniversary celebration" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Anniversaries</h3><p class="text-ivory/85 text-sm">Years of memories in one melody.</p></div>
-        </a>
-        <a href="order.html?occasion=Christmas" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-christmas.jpg" alt="Christmas celebration" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Christmas</h3><p class="text-ivory/85 text-sm">A warm carol for the whole family.</p></div>
-        </a>
-        <a href="/lp/faith" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-faith.jpg" alt="Faith and blessings" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">Faith &amp; Blessings</h3><p class="text-ivory/85 text-sm">Hymns and blessings for holy days.</p></div>
-        </a>
-        <a href="order.html?occasion=New%20Baby" class="occasion group shadow-lift">
-          <div class="lifestyle aspect-[4/3]"><img src="brand_assets/occasion-baby.jpg" alt="Welcoming a new baby" loading="lazy" /></div>
-          <div class="absolute bottom-0 inset-x-0 p-5 z-10"><h3 class="font-display text-ivory text-2xl">New Baby</h3><p class="text-ivory/85 text-sm">Welcome a little one into the family.</p></div>
-        </a>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- ============ GUARANTEE / REASSURANCE ============ -->
   <section class="py-20 bg-blush/40">
@@ -646,28 +624,7 @@
     </div>
   </section>
 
-  <!-- ============ FINAL CTA ============ -->
-  <section id="create" class="py-24 md:py-32 bg-claret text-ivory relative overflow-hidden">
-    <div class="absolute inset-0 opacity-[.16] pointer-events-none" style="background-image: radial-gradient(50% 60% at 15% 20%, #C6973F 0%, transparent 55%), radial-gradient(45% 55% at 90% 85%, #E9CBC0 0%, transparent 55%);"></div>
-    <div class="max-w-3xl mx-auto px-6 text-center relative reveal">
-      <svg class="staff mx-auto mb-8 w-40" height="30" viewBox="0 0 160 30" fill="none" aria-hidden="true">
-        <line x1="0" y1="15" x2="160" y2="15" stroke-width="1" opacity=".4"/>
-        <circle class="note" cx="55" cy="15" r="4" style="fill:#E4C67F"/><rect x="58" y="3" width="1.4" height="13" style="fill:#E4C67F"/>
-        <circle class="note" cx="100" cy="11" r="4" style="fill:#E4C67F"/><rect x="103" y="0" width="1.4" height="12" style="fill:#E4C67F"/>
-      </svg>
-      <h2 class="font-display font-500 text-ivory text-[2.6rem] md:text-[3.4rem] leading-[1.06] tracking-tight">
-        Give a gift they'll <span class="script-accent text-gold-soft text-[1.12em]">treasure</span> for years
-      </h2>
-      <p class="mt-6 text-ivory/85 text-[1.2rem] max-w-xl mx-auto">
-        In a few minutes, you can start a song they'll play and share for years to come.
-      </p>
-      <div class="mt-9 flex flex-wrap gap-4 justify-center">
-        <a href="order.html" class="btn btn-gold">Create your Heart Note</a>
-        <a href="#listen" class="btn btn-ghost !text-ivory !border-ivory/40 hover:!bg-ivory/10">Hear an example</a>
-      </div>
-      <p class="mt-6 text-ivory/60 text-sm">Loved by 10,000+ families · our happiness promise</p>
-    </div>
-  </section>
+  
 
   <!-- ============ FOOTER ============ -->
   <footer class="bg-claret-dark text-ivory/75">
@@ -682,10 +639,10 @@
       <div>
         <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Occasions</p>
         <ul class="space-y-2.5 text-[.98rem]">
-          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Birthdays</a></li>
-          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Weddings</a></li>
-          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Anniversaries</a></li>
-          <li><a href="#occasions" class="hover:text-gold-soft transition-colors">Christmas</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Birthdays</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Weddings</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Anniversaries</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Christmas</a></li>
         </ul>
       </div>
       <div>
@@ -809,6 +766,26 @@
         else { heroAudio.pause(); }
       });
     }
-  </script>
+  
+    // ---- Mobile menu ----
+    (function () {
+      var btn = document.getElementById('navToggle');
+      var panel = document.getElementById('mobileNav');
+      if (!btn || !panel) return;
+      var iconOpen = document.getElementById('navIconOpen');
+      var iconClose = document.getElementById('navIconClose');
+      function setOpen(on) {
+        panel.classList.toggle('hidden', !on);
+        iconOpen.classList.toggle('hidden', on);
+        iconClose.classList.toggle('hidden', !on);
+        btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+        btn.setAttribute('aria-label', on ? 'Close menu' : 'Open menu');
+      }
+      btn.addEventListener('click', function () { setOpen(panel.classList.contains('hidden')); });
+      // Tapping a link closes the menu rather than leaving it over the target.
+      panel.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
+</script>
 </body>
 </html>
