@@ -26,10 +26,11 @@ export default async function handler(req, res) {
 
   try {
     // Pull the small pre-grouped views + raw orders for the window, in parallel.
-    const [eventDaily, visitsDaily, buttonDaily, orders] = await Promise.all([
+    const [eventDaily, visitsDaily, buttonDaily, deviceDaily, orders] = await Promise.all([
       sbSelect('event_daily', `select=*&day=gte.${startDay}&order=day.asc`),
       sbSelect('visits_daily', `select=*&day=gte.${startDay}&order=day.asc`),
       sbSelect('button_daily', `select=*&day=gte.${startDay}`),
+      sbSelect('device_daily', `select=*&day=gte.${startDay}`).catch(() => []),
       sbSelect('orders', `select=created_at,amount_total,tier,occasion&created_at=gte.${startISO}&order=created_at.asc`),
     ]);
 
@@ -116,6 +117,13 @@ export default async function handler(req, res) {
         visit_to_purchase: visits ? purchases / visits : 0,
       },
       timeseries, angles, sources, tiers, buttons,
+      devices: Object.values((deviceDaily || []).reduce((acc, r) => {
+        const k = r.device || 'unknown';
+        (acc[k] ||= { device: k, sessions: 0, events: 0 });
+        acc[k].sessions += Number(r.sessions) || 0;
+        acc[k].events += Number(r.events) || 0;
+        return acc;
+      }, {})).sort((a, b) => b.sessions - a.sessions),
       meta, // { configured, spend, roas, ... } or null
     });
   } catch (err) {

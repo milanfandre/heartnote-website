@@ -45,6 +45,10 @@ create table if not exists public.events (
   meta          jsonb not null default '{}'::jsonb
 );
 
+-- Coarse device class: mobile | tablet | desktop. Null on rows recorded before
+-- this was captured.
+alter table public.events add column if not exists device text;
+
 create index if not exists events_created_at_idx on public.events (created_at desc);
 create index if not exists events_type_idx        on public.events (type);
 create index if not exists events_session_idx      on public.events (session_id);
@@ -85,4 +89,14 @@ create or replace view public.button_daily as
          count(*)                                    as count
   from public.events
   where type = 'cta_click'
+  group by 1, 2;
+
+-- Visitors per day split by device, so the dashboard can show the mobile and
+-- desktop share without pulling raw rows.
+create or replace view public.device_daily as
+  select date_trunc('day', created_at)::date as day,
+         coalesce(nullif(device, ''), 'unknown') as device,
+         count(distinct session_id)             as sessions,
+         count(*)                               as events
+  from public.events
   group by 1, 2;

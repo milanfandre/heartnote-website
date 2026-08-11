@@ -146,9 +146,9 @@
 
           <div>
             <label for="story" class="req">Tell us their story</label>
-            <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be. We read every word.</p>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be, and we read every word. A few sentences works far better than a line or two.</p>
             <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
-            <p class="text-right text-xs text-ink-soft mt-1"><span id="storyCount">0</span>/5000</p>
+            <p class="flex justify-between gap-3 text-xs text-ink-soft mt-1"><span id="storyHint">The more you write, the better the song.</span><span><span id="storyCount">0</span>/5000</span></p>
           </div>
 
           <div>
@@ -279,6 +279,19 @@
 
     // Char counters
     const counters = [['story','storyCount'],['details','detailsCount']];
+    // Nudge while they type rather than only blocking them at submit.
+    (function () {
+      var ta = $('story'), hint = $('storyHint');
+      if (!ta || !hint) return;
+      ta.addEventListener('input', function () {
+        var n = ta.value.trim().length;
+        hint.textContent = n === 0 ? 'The more you write, the better the song.'
+          : n < 120 ? 'Keep going, a few more sentences will really help.'
+          : n < 400 ? 'Good. Any extra detail still helps.'
+          : 'Wonderful, this is plenty to work with.';
+        hint.className = 'text-xs ' + (n && n < 120 ? 'text-claret font-600' : 'text-ink-soft');
+      });
+    })();
     function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
 
     // ---- Add to Cart: reaching this form ----
@@ -323,7 +336,7 @@
     const VOICES = [
       { name:'Brett',   desc:'Male · country',     src:'audio/voices/voice-brett.mp3' },
       { name:'Cameron', desc:'Male · pop',         src:'audio/voices/voice-cameron.mp3' },
-      { name:'Gabriel', desc:'Female · pop',       src:'audio/voices/voice-gabriel.mp3' },
+      { name:'Gabriel', desc:'Female · pop',       src:'audio/voices/voice-gabriel.mp3', unavailable:true },
       { name:'Harper',  desc:'Female · country',   src:'audio/voices/voice-harper.mp3' },
       { name:'Justin',  desc:'Male · soul',        src:'audio/voices/voice-justin.mp3' },
       { name:'Lily',    desc:'Female · joyful pop', src:'audio/voices/voice-lily.mp3' },
@@ -345,7 +358,16 @@
     const voiceOptionsHTML = () => VOICES.map(v => `<option value="${v.name}">${v.name} (${v.desc})</option>`).join('');
     // Order-level selectable picker (single-song tiers)
     function buildVoices() {
-      $('voiceGrid').innerHTML = VOICES.map(v => `
+      $('voiceGrid').innerHTML = VOICES.map(v => v.unavailable ? `
+        <div class="vc opacity-45 cursor-not-allowed" aria-disabled="true" title="${v.name} is away at the moment">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-claret/15 text-claret/50 shrink-0" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div class="min-w-0">
+            <p class="font-700 text-claret/70 leading-tight">${v.name}</p>
+            <p class="text-sm text-ink-soft">Away at the moment</p>
+          </div>
+        </div>` : `
         <label>
           <input type="radio" name="voice" value="${v.name}" class="sr-only" />
           <div class="vc">
@@ -405,7 +427,7 @@
       if (!data.occasion) return showErr('Please choose an occasion.', 'occasion');
       if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.', 'occasionOther');
       if (!data.recipient) return showErr('Please tell us who the song is for.', 'recipient');
-      if (!data.story || data.story.trim().length < 80) return showErr('Please share a bit more of their story so we can make the song personal (a few sentences at least).', 'story');
+      if (!data.story || data.story.trim().length < 120) return showErr('Please share a bit more of their story. A few sentences gives us far more to work with than a line or two.', 'story');
       const _k = currentTier();
       if ((isIncluded(_k,'voice') || voiceOn()) && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose "No thanks".', 'voicePicker');
       // Included add-ons are not on the form, so state them for the server.

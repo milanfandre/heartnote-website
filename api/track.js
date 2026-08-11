@@ -43,6 +43,7 @@ export default async function handler(req, res) {
       utm_content: str(body.utm_content, 200),
       value_cents: int(body.value_cents),
       tier: str(body.tier, 40),
+      device: ['mobile', 'tablet', 'desktop'].includes(body.device) ? body.device : null,
       meta: body.meta && typeof body.meta === 'object' ? body.meta : {},
     };
 

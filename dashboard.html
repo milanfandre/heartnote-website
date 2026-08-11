@@ -167,6 +167,9 @@
       <section class="card" style="padding:1.15rem 1.3rem">
         <h3 style="font-size:.94rem;margin:0 0 .9rem">Most clicked buttons</h3><div id="buttons"></div>
       </section>
+      <section class="card" style="padding:1.15rem 1.3rem">
+        <h3 style="font-size:.94rem;margin:0 0 .9rem">Mobile or desktop</h3><div id="devices"></div>
+      </section>
     </div>
   </div>
 </main>
@@ -274,6 +277,19 @@
     renderBars('sources', (DATA.sources || []).map(function (s) { return { label: s.source, value: s.pageviews }; }), PAL.pink, fInt);
     renderBars('tiers', (DATA.tiers || []).map(function (s) { return { label: s.tier || 'unknown', value: s.revenue_cents, note: s.orders + ' order' + (s.orders === 1 ? '' : 's') }; }), PAL.green, fMoney);
     renderBars('buttons', (DATA.buttons || []).map(function (b) { return { label: b.label, value: b.count }; }), PAL.purple, fInt);
+
+    // Share of visitors by device. Sessions, not events, so a long browse on one
+    // phone does not outweigh several short desktop visits.
+    var dev = DATA.devices || [];
+    var devTotal = dev.reduce(function (n, d) { return n + d.sessions; }, 0);
+    if (!devTotal) {
+      $('devices').innerHTML = '<p class="muted" style="margin:0;font-size:.86rem">No visits recorded yet for this period.</p>';
+    } else {
+      var NICE = { mobile: 'Mobile', tablet: 'Tablet', desktop: 'Desktop', unknown: 'Unknown' };
+      renderBars('devices', dev.map(function (d) {
+        return { label: NICE[d.device] || d.device, value: d.sessions, note: fPct(d.sessions / devTotal) };
+      }), PAL.orange, fInt);
+    }
   }
 
   function renderFunnel(t, m) {

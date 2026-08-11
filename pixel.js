@@ -125,11 +125,22 @@ window.HN_META = {
     utm_content: params.get('utm_content'),
   };
 
+  // Coarse device class, from viewport width and the touch capability. Enough
+  // to split mobile from desktop without touching the user-agent string.
+  function device() {
+    var w = window.innerWidth || document.documentElement.clientWidth || 0;
+    var touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (w && w < 768) return 'mobile';
+    if (w < 1024 && touch) return 'tablet';
+    return 'desktop';
+  }
+
   function send(type, extra) {
     var payload = {}, k;
     for (k in BASE) payload[k] = BASE[k];
     if (extra) for (k in extra) payload[k] = extra[k];
     payload.type = type;
+    payload.device = device();
     var body = JSON.stringify(payload);
     try {
       if (navigator.sendBeacon) {
