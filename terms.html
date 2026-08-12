@@ -85,5 +85,19 @@
 
     <p class="mt-14 text-ink-soft"><a href="index.html" class="text-claret font-700 hover:text-claret-deep">&larr; Back to home</a></p>
   </main>
+
+  <footer class="border-t border-claret/10 mt-10">
+    <div class="max-w-5xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-ink-soft text-sm">
+      <p>&copy; <span class="yr"></span> Heart Note. All rights reserved.</p>
+      <nav class="flex items-center gap-5">
+        <a href="story.html" class="hover:text-claret transition-colors">Our story</a>
+        <a href="terms.html" class="hover:text-claret transition-colors">Terms</a>
+        <a href="privacy.html" class="hover:text-claret transition-colors">Privacy</a>
+        <a href="contact.html" class="hover:text-claret transition-colors">Contact</a>
+      </nav>
+    </div>
+  </footer>
+  <script>document.querySelectorAll(".yr").forEach(function(e){e.textContent=new Date().getFullYear();});</script>
+
 </body>
 </html>
