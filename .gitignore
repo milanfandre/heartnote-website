@@ -37,3 +37,10 @@ brand_assets/lady-on-beach.png
 brand_assets/old-couple.png
 brand_assets/wedding-man-and-woman.png
 brand_assets/couple.png
+
+# raw email/desktop screenshots — working files that can hold unredacted
+# names, addresses, and live gift links. Only the redacted inbox-*.png
+# versions are ever committed.
+Screenshot *.png
+brand_assets/Screenshot *.png
+brand_assets/image (8).png
