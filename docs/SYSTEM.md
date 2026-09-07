@@ -39,7 +39,7 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 
 | File | Route | Purpose |
 |---|---|---|
-| index.html | / | Homepage. Section order: hero → play-prompt banner → trust bar → how (4 steps) → receive → pricing → inbox (email testimonials) → listen (samples) → faq → footer |
+| index.html | / | Homepage. Section order: hero (autoplaying muted Claire reaction loop, videos/hero-claire.mp4) → play-prompt banner → reactions (UGC video carousel + lightbox, streams from Supabase Media bucket) → trust bar → how (4 steps) → receive → pricing → inbox (email testimonials) → listen (samples) → faq → footer |
 | order.html | /order.html | Order form → Stripe. Duplicated TIERS object (see Money) |
 | funnel.html, lp-*.html | /lp, /lp/anniversary, /lp/birthday(-milestone), /lp/faith | Paid-traffic landing pages. **Intentionally lag the homepage** in places (still "Three simple steps", older hero); see DECISIONS before "fixing" |
 | story.html | /story.html | Our Story (Paul; NYU Tisch + Columbia College Chicago) |
@@ -74,8 +74,10 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
   and `brief` jsonb = the entire checkout metadata verbatim (nothing is ever lost).
 - **events** + views event_daily / visits_daily / button_daily / device_daily —
   first-party analytics. **Created Aug 4, 2026; no data exists before that.**
-- **Storage**: `Songs` (public bucket, no per-bucket cap; project cap 200MB),
-  `Covers` (public, 15MB cap + image-only MIME allowlist; orphaned since CD removal).
+- **Storage**: `Songs` (public, no per-bucket cap; project cap 200MB), `Covers`
+  (public, 15MB cap, image-only; orphaned since CD removal), `Media` (public,
+  marketing video hosting — the five UGC reaction videos the homepage carousel
+  streams; repo holds only their posters and the 6s hero loop in `videos/`).
 - Migrations = `db/schema.sql` + `db/analytics.sql`, both idempotent, run by hand
   in Supabase SQL editor. webhook tolerates missing columns; **send-lyrics does not**.
 

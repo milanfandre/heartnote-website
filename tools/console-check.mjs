@@ -12,8 +12,16 @@ const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox',
 const page = await browser.newPage();
 const errors = [], failed = [], expected = [];
 page.on('pageerror', (e) => errors.push(e.message));
-page.on('console', (m) => { if (m.type() === 'error') errors.push('console.error: ' + m.text()); });
+page.on('console', (m) => {
+  if (m.type() !== 'error') return;
+  // On localhost the /api/* 404s already show as expected failures; the console
+  // echoes them without a URL, so drop that duplicate there.
+  if (isLocal && m.text().startsWith('Failed to load resource')) return;
+  errors.push('console.error: ' + m.text());
+});
 page.on('requestfailed', (r) => {
+  // Browsers cancel speculative media preloads once satisfied; that is not a failure.
+  if ((r.failure()?.errorText || '').includes('ERR_ABORTED')) return;
   (isLocal && r.url().includes('/api/') ? expected : failed).push(r.url().slice(0, 100));
 });
 page.on('response', (r) => {

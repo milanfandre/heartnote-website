@@ -178,19 +178,24 @@
     /* Floating keepsake card */
     @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
     .floaty { animation: floaty 6s ease-in-out infinite; }
-    #heroCard.playing .note { animation: notebob 1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-    #heroCard.playing .note:nth-of-type(even) { animation-delay: .35s; }
     @keyframes notebob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-3px) } }
 
     /* Nudge toward the play control: testers did not read a bare triangle as
        something they could press. */
     @keyframes heroPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(110,20,35,.4); } 50% { box-shadow: 0 0 0 12px rgba(110,20,35,0); } }
     .heroPulse { animation: heroPulse 2.6s ease-out infinite; }
-    .heroPulse:hover, #heroCard.playing .heroPulse { animation: none; }
+    .heroPulse:hover { animation: none; }
 
     /* Draw-in staff line */
     .draw { stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 2.4s ease; }
     .draw.in { stroke-dashoffset: 0; }
+
+    /* Reaction carousel: horizontal snap track, scrollbar hidden */
+    .vtrack { scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+    .vtrack::-webkit-scrollbar { display: none; }
+    .vcard { scroll-snap-align: center; }
+    .vcard:hover .vposter { transform: scale(1.04); }
+    .vposter { transition: transform .6s cubic-bezier(.22,.61,.36,1); }
 
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; scroll-behavior: auto !important; }
@@ -294,31 +299,10 @@
       <!-- Lifestyle image + keepsake card -->
       <div class="relative reveal">
         <div class="lifestyle rounded-[26px] shadow-keepsake aspect-[4/5] ring-1 ring-claret/10">
-          <img src="brand_assets/hero-anniversary.jpg" alt="A husband giving his wife roses at golden hour on their anniversary" loading="eager" style="object-position:center 40%" />
+          <video src="videos/hero-claire.mp4" poster="videos/hero-claire-poster.jpg" autoplay muted loop playsinline preload="metadata"
+               class="w-full h-full object-cover" aria-label="A mom reacting to the custom anniversary song her family had made"></video>
         </div>
 
-        <!-- Now playing keepsake card -->
-        <div id="heroCard" class="absolute z-10 -bottom-8 -left-4 sm:-left-8 w-[19rem] max-w-[85%] bg-ivory rounded-2xl shadow-lift border border-gold/40 p-4">
-          <div class="flex items-center gap-3">
-            <button type="button" id="heroPlay" aria-label="Play an anniversary sample song" class="heroPulse grid place-items-center w-12 h-12 rounded-full bg-claret text-ivory shrink-0 transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-              <svg id="heroPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-            <div class="min-w-0">
-              <p class="text-[.72rem] uppercase tracking-[.14em] text-gold font-700">Now playing</p>
-              <p class="font-display text-claret text-lg leading-tight truncate">For Sarah, 25 years</p>
-            </div>
-          </div>
-          <svg class="staff mt-3 w-full" height="34" viewBox="0 0 300 34" fill="none" aria-hidden="true">
-            <line x1="0" y1="6" x2="300" y2="6" stroke-width="1" opacity=".5"/>
-            <line x1="0" y1="13" x2="300" y2="13" stroke-width="1" opacity=".5"/>
-            <line x1="0" y1="20" x2="300" y2="20" stroke-width="1" opacity=".5"/>
-            <line x1="0" y1="27" x2="300" y2="27" stroke-width="1" opacity=".5"/>
-            <circle class="note" cx="40" cy="20" r="4"/><rect class="note" x="43" y="6" width="1.5" height="15"/>
-            <circle class="note" cx="110" cy="13" r="4"/><rect class="note" x="113" y="2" width="1.5" height="12"/>
-            <circle class="note" cx="180" cy="24" r="4"/><rect class="note" x="183" y="10" width="1.5" height="15"/>
-            <circle class="note" cx="250" cy="16" r="4"/><rect class="note" x="253" y="4" width="1.5" height="13"/>
-          </svg>
-        </div>
       </div>
     </div>
   </section>
@@ -330,8 +314,125 @@
       <span class="grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0" aria-hidden="true">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       </span>
-      <span>Press play on the card above to hear a real anniversary song.</span>
+      <span>Real families hearing their songs for the first time, just below. Tap any video to watch with sound.</span>
     </p>
+  </div>
+
+  <!-- ============ REAL REACTIONS ============ -->
+  <section id="reactions" class="py-16 md:py-20 bg-claret-dark relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(55% 60% at 12% 0%, rgba(198,151,63,.16) 0%, rgba(198,151,63,0) 60%), radial-gradient(50% 55% at 90% 100%, rgba(110,20,35,.5) 0%, rgba(110,20,35,0) 65%);" aria-hidden="true"></div>
+    <div class="relative">
+      <div class="max-w-6xl mx-auto px-6 text-center reveal">
+        <h2 class="font-display font-500 text-ivory text-[2.2rem] md:text-[2.8rem] leading-[1.08] tracking-tight">Real families, real first listens</h2>
+        <p class="mt-3 text-ivory/75 text-[1.05rem] max-w-xl mx-auto">Filmed by our customers themselves. Tap a video to watch it full size, sound on.</p>
+      </div>
+
+      <div class="relative mt-10 reveal">
+        <div id="vtrack" class="vtrack flex gap-4 sm:gap-5 overflow-x-auto px-6 sm:px-10 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
+        <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
+                data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-pauls-aunt.mp4" data-title="For his aunt" aria-label="Watch: For his aunt. A thank-you, set to music. Opens a larger player with sound.">
+          <img src="videos/poster-ugc-pauls-aunt.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+          <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+          <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40 transition-transform group-hover:scale-105 group-active:scale-95" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.68rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            With sound
+          </span>
+          <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true">
+            <span class="block font-display text-ivory text-xl leading-tight">For his aunt</span>
+            <span class="block text-ivory/80 text-sm mt-0.5">A thank-you, set to music</span>
+          </span>
+        </button>
+        <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
+                data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-jill.mp4" data-title="For Jill" aria-label="Watch: For Jill. Their whole life, in one song. Opens a larger player with sound.">
+          <img src="videos/poster-ugc-jill.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+          <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+          <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40 transition-transform group-hover:scale-105 group-active:scale-95" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.68rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            With sound
+          </span>
+          <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true">
+            <span class="block font-display text-ivory text-xl leading-tight">For Jill</span>
+            <span class="block text-ivory/80 text-sm mt-0.5">Their whole life, in one song</span>
+          </span>
+        </button>
+        <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
+                data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-husband.mp4" data-title="For her husband" aria-label="Watch: For her husband. Hearing their story. Opens a larger player with sound.">
+          <img src="videos/poster-ugc-husband.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+          <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+          <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40 transition-transform group-hover:scale-105 group-active:scale-95" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.68rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            With sound
+          </span>
+          <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true">
+            <span class="block font-display text-ivory text-xl leading-tight">For her husband</span>
+            <span class="block text-ivory/80 text-sm mt-0.5">Hearing their story</span>
+          </span>
+        </button>
+        <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
+                data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-car.mp4" data-title="First listen, in the car" aria-label="Watch: First listen, in the car. A song for her husband. Opens a larger player with sound.">
+          <img src="videos/poster-ugc-car.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+          <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+          <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40 transition-transform group-hover:scale-105 group-active:scale-95" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.68rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            With sound
+          </span>
+          <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true">
+            <span class="block font-display text-ivory text-xl leading-tight">First listen, in the car</span>
+            <span class="block text-ivory/80 text-sm mt-0.5">A song for her husband</span>
+          </span>
+        </button>
+        <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
+                data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-dad-birthday.mp4" data-title="For Dad's birthday" aria-label="Watch: For Dad's birthday. His reaction to the lyrics. Opens a larger player with sound.">
+          <img src="videos/poster-ugc-dad-birthday.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+          <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+          <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40 transition-transform group-hover:scale-105 group-active:scale-95" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.68rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            With sound
+          </span>
+          <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true">
+            <span class="block font-display text-ivory text-xl leading-tight">For Dad's birthday</span>
+            <span class="block text-ivory/80 text-sm mt-0.5">His reaction to the lyrics</span>
+          </span>
+        </button>
+        </div>
+        <button type="button" id="vPrev" aria-label="Previous videos" class="hidden md:grid place-items-center absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" id="vNext" aria-label="More videos" class="hidden md:grid place-items-center absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reaction lightbox: video streams only once opened, with sound -->
+  <div id="vLightbox" class="hidden fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Customer reaction video">
+    <div id="vScrim" class="absolute inset-0 bg-claret-dark/95"></div>
+    <div class="relative h-full grid place-items-center p-4">
+      <figure class="m-0 w-auto">
+        <video id="vPlayer" class="max-h-[82vh] max-w-[92vw] aspect-[9/16] rounded-2xl ring-1 ring-gold/40 bg-black shadow-keepsake" controls playsinline preload="none"></video>
+        <figcaption id="vCaption" class="mt-3 text-center text-ivory font-display text-lg"></figcaption>
+      </figure>
+      <button type="button" id="vClose" aria-label="Close video"
+              class="absolute top-4 right-4 grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- ============ TRUST BAR ============ -->
@@ -783,21 +884,6 @@
       io.observe(card);
     });
 
-    // Hero anniversary sample preview
-    const heroPlay = document.getElementById('heroPlay');
-    if (heroPlay) {
-      const heroAudio = new Audio('audio/sample-anniversary.mp3');
-      const heroIconPath = document.getElementById('heroPlayIcon').querySelector('path');
-      const heroCard = document.getElementById('heroCard');
-      heroAudio.addEventListener('play', () => { heroIconPath.setAttribute('d', 'M6 5h4v14H6zM14 5h4v14h-4z'); heroCard.classList.add('playing'); });
-      heroAudio.addEventListener('pause', () => { heroIconPath.setAttribute('d', 'M8 5v14l11-7z'); heroCard.classList.remove('playing'); });
-      heroAudio.addEventListener('ended', () => heroAudio.pause());
-      heroPlay.addEventListener('click', () => {
-        if (heroAudio.paused) { if (current && current !== heroAudio) current.pause(); current = heroAudio; heroAudio.play().catch(() => {}); }
-        else { heroAudio.pause(); }
-      });
-    }
-  
     // ---- Mobile menu ----
     (function () {
       var btn = document.getElementById('navToggle');
@@ -816,6 +902,43 @@
       // Tapping a link closes the menu rather than leaving it over the target.
       panel.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
+
+    // ---- Reaction carousel + lightbox ----
+    (function () {
+      var track = document.getElementById('vtrack');
+      var box = document.getElementById('vLightbox');
+      if (!track || !box) return;
+      var player = document.getElementById('vPlayer');
+      var caption = document.getElementById('vCaption');
+      var closeBtn = document.getElementById('vClose');
+      var lastFocus = null;
+
+      function openBox(card) {
+        lastFocus = card;
+        // src assigned only now, so nothing streams until someone asks.
+        if (player.getAttribute('src') !== card.dataset.video) player.src = card.dataset.video;
+        caption.textContent = card.dataset.title;
+        box.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+        player.muted = false;
+        player.play().catch(function () {});
+      }
+      function closeBox() {
+        player.pause();
+        box.classList.add('hidden');
+        document.body.style.overflow = '';
+        if (lastFocus) lastFocus.focus();
+      }
+      track.querySelectorAll('.vcard').forEach(function (c) { c.addEventListener('click', function () { openBox(c); }); });
+      closeBtn.addEventListener('click', closeBox);
+      document.getElementById('vScrim').addEventListener('click', closeBox);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.classList.contains('hidden')) closeBox(); });
+
+      var step = function () { var c = track.querySelector('.vcard'); return c ? c.getBoundingClientRect().width + 20 : 300; };
+      document.getElementById('vPrev').addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      document.getElementById('vNext').addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
     })();
 </script>
 </body>

@@ -102,6 +102,16 @@ When this file and an older spec disagree, **this file wins**.
   RUNBOOK.md / DECISIONS.md added; scratch verification scripts promoted to
   committed `tools/`; July spec marked partially superseded.
 
+- **Sep 7 — Hero goes video; UGC reaction carousel added.** The static
+  anniversary photo and the "Now playing, For Sarah" card are replaced by a 6s
+  muted loop of the Claire reaction hook (caption burned in; card's play-JS and
+  CSS removed with it). A reactions band under the hero copies timelesssong.com's
+  format — dark full-bleed, 9:16 rounded cards, on-card captions, edge arrows —
+  skinned claret. Deliberate divergence: cards are posters, not muted autoplay;
+  the full videos (transcoded from ~1.4GB of masters) stream from the new
+  Supabase `Media` bucket only when a card opens the lightbox, sound on. Motion
+  budget spent on the hero alone.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

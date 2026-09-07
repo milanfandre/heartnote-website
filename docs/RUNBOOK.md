@@ -142,6 +142,26 @@ Raw email screenshots contain surnames, addresses, and sometimes **live
    claim the emails are unedited.
 6. Verify with Read on every output — coordinates are estimates until seen.
 
+## UGC video pipeline (homepage reactions carousel)
+
+Sources are 2-5 min 1080x1920 masters (some HEVC) in the client's Creative
+Process folder — never committed. Web builds:
+
+```bash
+# full video -> Supabase Media bucket (H.264 + AAC; HEVC sources must transcode)
+ffmpeg -i SRC.mov -vf scale=720:1280 -c:v libx264 -preset fast -crf 27 \
+  -pix_fmt yuv420p -c:a aac -b:a 112k -movflags +faststart out.mp4
+# poster (repo, videos/poster-*.jpg) and hero-style muted loop as needed
+curl -X POST "$U/storage/v1/object/Media/<n>.mp4" -H "apikey: $SB" \
+  -H "Authorization: Bearer $SB" -H "content-type: video/mp4" \
+  -H "x-upsert: true" --data-binary @out.mp4     # HTTP 000 = local drop, retry
+```
+
+Verify each public URL: 200, `content-type: video/mp4`, `accept-ranges: bytes`,
+content-length matches local. Lightbox assigns `src` on first open, so nothing
+streams until a visitor asks. Card posters live in `videos/`; captions quote
+the burned-in UGC text, never invented stories.
+
 ## Data-collection change? Update the privacy policy
 
 privacy.html § tables were written from a code audit (client storage keys,
