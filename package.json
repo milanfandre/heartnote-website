@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node serve.mjs",
+    "shot": "node screenshot.mjs",
+    "shot:section": "node tools/shot-section.mjs",
+    "check:console": "node tools/console-check.mjs"
   },
   "keywords": [],
   "author": "",
