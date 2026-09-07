@@ -76,8 +76,9 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
   first-party analytics. **Created Aug 4, 2026; no data exists before that.**
 - **Storage**: `Songs` (public, no per-bucket cap; project cap 200MB), `Covers`
   (public, 15MB cap, image-only; orphaned since CD removal), `Media` (public,
-  marketing video hosting — the five UGC reaction videos the homepage carousel
-  streams; repo holds only their posters and the 6s hero loop in `videos/`).
+  marketing video hosting — the six UGC reaction videos the homepage carousel
+  streams, incl. the full Claire anniversary reaction whose first 6s are the
+  hero loop; repo holds only their posters and the hero loop in `videos/`).
 - Migrations = `db/schema.sql` + `db/analytics.sql`, both idempotent, run by hand
   in Supabase SQL editor. webhook tolerates missing columns; **send-lyrics does not**.
 
