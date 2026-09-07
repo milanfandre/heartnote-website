@@ -112,6 +112,15 @@ When this file and an older spec disagree, **this file wins**.
   Supabase `Media` bucket only when a card opens the lightbox, sound on. Motion
   budget spent on the hero alone.
 
+- **Sep 7 — Hero loop carries its real audio; layout tightened.** Browsers
+  refuse autoplay with sound, so the loop still starts muted; an ivory speaker
+  toggle (bottom-right, pulses until first tap) unmutes and restarts the clip
+  from 0 so the hook is heard from its first beat. Opening the reactions
+  lightbox mutes the hero so two soundtracks never overlap. The play-prompt
+  banner under the hero was cut as redundant and the trust bar moved up from
+  below the carousel to sit between hero and reactions (ivory → claret →
+  claret-dark ramp).
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

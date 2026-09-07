@@ -299,24 +299,40 @@
       <!-- Lifestyle image + keepsake card -->
       <div class="relative reveal">
         <div class="lifestyle rounded-[26px] shadow-keepsake aspect-[4/5] ring-1 ring-claret/10">
-          <video src="videos/hero-claire.mp4" poster="videos/hero-claire-poster.jpg" autoplay muted loop playsinline preload="metadata"
+          <video id="heroVideo" src="videos/hero-claire.mp4" poster="videos/hero-claire-poster.jpg" autoplay muted loop playsinline preload="metadata"
                class="w-full h-full object-cover" aria-label="A mom reacting to the custom anniversary song her family had made"></video>
+          <button type="button" id="heroSound" aria-pressed="false" aria-label="Play the video with sound"
+                  class="heroPulse absolute bottom-4 right-4 z-10 grid place-items-center w-12 h-12 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+            <svg id="heroSoundOff" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+            <svg id="heroSoundOn" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+          </button>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- Play prompt: sits under the hero so it follows the card rather than
-       competing with the headline. Testers were missing the control. -->
-  <div class="bg-blush/45 border-y border-claret/12">
-    <p class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-center gap-3 text-center text-claret font-600 text-[1.02rem]">
-      <span class="grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0" aria-hidden="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      </span>
-      <span>Real families hearing their songs for the first time, just below. Tap any video to watch with sound.</span>
-    </p>
-  </div>
+  <!-- ============ TRUST BAR ============ -->
+  <section class="bg-claret text-ivory">
+    <div class="max-w-6xl mx-auto px-6 py-7 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-center">
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Professionally produced for you</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Delivered in 24 hours</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Our happiness promise</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Yours to keep forever</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ REAL REACTIONS ============ -->
   <section id="reactions" class="py-16 md:py-20 bg-claret-dark relative overflow-hidden">
@@ -434,28 +450,6 @@
       </button>
     </div>
   </div>
-
-  <!-- ============ TRUST BAR ============ -->
-  <section class="bg-claret text-ivory">
-    <div class="max-w-6xl mx-auto px-6 py-7 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-center">
-      <div class="flex flex-col items-center gap-1.5">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        <p class="text-sm font-600 text-ivory/90">Professionally produced for you</p>
-      </div>
-      <div class="flex flex-col items-center gap-1.5">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        <p class="text-sm font-600 text-ivory/90">Delivered in 24 hours</p>
-      </div>
-      <div class="flex flex-col items-center gap-1.5">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>
-        <p class="text-sm font-600 text-ivory/90">Our happiness promise</p>
-      </div>
-      <div class="flex flex-col items-center gap-1.5">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-        <p class="text-sm font-600 text-ivory/90">Yours to keep forever</p>
-      </div>
-    </div>
-  </section>
 
   <!-- ============ HOW IT WORKS ============ -->
   <section id="how" class="py-24 md:py-32">
@@ -904,6 +898,36 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
     })();
 
+    // ---- Hero sound toggle (autoplay must stay muted; sound needs a tap) ----
+    (function () {
+      var v = document.getElementById('heroVideo');
+      var b = document.getElementById('heroSound');
+      if (!v || !b) return;
+      var off = document.getElementById('heroSoundOff');
+      var on = document.getElementById('heroSoundOn');
+      var everUnmuted = false;
+      function setMuted(m) {
+        v.muted = m;
+        off.classList.toggle('hidden', !m);
+        on.classList.toggle('hidden', m);
+        b.setAttribute('aria-pressed', String(!m));
+        b.setAttribute('aria-label', m ? 'Play the video with sound' : 'Mute the video');
+      }
+      b.addEventListener('click', function () {
+        b.classList.remove('heroPulse');
+        if (v.muted) {
+          // First unmute restarts the clip so the hook is heard from its first beat.
+          if (!everUnmuted) { everUnmuted = true; try { v.currentTime = 0; } catch (e) {} }
+          setMuted(false);
+          v.play().catch(function () {});
+        } else {
+          setMuted(true);
+        }
+      });
+      // The reaction lightbox calls this so two soundtracks never play at once.
+      window.__muteHero = function () { if (!v.muted) setMuted(true); };
+    })();
+
     // ---- Reaction carousel + lightbox ----
     (function () {
       var track = document.getElementById('vtrack');
@@ -916,6 +940,7 @@
 
       function openBox(card) {
         lastFocus = card;
+        if (window.__muteHero) window.__muteHero();
         // src assigned only now, so nothing streams until someone asks.
         if (player.getAttribute('src') !== card.dataset.video) player.src = card.dataset.video;
         caption.textContent = card.dataset.title;

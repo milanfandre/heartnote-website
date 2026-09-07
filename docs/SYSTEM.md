@@ -39,7 +39,7 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 
 | File | Route | Purpose |
 |---|---|---|
-| index.html | / | Homepage. Section order: hero (autoplaying muted Claire reaction loop, videos/hero-claire.mp4) → play-prompt banner → reactions (UGC video carousel + lightbox, streams from Supabase Media bucket) → trust bar → how (4 steps) → receive → pricing → inbox (email testimonials) → listen (samples) → faq → footer |
+| index.html | / | Homepage. Section order: hero (Claire reaction loop, videos/hero-claire.mp4 — autoplays muted, carries real audio behind a tap-to-unmute toggle) → trust bar → reactions (UGC video carousel + lightbox, streams from Supabase Media bucket; opening it mutes the hero) → how (4 steps) → receive → pricing → inbox (email testimonials) → listen (samples) → faq → footer |
 | order.html | /order.html | Order form → Stripe. Duplicated TIERS object (see Money) |
 | funnel.html, lp-*.html | /lp, /lp/anniversary, /lp/birthday(-milestone), /lp/faith | Paid-traffic landing pages. **Intentionally lag the homepage** in places (still "Three simple steps", older hero); see DECISIONS before "fixing" |
 | story.html | /story.html | Our Story (Paul; NYU Tisch + Columbia College Chicago) |
