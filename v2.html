@@ -149,8 +149,9 @@
 </head>
 <body id="top">
 
-  <!-- ============ PROMO BAR ============ -->
-  <div class="bg-claret-dark text-ivory text-center px-4 py-2.5 relative z-50">
+  <!-- ============ PROMO BAR + HEADER (one sticky block) ============ -->
+  <div class="sticky top-0 z-50">
+  <div class="bg-claret-dark text-ivory text-center px-4 py-2.5">
     <p class="text-[.92rem] leading-snug font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</p>
     <p class="text-[.8rem] text-ivory/80 flex items-center justify-center gap-1.5">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -158,8 +159,7 @@
     </p>
   </div>
 
-  <!-- ============ HEADER ============ -->
-  <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-claret/10">
+  <header class="bg-ivory/95 backdrop-blur border-b border-claret/10">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
       <a href="#top" class="flex items-center gap-2.5" aria-label="Heart Note home">
         <img src="brand_assets/heartnote-mark.png" alt="" style="height:34px;width:auto" onerror="this.style.display='none'" />
@@ -181,6 +181,7 @@
       </div>
     </nav>
   </header>
+  </div>
 
   <!-- ============ HERO ============ -->
   <section class="hero-bg pt-10 pb-12 md:pt-16 md:pb-20">

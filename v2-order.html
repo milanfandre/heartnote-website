@@ -107,13 +107,13 @@
 </head>
 <body>
 
-  <!-- PROMO BAR -->
-  <div class="bg-claret-dark text-ivory text-center px-4 py-2 relative z-50">
+  <!-- PROMO BAR + HEADER (one sticky block) -->
+  <div class="sticky top-0 z-50">
+  <div class="bg-claret-dark text-ivory text-center px-4 py-2">
     <p class="text-[.85rem] leading-snug font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time &middot; ends Sunday at midnight &middot; <span data-promo-countdown class="font-700 tabular-nums"></span></p>
   </div>
 
-  <!-- HEADER -->
-  <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-claret/10">
+  <header class="bg-ivory/95 backdrop-blur border-b border-claret/10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
       <a href="v2.html" class="flex items-center gap-2.5" aria-label="Back to Heart Note">
         <img src="brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" onerror="this.style.display='none'" />
@@ -125,6 +125,7 @@
       </p>
     </div>
   </header>
+  </div>
 
   <!-- ================= PHASE 1: QUIZ ================= -->
   <main id="phaseQuiz" class="phase live">
@@ -294,7 +295,7 @@
       <div class="mt-9 grid md:grid-cols-[1fr_22rem] gap-7 items-start">
 
         <!-- Order card: first on mobile, sticky right on desktop -->
-        <aside class="md:order-2 md:sticky md:top-20">
+        <aside class="md:order-2 md:sticky md:top-28">
           <div class="bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6">
             <h2 class="font-display text-claret text-[1.3rem] leading-tight"><span class="coPoss" data-cap>Their</span> song is reserved</h2>
             <p class="mt-1 text-ink-soft text-[.88rem]">We'll send it to <span id="coEmail" class="font-700 text-ink">you</span> &middot; <button type="button" id="changeEmail" class="text-claret font-700 underline decoration-gold/60 underline-offset-2 cursor-pointer">change</button></p>
