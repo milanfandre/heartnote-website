@@ -101,6 +101,7 @@
     @media (prefers-reduced-motion: reduce) { .step.live { animation: none; } }
 
     #meterFill { transition: width .3s ease; }
+    @supports not (aspect-ratio: 1 / 1) { #coVideo { padding-top: 56.25%; } }
     .phase { display: none; }
     .phase.live { display: block; }
   </style>

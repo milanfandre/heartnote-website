@@ -139,8 +139,19 @@
     .staff .note { fill: #C6973F; }
 
     /* Reveal on scroll */
-    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
-    .reveal.in { opacity: 1; transform: none; }
+    /* Older browsers without aspect-ratio support (iOS 14 Safari and
+       earlier) get explicit heights, so the reaction cards can never
+       collapse to zero and vanish. Modern browsers ignore this block. */
+    @supports not (aspect-ratio: 1 / 1) {
+      #vtrack .vcard { height: 28.5rem; }
+      @media (min-width: 640px) { #vtrack .vcard { height: 31.2rem; } }
+    }
+
+    /* Content is visible by default; the entrance animation only applies once
+       the script has actually armed the observer (html.reveal-armed). If any
+       script fails or IntersectionObserver is missing, nothing ever hides. */
+    .reveal { transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
+    html.reveal-armed .reveal:not(.in) { opacity: 0; transform: translateY(22px); }
 
     /* Occasion + testimonial cards */
     .card {
@@ -817,11 +828,19 @@
   </footer>
 
   <script>
-    // Reveal on scroll
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.14 });
-    document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+    // Reveal on scroll. Armed only when the observer really exists, so a
+    // browser without it (or with scripts partially blocked) still shows
+    // every section; it just skips the entrance animation.
+    try {
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.14 });
+        window.__revealIO = io;
+        document.documentElement.classList.add('reveal-armed');
+        document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+      }
+    } catch (e) {}
 
     // ---- Sample audio players ----
     // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
@@ -891,7 +910,7 @@
       });
 
       grid.appendChild(card);
-      io.observe(card);
+      if (window.__revealIO) window.__revealIO.observe(card);
     });
 
     // ---- Mobile menu ----
@@ -914,6 +933,10 @@
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
     })();
 
+</script>
+<script>
+    // Click-to-play essentials live in their own script block: a failure in
+    // the block above (menu, samples) can no longer take these down.
     // ---- Hero sound toggle (autoplay must stay muted; sound needs a tap) ----
     (function () {
       var v = document.getElementById('heroVideo');

@@ -155,6 +155,20 @@ When this file and an older spec disagree, **this file wins**.
   and the occasions CTA became a solid 2px claret-outline button. The classic
   homepage and order.html keep visible prices; only v2 runs the experiment.
 
+- **Sep 8 — Progressive-enhancement hardening after a real-device blank-page
+  report.** A client phone in incognito showed the homepage without its videos.
+  Two root causes, both invisible to headless-Chrome probes: (1) `.reveal`
+  sections started at opacity 0 and an unguarded IntersectionObserver sat at
+  the top of the single script block, so any blocked or failed script left
+  most of the page permanently invisible; (2) carousel cards took their height
+  only from CSS aspect-ratio, which iOS 14 Safari and earlier lack, collapsing
+  the track to nothing. Fix: content is now visible by default and hides for
+  the entrance animation only after the observer arms (`html.reveal-armed`);
+  click-to-play wiring lives in its own script block; `@supports not
+  (aspect-ratio)` fallbacks give the ratio boxes real heights. Applied to
+  index, v2, and v2-order. Standing rule: never gate baseline visibility on
+  JS succeeding.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
