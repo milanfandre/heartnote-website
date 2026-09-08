@@ -22,6 +22,9 @@ page.on('console', (m) => {
 page.on('requestfailed', (r) => {
   // Browsers cancel speculative media preloads once satisfied; that is not a failure.
   if ((r.failure()?.errorText || '').includes('ERR_ABORTED')) return;
+  // The Meta pixel flags headless Chrome as bot traffic and its own error
+  // beacon then fails; that only happens under automation, never for visitors.
+  if (r.url().includes('connect.facebook.net') && r.url().includes('/log/error')) return;
   (isLocal && r.url().includes('/api/') ? expected : failed).push(r.url().slice(0, 100));
 });
 page.on('response', (r) => {

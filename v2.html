@@ -117,6 +117,7 @@
       background: #fff; border: 1px solid rgba(110,20,35,.16); border-radius: 20px; z-index: 0;
     }
     .deckwrap::after { left: 13%; right: 13%; bottom: -18px; z-index: -1; opacity: .7; }
+    @media (min-width: 768px) { .deckwrap::before, .deckwrap::after { display: none; } }
 
     .receipt-font { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
@@ -136,6 +137,8 @@
     /* Sticky bottom CTA */
     #stickyCta { transform: translateY(110%); transition: transform .45s cubic-bezier(.22,1,.36,1); }
     #stickyCta.show { transform: translateY(0); }
+
+    @media (min-width: 768px) { .phone { width: 320px; } }
 
     /* Compare chart center column lift */
     .compare-hn { background: linear-gradient(180deg, rgba(110,20,35,.05), rgba(110,20,35,.02)); }
@@ -160,7 +163,7 @@
         <span class="font-display text-claret text-[1.35rem] font-500 tracking-tight">Heart&nbsp;Note</span>
       </a>
       <div class="flex items-center gap-2.5">
-        <a href="order.html" data-cta="v2-header" class="btn btn-primary !py-2.5 !px-5 !text-[.95rem]">Create</a>
+        <a href="v2-order.html" data-cta="v2-header" class="btn btn-primary !py-2.5 !px-5 !text-[.95rem]">Create</a>
         <button id="navBtn" aria-label="Open menu" aria-expanded="false" class="grid place-items-center w-11 h-11 rounded-xl border border-claret/20 text-claret cursor-pointer">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
@@ -169,7 +172,7 @@
     <nav id="navPanel" class="hidden bg-ivory border-t border-claret/10 shadow-lift">
       <div class="max-w-6xl mx-auto px-6 py-4 grid gap-1 text-[1.05rem] font-600 text-claret">
         <a class="py-2.5" href="index.html">Home</a>
-        <a class="py-2.5" href="order.html">Create your song</a>
+        <a class="py-2.5" href="v2-order.html">Create your song</a>
         <a class="py-2.5" href="story.html">Our story</a>
         <a class="py-2.5" href="contact.html">Contact</a>
       </div>
@@ -177,13 +180,16 @@
   </header>
 
   <!-- ============ HERO ============ -->
-  <section class="hero-bg pt-10 pb-12">
-    <div class="max-w-xl mx-auto px-5 text-center">
-      <h1 class="font-display font-500 text-claret text-[2.35rem] leading-[1.1] tracking-tight reveal">
+  <section class="hero-bg pt-10 pb-12 md:pt-16 md:pb-20">
+    <div class="max-w-xl md:max-w-6xl mx-auto px-5 md:px-6 text-center md:text-left md:grid md:grid-cols-2 md:gap-x-14">
+      <div class="md:col-start-1 md:self-end">
+      <h1 class="font-display font-500 text-claret text-[2.35rem] md:text-[3rem] leading-[1.1] tracking-tight reveal">
         Watch the moment they hear <span class="script-accent text-gold text-[1.15em]">their</span> song.
       </h1>
 
-      <div class="relative mt-7 rounded-[24px] overflow-hidden shadow-keepsake ring-1 ring-claret/15 reveal" style="aspect-ratio:720/800">
+      </div>
+      <div class="md:col-start-2 md:row-start-1 md:row-span-2 md:self-center">
+      <div class="relative mt-7 md:mt-0 rounded-[24px] md:max-w-[26rem] md:ml-auto overflow-hidden shadow-keepsake ring-1 ring-claret/15 reveal" style="aspect-ratio:720/800">
         <video id="mv" src="videos/hero-montage.mp4" poster="videos/hero-montage-poster.jpg" autoplay muted loop playsinline preload="metadata"
                class="w-full h-full object-cover" aria-label="A montage of Heart Note customers reacting as they hear their songs for the first time"></video>
         <span class="absolute left-3.5 bottom-3.5 bg-claret-dark/70 text-ivory/95 text-[.7rem] font-700 tracking-[.09em] uppercase px-2.5 py-1.5 rounded-full pointer-events-none">Real customer reactions</span>
@@ -198,12 +204,13 @@
           </button>
         </div>
       </div>
-
+      </div>
+      <div class="md:col-start-1 md:row-start-2 md:self-start">
       <p class="mt-7 text-claret font-700 tracking-[.14em] uppercase text-[.78rem] reveal">Handcrafted keepsake songs</p>
       <p class="mt-2.5 text-ink/80 text-[1.12rem] leading-relaxed reveal">A song written just for the ones you love, made from your memories and delivered within 24 hours.</p>
 
       <div class="mt-6 reveal">
-        <a href="order.html" id="heroCta" data-cta="v2-hero" class="btn btn-primary w-full !py-4 !text-[1.12rem]">Create your Heart Note</a>
+        <a href="v2-order.html" id="heroCta" data-cta="v2-hero" class="btn btn-primary w-full !py-4 !text-[1.12rem]">Create your Heart Note</a>
         <p class="mt-3 text-ink-soft text-[.9rem]">Delivered within 24 hours &middot; One free revision included</p>
       </div>
 
@@ -216,6 +223,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="halfStar"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="currentColor" stop-opacity=".28"/></linearGradient></defs><path fill="url(#halfStar)" d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
         </div>
         <p class="text-ink-soft font-600 text-[.98rem]"><span class="text-claret font-700">4.5</span> from 1,200+ families</p>
+      </div>
       </div>
     </div>
   </section>
@@ -231,7 +239,7 @@
       </div>
 
       <div class="relative mt-8 reveal">
-        <div id="vtrack" class="snaptrack flex gap-4 overflow-x-auto px-5 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
+        <div id="vtrack" class="snaptrack flex gap-4 md:gap-5 overflow-x-auto px-5 md:px-12 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
           <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
                   data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary" aria-label="Watch: For their anniversary. Mom's reaction, in full. Opens a larger player with sound.">
             <img src="videos/poster-ugc-claire.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
@@ -281,26 +289,32 @@
             <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For Dad's birthday</span><span class="block text-ivory/80 text-sm mt-0.5">His reaction to the lyrics</span></span>
           </button>
         </div>
-        <p class="mt-4 text-center text-ivory/60 text-[.9rem]">Swipe to see more reactions</p>
+        <button type="button" id="vPrev" aria-label="Previous videos" class="hidden md:grid place-items-center absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" id="vNext" aria-label="More videos" class="hidden md:grid place-items-center absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <p class="mt-4 text-center text-ivory/60 text-[.9rem] md:hidden">Swipe to see more reactions</p>
       </div>
 
       <div class="max-w-xl mx-auto px-5 mt-8 text-center reveal">
         <p class="text-ivory text-[1.08rem] leading-relaxed"><span class="font-700">Someone you love deserves this moment.</span> The smile, the tears, the story they will tell about it.</p>
-        <a href="order.html" data-cta="v2-reactions" class="btn btn-ivory w-full mt-5">Create this moment for someone</a>
+        <a href="v2-order.html" data-cta="v2-reactions" class="btn btn-ivory w-full mt-5">Create this moment for someone</a>
         <p class="mt-3 text-ivory/65 text-[.88rem]">Every order comes with our happiness promise.</p>
       </div>
     </div>
   </section>
 
   <!-- ============ HOW IT WORKS: SWIPE DECK ============ -->
-  <section id="how" class="py-16">
-    <div class="max-w-xl mx-auto px-5 text-center">
+  <section id="how" class="py-16 md:py-24">
+    <div class="max-w-xl md:max-w-6xl mx-auto px-5 text-center">
       <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">How it works</p>
       <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">From your story to their song</h2>
       <p class="mt-3 text-ink/75 text-[1.02rem] reveal">Four steps. One unforgettable gift. Ready within 24 hours.</p>
 
       <div class="deckwrap relative mt-10 reveal">
-        <div id="deck" class="snaptrack relative z-10 flex gap-4 overflow-x-auto pb-1" aria-label="The four steps, swipe sideways">
+        <div id="deck" class="snaptrack relative z-10 flex gap-4 overflow-x-auto pb-1 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible" aria-label="The four steps, swipe sideways">
           <article class="shrink-0 w-full bg-white rounded-[20px] border border-claret/15 shadow-keepsake p-6 text-left">
             <div class="flex items-center justify-between">
               <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale font-display text-xl">1</span>
@@ -343,10 +357,10 @@
           </article>
         </div>
       </div>
-      <div id="deckDots" class="mt-7 flex justify-center gap-2.5" aria-hidden="true"></div>
-      <p class="mt-3 text-ink-soft text-[.8rem] font-700 tracking-[.16em] uppercase receipt-font">&larr; Swipe the deck &rarr;</p>
+      <div id="deckDots" class="mt-7 flex md:hidden justify-center gap-2.5" aria-hidden="true"></div>
+      <p class="mt-3 md:hidden text-ink-soft text-[.8rem] font-700 tracking-[.16em] uppercase receipt-font">&larr; Swipe the deck &rarr;</p>
 
-      <a href="order.html" data-cta="v2-how" class="btn btn-primary w-full mt-8 reveal">Start your song</a>
+      <a href="v2-order.html" data-cta="v2-how" class="btn btn-primary w-full mt-8 reveal">Start your song</a>
       <p class="mt-3 text-ink-soft text-[.9rem] reveal">Takes less than five minutes to start</p>
     </div>
   </section>
@@ -390,134 +404,40 @@
   </section>
 
   <!-- ============ A QUESTION + ORDER WALKTHROUGH ============ -->
-  <section class="py-20 bg-claret-dark relative overflow-hidden">
+  <section class="py-20 md:py-28 bg-claret-dark relative overflow-hidden">
     <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(70% 55% at 50% 0%, rgba(198,151,63,.14) 0%, rgba(198,151,63,0) 60%);" aria-hidden="true"></div>
-    <div class="relative max-w-xl mx-auto px-5 text-center">
-      <p class="text-gold font-700 tracking-[.2em] uppercase text-[.75rem] reveal">A question</p>
-      <h2 class="mt-5 font-display font-500 italic text-ivory text-[2.5rem] leading-[1.12] tracking-tight reveal">
-        What do you give the person who has <span class="text-gold-soft">everything</span>?
-      </h2>
-      <p class="mt-6 text-ivory/80 text-[1.1rem] reveal">One honest answer: a song about them. Here is the whole order, screen by screen.</p>
+    <div class="relative max-w-xl md:max-w-6xl mx-auto px-5 text-center md:text-left md:grid md:grid-cols-2 md:gap-14 md:items-center">
+      <div>
+        <p class="text-gold font-700 tracking-[.2em] uppercase text-[.75rem] reveal">A question</p>
+        <h2 class="mt-5 font-display font-500 italic text-ivory text-[2.5rem] md:text-[3rem] leading-[1.12] tracking-tight reveal">
+          What do you give the person who has <span class="text-gold-soft">everything</span>?
+        </h2>
+        <p class="mt-6 text-ivory/80 text-[1.1rem] reveal">One honest answer: a song about them. Watch a real order below, from the first question to picking a package.</p>
+        <p class="mt-4 text-ivory/60 text-[.88rem] reveal hidden md:block">The real order, exactly as you'll see it. About five minutes start to finish.</p>
+        <a href="v2-order.html" data-cta="v2-walkthrough" class="btn btn-gold w-full md:w-auto mt-7 reveal hidden md:inline-flex">Start with the first question</a>
+      </div>
 
-      <div class="mt-10 flex justify-center reveal">
+      <div class="mt-10 md:mt-0 flex justify-center reveal">
         <div class="phone">
-          <div class="phone-screen">
-            <div class="flex items-center justify-between px-4 pt-3 pb-2 border-b border-claret/10">
-              <span class="font-display text-claret text-[.95rem]">Heart&nbsp;Note</span>
-              <span class="text-ink-soft text-[.62rem] font-700 tracking-[.1em] uppercase" id="phoneStep">Step 1 of 6</span>
-            </div>
-            <div id="phoneTrack" class="snaptrack flex overflow-x-auto" aria-label="Order form walkthrough, swipe sideways" tabindex="0">
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Choose the occasion</p>
-                <div class="mt-3 flex flex-wrap gap-1.5">
-                  <span class="px-3 py-1.5 rounded-full bg-claret text-ivory text-[.72rem] font-700">Anniversary</span>
-                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Birthday</span>
-                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Wedding</span>
-                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Proposal</span>
-                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Just because</span>
-                </div>
-                <div class="mt-4 mini-field px-3 py-2.5">
-                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">Their name</p>
-                  <p class="text-[.85rem] text-ink font-600">Patricia</p>
-                </div>
-                <p class="mt-8 text-[.72rem] text-ink-soft text-center">No account needed</p>
-              </div>
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Share your story</p>
-                <div class="mt-3 mini-field px-3 py-2.5">
-                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">Your favorite memories together</p>
-                  <p class="text-[.8rem] text-ink/75 italic leading-snug mt-1">The road trip where the map was wrong and it became the best day of the whole...</p>
-                </div>
-                <div class="mt-2.5 mini-field px-3 py-2.5">
-                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">The little things you love about them</p>
-                  <p class="text-[.8rem] text-ink/75 italic leading-snug mt-1">She hums while she cooks. She never lets anyone leave without a hug...</p>
-                </div>
-                <p class="mt-6 text-[.72rem] text-ink-soft text-center">A few sentences is plenty</p>
-              </div>
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Pick the music style</p>
-                <div class="mt-3 grid grid-cols-3 gap-1.5 text-center">
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Pop</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Country</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Folk</span>
-                  <span class="px-1 py-2 rounded-lg bg-claret text-ivory text-[.66rem] font-700">Piano ballad</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Soul</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Rock</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Indie</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Hip-hop</span>
-                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">More...</span>
-                </div>
-                <p class="mt-6 text-[.72rem] text-ink-soft text-center">Not sure? Leave it to us</p>
-              </div>
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Choose a voice</p>
-                <div class="mt-3 space-y-1.5">
-                  <div class="mini-field px-3 py-2 flex items-center justify-between">
-                    <div><p class="text-[.8rem] font-700 text-ink">Brett</p><p class="text-[.66rem] text-ink-soft">Male &middot; country</p></div>
-                  </div>
-                  <div class="px-3 py-2 flex items-center justify-between rounded-[.55rem] bg-claret text-ivory">
-                    <div><p class="text-[.8rem] font-700">Gabriel</p><p class="text-[.66rem] text-ivory/75">Female &middot; pop</p></div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-                  </div>
-                  <div class="mini-field px-3 py-2 flex items-center justify-between">
-                    <div><p class="text-[.8rem] font-700 text-ink">Justin</p><p class="text-[.66rem] text-ink-soft">Male &middot; soul</p></div>
-                  </div>
-                  <div class="mini-field px-3 py-2 flex items-center justify-between opacity-50">
-                    <div><p class="text-[.8rem] font-700 text-ink">Lily</p><p class="text-[.66rem] text-ink-soft">Female &middot; joyful pop</p></div>
-                    <span class="text-[.6rem] font-700 uppercase tracking-[.06em] text-ink-soft">Unavailable</span>
-                  </div>
-                </div>
-                <p class="mt-4 text-[.72rem] text-ink-soft text-center">Hear a sample of each</p>
-              </div>
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Pick your package</p>
-                <div class="mt-3 space-y-1.5">
-                  <div class="mini-field px-3 py-2 flex items-center justify-between">
-                    <p class="text-[.8rem] font-700 text-ink">Single</p><p class="text-[.8rem] font-700 text-claret">$59 <span class="text-ink-soft font-400 line-through text-[.7rem]">$89</span></p>
-                  </div>
-                  <div class="mini-field px-3 py-2 flex items-center justify-between">
-                    <p class="text-[.8rem] font-700 text-ink">Deluxe</p><p class="text-[.8rem] font-700 text-claret">$69 <span class="text-ink-soft font-400 line-through text-[.7rem]">$99</span></p>
-                  </div>
-                  <div class="px-3 py-2.5 rounded-[.55rem] bg-claret text-ivory relative">
-                    <span class="absolute -top-2 right-2 bg-gold text-claret-dark text-[.55rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Best value</span>
-                    <div class="flex items-center justify-between">
-                      <p class="text-[.8rem] font-700">Experience</p><p class="text-[.8rem] font-700">$89 <span class="text-ivory/60 font-400 line-through text-[.7rem]">$139</span></p>
-                    </div>
-                    <p class="text-[.64rem] text-ivory/75 mt-0.5">Three versions, remastered</p>
-                  </div>
-                </div>
-                <p class="mt-5 text-[.72rem] text-ink-soft text-center">One free revision on every package</p>
-              </div>
-
-              <div class="shrink-0 w-full p-4 text-left">
-                <p class="font-display text-claret text-[1.05rem] leading-snug">Secure checkout</p>
-                <div class="mt-3 mini-field px-3 py-2.5">
-                  <div class="flex items-center justify-between"><p class="text-[.78rem] font-600 text-ink">Experience Package</p><p class="text-[.78rem] font-700 text-ink">$89</p></div>
-                  <div class="flex items-center justify-between mt-1 pt-1 border-t border-claret/10"><p class="text-[.78rem] font-700 text-claret">Total</p><p class="text-[.78rem] font-700 text-claret">$89</p></div>
-                </div>
-                <div class="mt-3 rounded-[.55rem] bg-claret text-ivory text-center py-2.5 text-[.8rem] font-700">Pay securely</div>
-                <p class="mt-3 text-[.68rem] text-ink-soft text-center leading-snug">Payment and email handled by Stripe. Your song is on its way within 24 hours.</p>
-              </div>
-
-            </div>
-            <div id="phoneDots" class="flex justify-center gap-2 py-3 border-t border-claret/10" aria-hidden="true"></div>
+          <div class="phone-screen relative" style="aspect-ratio:390/780">
+            <video id="demoVid" src="videos/demo-checkout.mp4" poster="videos/demo-checkout-poster.jpg" autoplay muted loop playsinline preload="metadata"
+                   class="absolute inset-0 w-full h-full object-cover" aria-label="A screen recording of the Heart Note order: choosing who the song is for, the occasion, the themes and style, sharing the story, and picking a package"></video>
           </div>
         </div>
       </div>
-      <p class="mt-5 text-ivory/60 text-[.88rem] reveal">The real order, screen by screen. About five minutes start to finish.</p>
-      <a href="order.html" data-cta="v2-walkthrough" class="btn btn-gold w-full mt-7 reveal">Start with the first question</a>
+
+      <div class="md:hidden">
+        <p class="mt-5 text-ivory/60 text-[.88rem] reveal">The real order, exactly as you'll see it. About five minutes start to finish.</p>
+        <a href="v2-order.html" data-cta="v2-walkthrough-m" class="btn btn-gold w-full mt-6 reveal">Start with the first question</a>
+      </div>
     </div>
   </section>
 
   <!-- ============ ONE FAMILY'S HEART NOTE ============ -->
-  <section class="py-16">
-    <div class="max-w-xl mx-auto px-5">
+  <section class="py-16 md:py-24">
+    <div class="max-w-xl md:max-w-5xl mx-auto px-5">
       <p class="text-center text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">One family's Heart Note</p>
+      <div class="md:grid md:grid-cols-[.85fr_1fr] md:gap-14 md:items-center">
 
       <figure class="m-0 mt-8 relative reveal" style="transform:rotate(-1.2deg)">
         <span class="absolute -top-3 left-8 w-24 h-6 bg-gold-pale/70 rotate-[-4deg] rounded-[2px]" aria-hidden="true"></span>
@@ -547,23 +467,25 @@
         <blockquote class="mt-6 border-l-[3px] border-claret pl-5 font-display italic text-claret text-[1.25rem] leading-relaxed">
           By the last chorus she is holding the card in both hands, and nobody at the table is saying a word.
         </blockquote>
-        <button type="button" id="storyWatch" class="btn btn-ghost w-full mt-7">
+        <button type="button" id="storyWatch" class="btn btn-ghost w-full md:w-auto mt-7">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
           Watch the full reaction
         </button>
+      </div>
       </div>
     </div>
   </section>
 
   <!-- ============ FLOWERS VS SONG ============ -->
   <section class="py-16 bg-ivory-deep">
-    <div class="max-w-xl mx-auto px-5 text-center">
+    <div class="max-w-xl md:max-w-4xl mx-auto px-5 text-center">
       <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">Why a song</p>
       <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Flowers last a week. A song plays for years.</h2>
       <p class="mt-4 text-ink/75 text-[1.02rem] reveal">A traditional gift is a moment. A song about the person is a soundtrack: replayed on birthdays, anniversaries, and the quiet days in between.</p>
 
+      <div class="md:grid md:grid-cols-2 md:gap-7 md:items-start md:mt-12">
       <!-- The usual route: receipt -->
-      <div class="mt-10 bg-ivory rounded-[18px] border border-claret/20 shadow-keepsake p-6 text-left receipt-font reveal" style="transform:rotate(-.6deg)">
+      <div class="mt-10 md:mt-0 bg-ivory rounded-[18px] border border-claret/20 shadow-keepsake p-6 text-left receipt-font reveal" style="transform:rotate(-.6deg)">
         <p class="text-center text-ink-soft text-[.72rem] tracking-[.2em] uppercase">&#9733; Traditional Gift Co.</p>
         <p class="text-center font-display text-claret text-[1.6rem] mt-1" style="font-family:'Fraunces',serif">The usual route</p>
         <p class="text-center text-ink-soft text-[.75rem] mt-0.5">Order #4471 &middot; Thank you!</p>
@@ -580,7 +502,7 @@
       </div>
 
       <!-- The Heart Note ticket -->
-      <div class="mt-8 bg-claret-dark rounded-[18px] shadow-keepsake ring-1 ring-gold/40 p-6 text-left text-ivory reveal" style="transform:rotate(.5deg)">
+      <div class="mt-8 md:mt-0 bg-claret-dark rounded-[18px] shadow-keepsake ring-1 ring-gold/40 p-6 text-left text-ivory reveal" style="transform:rotate(.5deg)">
         <div class="flex items-center justify-between">
           <p class="font-display text-[1.5rem]">A Heart Note</p>
           <p class="font-700 text-gold-soft text-[1.15rem]">from $59</p>
@@ -597,20 +519,21 @@
         <div class="border-t border-dashed border-ivory/25 my-4"></div>
         <div class="flex justify-between items-end"><span class="receipt-font tracking-[.1em] uppercase text-ivory/60 text-[.85rem]">Lifespan</span><span class="font-display italic text-gold-soft text-[1.3rem]">forever</span></div>
       </div>
+      </div>
 
       <p class="mt-9 font-display italic text-claret text-[1.35rem] leading-snug reveal">The difference is five minutes of telling us your story.</p>
-      <a href="order.html" data-cta="v2-flowers" class="btn btn-primary w-full mt-6 reveal">Start your song</a>
+      <a href="v2-order.html" data-cta="v2-flowers" class="btn btn-primary w-full mt-6 reveal">Start your song</a>
       <p class="mt-3 text-ink-soft text-[.9rem] reveal">Delivered within 24 hours &middot; One free revision included</p>
     </div>
   </section>
 
   <!-- ============ WE'VE ALL BEEN THERE ============ -->
-  <section class="py-16">
-    <div class="max-w-xl mx-auto px-5 text-center">
-      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">We've all been there</h2>
+  <section class="py-16 md:py-24">
+    <div class="max-w-xl md:max-w-3xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] md:text-[2.6rem] leading-[1.1] tracking-tight reveal">We've all been there</h2>
       <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Standing in a store the night before, thinking <em>nothing here is good enough for them.</em></p>
 
-      <div class="mt-9 space-y-4 text-left">
+      <div class="mt-9 grid gap-4 md:grid-cols-2 text-left">
         <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 flex gap-4 reveal">
           <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M7.5 8a2.5 2.5 0 1 1 4.5-1.5A2.5 2.5 0 1 1 16.5 8"/></svg></span>
           <div><h3 class="font-display text-claret text-[1.2rem]">Generic gifts say generic things</h3><p class="text-ink/75 text-[.95rem] mt-1">Another candle. Another gift card. Another way of saying you didn't know what to get.</p></div>
@@ -649,99 +572,80 @@
   </section>
 
   <!-- ============ HOW WE COMPARE ============ -->
-  <section class="py-16 bg-ivory-deep">
-    <div class="max-w-2xl mx-auto px-4 text-center">
+  <section class="py-16 md:py-24 bg-ivory-deep">
+    <div class="max-w-2xl lg:max-w-4xl mx-auto px-4 text-center">
       <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">How we compare</p>
-      <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">More personal than an app. A fraction of a studio commission.</h2>
-      <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Instant song apps are fast but faceless. Studio commissions are beautiful but cost a fortune. Heart Note sits in the sweet spot.</p>
+      <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] md:text-[2.6rem] leading-[1.1] tracking-tight reveal">More personal than an app. A fraction of a studio commission.</h2>
+      <p class="mt-4 text-ink/75 text-[1.02rem] max-w-xl mx-auto reveal">Instant song apps are fast but faceless. Studio commissions are beautiful but cost a fortune. Heart Note sits in the sweet spot.</p>
 
-      <p class="mt-8 script-accent text-claret text-[1.5rem] leading-none reveal">the one they'll replay forever<span class="block text-gold text-[1.1rem] rotate-6 -mt-1" aria-hidden="true">&#8600;</span></p>
+      <p class="mt-9 script-accent text-claret text-[1.5rem] md:text-[1.8rem] leading-none reveal">the one they'll replay forever<span class="block text-gold text-[1.1rem] rotate-6 -mt-1" aria-hidden="true">&#8600;</span></p>
 
-      <div class="mt-2 grid grid-cols-[1fr_1.35fr_1fr] gap-2 text-left items-stretch reveal">
-        <div class="pt-6">
-          <div class="bg-white rounded-[16px] border border-claret/12 p-3 h-full">
-            <p class="font-display text-claret text-[.95rem] leading-tight">Instant song apps</p>
-            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Fast, faceless</span>
+      <div class="mt-2 grid grid-cols-[1fr_1.35fr_1fr] md:grid-cols-[1fr_1.25fr_1fr] gap-2 md:gap-4 items-start text-left reveal">
+        <div class="pt-7">
+          <div class="bg-white rounded-[18px] border border-claret/12 p-3 md:p-5">
+            <p class="font-display text-claret text-[.95rem] md:text-[1.15rem] leading-tight">Instant song apps</p>
+            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.58rem] md:text-[.66rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Fast, faceless</span>
+            <div class="mt-3 divide-y divide-dashed divide-claret/15 text-[.8rem] md:text-[.9rem] text-ink/70">
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>Often $10 to $30, plus upsells</p>
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>Instant, and it sounds like it</p>
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>Software, no person in the loop</p>
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>A prompt box and a gamble</p>
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>Re-roll and hope</p>
+              <p class="py-3 flex gap-1.5"><span class="text-claret/60 shrink-0" aria-hidden="true">&#10005;</span>A file to misplace</p>
+            </div>
           </div>
         </div>
+
         <div class="relative">
           <span class="absolute -top-0.5 left-1/2 -translate-x-1/2 bg-claret text-ivory text-[.62rem] font-700 tracking-[.12em] uppercase px-3 py-1 rounded-full whitespace-nowrap z-10">#1 choice</span>
-          <div class="compare-hn bg-white rounded-[16px] ring-2 ring-claret p-3 pt-5 h-full mt-2.5 shadow-keepsake">
-            <p class="font-display text-claret text-[1.1rem] leading-tight">Heart&nbsp;Note</p>
-            <span class="inline-block mt-1.5 bg-gold/20 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">The sweet spot</span>
+          <div class="compare-hn bg-white rounded-[18px] ring-2 ring-claret shadow-keepsake p-3 md:p-5 pt-6 md:pt-7 mt-2.5">
+            <p class="font-display text-claret text-[1.1rem] md:text-[1.35rem] leading-tight">Heart&nbsp;Note</p>
+            <span class="inline-block mt-1.5 bg-gold/20 text-claret text-[.58rem] md:text-[.66rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">The sweet spot</span>
+            <div class="mt-2 text-[.85rem] md:text-[.95rem] text-ink font-600 space-y-1">
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase">Price</p>
+              <p class="flex gap-1.5 pb-2"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Up to $50 off what comparable services charge. No subscriptions, no hidden fees</p>
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase border-t border-claret/10">Delivery</p>
+              <p class="flex gap-1.5 pb-2"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>24-hour delivery standard</p>
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase border-t border-claret/10">Who makes it</p>
+              <p class="flex gap-1.5 pb-2"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Paul and his team, every order</p>
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase border-t border-claret/10">Personalization</p>
+              <p class="flex gap-1.5 pb-2"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A guided brief: right names, right memories, your choice of style and voice</p>
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase border-t border-claret/10">If it's not right</p>
+              <p class="flex gap-1.5 pb-2"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>One free revision, then we keep working until you love it</p>
+              <p class="pt-2 text-center text-ink-soft text-[.6rem] md:text-[.66rem] font-700 tracking-[.14em] uppercase border-t border-claret/10">Keeping it</p>
+              <p class="flex gap-1.5"><svg class="shrink-0 mt-1 text-gold" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A private gift page: stream, download, share, forever</p>
+            </div>
           </div>
         </div>
-        <div class="pt-6">
-          <div class="bg-white rounded-[16px] border border-claret/12 p-3 h-full">
-            <p class="font-display text-claret text-[.95rem] leading-tight">Studio commissions</p>
-            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Slow, costly</span>
-          </div>
-        </div>
-      </div>
 
-      <div class="mt-2 space-y-2 text-left reveal">
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Price</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">$10 to $30, plus upsells</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">$59 to $89, everything included</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">$500 and up</div>
-          </div>
-        </div>
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Delivery</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Instant, and it sounds like it</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">Within 24 hours</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Weeks, when the calendar opens</div>
-          </div>
-        </div>
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Who makes it</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Software, no person in the loop</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">Paul and his team, every order</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">One artist, one style</div>
-          </div>
-        </div>
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Personalization</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A prompt box and a gamble</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">A guided brief: right names, right memories, your choice of style and voice</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A brief, read once</div>
-          </div>
-        </div>
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">If it's not right</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Re-roll and hope</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">One free revision, then we keep working until you love it</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Often billed per round</div>
-          </div>
-        </div>
-        <div>
-          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Keeping it</p>
-          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A file to misplace</div>
-            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">A private gift page: stream, download, share, forever</div>
-            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Files handed off at the end</div>
+        <div class="pt-7">
+          <div class="bg-white rounded-[18px] border border-claret/12 p-3 md:p-5">
+            <p class="font-display text-claret text-[.95rem] md:text-[1.15rem] leading-tight">Studio commissions</p>
+            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.58rem] md:text-[.66rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Slow, costly</span>
+            <div class="mt-3 divide-y divide-dashed divide-claret/15 text-[.8rem] md:text-[.9rem] text-ink/70">
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>Often $500 and up</p>
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>Weeks, when the calendar opens</p>
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>One artist, one style</p>
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>A brief, read once</p>
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>Often billed per round</p>
+              <p class="py-3 flex gap-1.5"><span class="text-gold shrink-0" aria-hidden="true">&#8776;</span>Files handed off at the end</p>
+            </div>
           </div>
         </div>
       </div>
 
       <p class="mt-8 text-ink/85 text-[1.05rem] reveal">Keepsake quality, without the keepsake price tag.</p>
-      <a href="order.html" data-cta="v2-compare" class="btn btn-primary w-full max-w-xl mt-5 reveal">Create your Heart Note</a>
+      <a href="v2-order.html" data-cta="v2-compare" class="btn btn-primary w-full max-w-xl mt-5 reveal">Create your Heart Note</a>
     </div>
   </section>
 
   <!-- ============ EVERY MEANINGFUL MOMENT ============ -->
-  <section class="py-16">
-    <div class="max-w-xl mx-auto px-5 text-center">
-      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Perfect for every meaningful moment</h2>
+  <section class="py-16 md:py-24">
+    <div class="max-w-xl md:max-w-5xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] md:text-[2.6rem] leading-[1.1] tracking-tight reveal">Perfect for every meaningful moment</h2>
       <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Whatever the occasion, we'll help you put it to music.</p>
 
-      <div class="mt-9 grid grid-cols-2 gap-3.5 text-left">
+      <div class="mt-9 grid grid-cols-2 md:grid-cols-4 gap-3.5 text-left">
         <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
           <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
           <h3 class="mt-3 font-display text-claret text-[1.15rem]">Anniversaries</h3>
@@ -793,29 +697,29 @@
       </div>
 
       <p class="mt-8 text-ink/80 text-[1rem] reveal">Don't see your occasion? <span class="font-700">Every story is welcome.</span></p>
-      <a href="order.html" data-cta="v2-occasions" class="btn btn-ghost w-full mt-5 reveal">Create yours</a>
+      <a href="v2-order.html" data-cta="v2-occasions" class="btn btn-ghost w-full mt-5 reveal">Create yours</a>
     </div>
   </section>
 
   <!-- ============ LISTEN ============ -->
-  <section id="listen" class="py-16 bg-claret-deep text-ivory relative overflow-hidden">
+  <section id="listen" class="py-16 md:py-24 bg-claret-deep text-ivory relative overflow-hidden">
     <div class="absolute inset-0 opacity-[.12] pointer-events-none" style="background-image: radial-gradient(50% 60% at 80% 20%, #C6973F 0%, transparent 60%), radial-gradient(45% 55% at 10% 90%, #E9CBC0 0%, transparent 55%);" aria-hidden="true"></div>
-    <div class="relative max-w-xl mx-auto px-5 text-center">
+    <div class="relative max-w-xl md:max-w-3xl mx-auto px-5 text-center">
       <p class="text-gold font-700 tracking-[.16em] uppercase text-[.75rem] reveal">Hear it for yourself</p>
       <h2 class="mt-3 font-display font-500 text-ivory text-[2.05rem] leading-[1.1] tracking-tight reveal">The kind of song you'll receive</h2>
       <p class="mt-3 text-gold-soft text-[.95rem] reveal">Press play on any of these to hear a real song we made.</p>
 
-      <div id="sampleList" class="mt-9 space-y-3 text-left reveal"></div>
+      <div id="sampleList" class="mt-9 grid gap-3 md:grid-cols-2 text-left reveal"></div>
 
       <p class="mt-6 text-ivory/60 text-[.88rem] reveal">Every song is written fresh for your own story. These are just a taste.</p>
-      <a href="order.html" data-cta="v2-listen" class="btn btn-ivory w-full mt-6 reveal">Ready to create yours?</a>
+      <a href="v2-order.html" data-cta="v2-listen" class="btn btn-ivory w-full mt-6 reveal">Ready to create yours?</a>
     </div>
   </section>
 
   <!-- ============ EVERYTHING YOU GET ============ -->
-  <section class="py-16">
-    <div class="max-w-xl mx-auto px-5 text-center">
-      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Everything you get</h2>
+  <section class="py-16 md:py-24">
+    <div class="max-w-xl md:max-w-3xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] md:text-[2.6rem] leading-[1.1] tracking-tight reveal">Everything you get</h2>
       <p class="mt-3 text-ink/75 text-[1.02rem] reveal">One price. No subscriptions. No surprises.</p>
 
       <div class="mt-9 grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left">
@@ -849,7 +753,7 @@
         </div>
       </div>
 
-      <div class="mt-8 bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6 text-left reveal">
+      <div class="mt-8 md:max-w-lg md:mx-auto bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6 text-left reveal">
         <p class="text-center font-display text-claret text-[1.4rem]">Your Heart Note</p>
         <p class="text-center text-ink-soft text-[.9rem]">No monthly fees. No subscriptions.</p>
         <div class="mt-4 flex items-end justify-center gap-2.5">
@@ -863,7 +767,7 @@
           <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Delivered within 24 hours</li>
           <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Yours to keep forever, no subscription</li>
         </ul>
-        <a href="order.html" data-cta="v2-package" class="btn btn-primary w-full mt-6">Create your Heart Note</a>
+        <a href="v2-order.html" data-cta="v2-package" class="btn btn-primary w-full mt-6">Create your Heart Note</a>
         <p class="mt-3 text-center text-ink-soft text-[.85rem]">Single $59 &middot; Deluxe $69 &middot; Experience $89</p>
       </div>
     </div>
@@ -907,19 +811,19 @@
     <div class="relative max-w-xl mx-auto px-5">
       <h2 class="font-display font-500 text-ivory text-[2.2rem] leading-[1.12] tracking-tight reveal">Someone you love has a song waiting.</h2>
       <p class="mt-4 text-ivory/75 text-[1.05rem] reveal">Start tonight, and it can be in your inbox by tomorrow.</p>
-      <a href="order.html" data-cta="v2-final" class="btn btn-gold w-full mt-7 reveal">Create your Heart Note</a>
+      <a href="v2-order.html" data-cta="v2-final" class="btn btn-gold w-full mt-7 reveal">Create your Heart Note</a>
       <p class="mt-3 text-ivory/60 text-[.88rem] reveal">Delivered within 24 hours &middot; One free revision included</p>
     </div>
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer class="bg-claret-dark text-ivory/75 border-t border-ivory/10 pb-28">
-    <div class="max-w-xl mx-auto px-5 py-12">
+  <footer class="bg-claret-dark text-ivory/75 border-t border-ivory/10 pb-28 md:pb-10">
+    <div class="max-w-xl md:max-w-3xl mx-auto px-5 py-12">
       <p class="font-display text-ivory text-[1.4rem]">Heart&nbsp;Note</p>
       <p class="mt-2 text-[.95rem]">A song written just for the ones you love, made from your story and delivered within 24 hours.</p>
       <div class="mt-7 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[.95rem]">
         <a class="py-1" href="index.html">Home</a>
-        <a class="py-1" href="order.html">Create your song</a>
+        <a class="py-1" href="v2-order.html">Create your song</a>
         <a class="py-1" href="story.html">Our story</a>
         <a class="py-1" href="contact.html">Contact</a>
         <a class="py-1" href="privacy.html">Privacy</a>
@@ -934,8 +838,8 @@
   </footer>
 
   <!-- ============ STICKY BOTTOM CTA ============ -->
-  <div id="stickyCta" class="fixed bottom-0 inset-x-0 z-40 bg-ivory/95 backdrop-blur border-t border-claret/15 px-4 pt-3 pb-4" style="padding-bottom: max(1rem, env(safe-area-inset-bottom))">
-    <a href="order.html" data-cta="v2-sticky" class="btn btn-primary w-full max-w-xl mx-auto !py-3.5">Create your Heart Note</a>
+  <div id="stickyCta" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-ivory/95 backdrop-blur border-t border-claret/15 px-4 pt-3 pb-4" style="padding-bottom: max(1rem, env(safe-area-inset-bottom))">
+    <a href="v2-order.html" data-cta="v2-sticky" class="btn btn-primary w-full max-w-xl mx-auto !py-3.5">Create your Heart Note</a>
   </div>
 
   <!-- ============ LIGHTBOX ============ -->
@@ -1037,6 +941,12 @@
       if (lastFocus) lastFocus.focus();
     }
     document.querySelectorAll('.vcard[data-video]').forEach(function (c) { c.addEventListener('click', function () { openBox(c); }); });
+    var vp = document.getElementById('vPrev'), vn = document.getElementById('vNext'), vt = document.getElementById('vtrack');
+    if (vp && vn && vt) {
+      var vstep = function () { var c = vt.querySelector('.vcard'); return c ? c.getBoundingClientRect().width + 16 : 300; };
+      vp.addEventListener('click', function () { vt.scrollBy({ left: -vstep(), behavior: 'smooth' }); });
+      vn.addEventListener('click', function () { vt.scrollBy({ left: vstep(), behavior: 'smooth' }); });
+    }
     var storyWatch = document.getElementById('storyWatch');
     if (storyWatch) storyWatch.addEventListener('click', function () { openBox(document.getElementById('storyPlay')); });
     closeBtn.addEventListener('click', closeBox);
@@ -1071,10 +981,6 @@
     }, { passive: true });
   }
   wireDots('deck', 'deckDots');
-  wireDots('phoneTrack', 'phoneDots', null, function (idx) {
-    var el = document.getElementById('phoneStep');
-    if (el) el.textContent = 'Step ' + (idx + 1) + ' of 6';
-  });
 
   // ---- Sample songs ----
   (function () {

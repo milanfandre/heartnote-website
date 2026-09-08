@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create your Heart Note</title>
+  <meta name="description" content="Answer seven quick questions and we'll turn your story into a song, delivered within 24 hours." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+
+  <script src="/pixel.js"></script>
+  <script src="/promo-bar.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+            gold: { DEFAULT: '#C6973F', soft: '#E4C67F', pale: '#EFDCA9' },
+            ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+            blush: '#E9CBC0',
+            ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            keepsake: '0 1px 2px rgba(54,9,17,.06), 0 12px 28px -12px rgba(110,20,35,.28), 0 40px 64px -32px rgba(110,20,35,.22)',
+            lift: '0 2px 4px rgba(54,9,17,.05), 0 18px 40px -16px rgba(110,20,35,.30)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root { --ivory:#F7F1E6; --claret:#6E1423; --gold:#C6973F; }
+    html { scroll-behavior: smooth; font-size: 17px; }
+    body { background-color: var(--ivory); color: #2B2019; font-family: 'Nunito Sans', system-ui, sans-serif; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', Georgia, serif; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: .05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      font-weight: 700; letter-spacing: .01em; border-radius: 999px;
+      padding: 1rem 1.9rem; font-size: 1.05rem; line-height: 1;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease, background-color .3s ease, opacity .3s ease;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--claret); color: #F7F1E6; box-shadow: 0 10px 24px -10px rgba(110,20,35,.6); }
+    .btn-primary:hover { background: #5a0f1c; transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: transparent; color: #6E1423; border-color: rgba(110,20,35,.28); }
+    .btn-ghost:hover { background: rgba(110,20,35,.06); transform: translateY(-2px); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+    .field {
+      width: 100%; background: #fff; border: 1.5px solid rgba(110,20,35,.2); border-radius: .8rem;
+      padding: .85rem 1rem; font-size: 1.02rem; color: #2B2019;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+    .field:focus { outline: none; border-color: #6E1423; box-shadow: 0 0 0 3px rgba(198,151,63,.25); }
+    .field::placeholder { color: #A99B8C; }
+
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      border-radius: .8rem; border: 1.5px solid rgba(110,20,35,.2); background: #fff;
+      padding: .7rem 1rem; font-weight: 600; font-size: .95rem; color: #4b3a30; cursor: pointer;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, opacity .2s ease;
+      position: relative; text-align: center;
+    }
+    .chip:hover { border-color: rgba(110,20,35,.5); }
+    .chip:active { transform: scale(.97); }
+    .chip.on { background: var(--claret); color: #F7F1E6; border-color: var(--claret); }
+    .chip.dim { opacity: .4; pointer-events: none; }
+    .badge { position: absolute; top: -9px; right: -6px; font-size: .56rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .5rem; border-radius: 999px; }
+    .badge-hot { background: var(--claret); color: #F7F1E6; }
+    .badge-trend { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; }
+
+    .optcard {
+      width: 100%; text-align: left; background: #fff; border: 1.5px solid rgba(110,20,35,.2);
+      border-radius: 1.1rem; padding: 1.1rem 1.2rem; cursor: pointer;
+      transition: border-color .25s ease, background-color .25s ease, transform .2s ease;
+    }
+    .optcard:hover { border-color: rgba(110,20,35,.55); }
+    .optcard:active { transform: scale(.98); }
+    .optcard.on { border-color: var(--claret); background: #FBF3EE; box-shadow: 0 0 0 1.5px var(--claret) inset; }
+
+    .step { display: none; }
+    .step.live { display: block; animation: stepIn .45s cubic-bezier(.22,1,.36,1); }
+    @keyframes stepIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .step.live { animation: none; } }
+
+    #meterFill { transition: width .3s ease; }
+    .phase { display: none; }
+    .phase.live { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- PROMO BAR -->
+  <div class="bg-claret-dark text-ivory text-center px-4 py-2 relative z-50">
+    <p class="text-[.85rem] leading-snug font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time &middot; ends Sunday at midnight &middot; <span data-promo-countdown class="font-700 tabular-nums"></span></p>
+  </div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-claret/10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <a href="v2.html" class="flex items-center gap-2.5" aria-label="Back to Heart Note">
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" onerror="this.style.display='none'" />
+        <span class="font-display text-claret text-[1.2rem] font-500 tracking-tight">Heart&nbsp;Note</span>
+      </a>
+      <p class="text-ink-soft text-[.82rem] font-600 flex items-center gap-1.5">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure checkout
+      </p>
+    </div>
+  </header>
+
+  <!-- ================= PHASE 1: QUIZ ================= -->
+  <main id="phaseQuiz" class="phase live">
+    <div class="max-w-lg lg:max-w-xl mx-auto px-5 py-8 md:py-12">
+
+      <div class="flex items-center justify-between text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">
+        <span id="stepLabel">Step 1 of 7</span>
+        <span class="text-claret">About 5 minutes</span>
+      </div>
+      <div class="mt-2.5 h-1.5 rounded-full bg-claret/12 overflow-hidden" aria-hidden="true">
+        <div id="stepBar" class="h-full rounded-full bg-gradient-to-r from-claret to-gold transition-[width] duration-500" style="width:14%"></div>
+      </div>
+
+      <!-- STEP 1: who + about them -->
+      <section class="step live" data-step="1">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Who is this song for?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Tell us who will treasure this song.</p>
+
+        <div class="mt-6 grid gap-3">
+          <button type="button" class="optcard" data-who="someone">
+            <span class="flex items-center gap-3.5">
+              <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg></span>
+              <span><span class="block font-display text-claret text-[1.15rem]">Someone else</span><span class="block text-ink-soft text-[.9rem]">A gift for a loved one</span></span>
+            </span>
+          </button>
+          <button type="button" class="optcard" data-who="myself">
+            <span class="flex items-center gap-3.5">
+              <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
+              <span><span class="block font-display text-claret text-[1.15rem]">Myself</span><span class="block text-ink-soft text-[.9rem]">A personal song</span></span>
+            </span>
+          </button>
+        </div>
+
+        <div id="aboutThem" class="hidden mt-6 space-y-4">
+          <div>
+            <label for="qName" class="block font-700 text-ink text-[.95rem] mb-1.5">Their name</label>
+            <input id="qName" class="field" type="text" placeholder="Enter their name" autocomplete="off" />
+          </div>
+          <div>
+            <label for="qRel" class="block font-700 text-ink text-[.95rem] mb-1.5">Your relationship <span class="font-400 text-ink-soft">(optional)</span></label>
+            <input id="qRel" class="field" type="text" placeholder="e.g., my mother, a friend, my spouse" autocomplete="off" />
+          </div>
+          <div>
+            <p class="font-700 text-ink text-[.95rem] mb-1.5">Their gender <span class="font-400 text-ink-soft">(helps personalize lyrics)</span></p>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" class="chip" data-gender="Female">Female</button>
+              <button type="button" class="chip" data-gender="Male">Male</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: occasion -->
+      <section class="step" data-step="2">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">What's the occasion?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">We'll shape the song around the moment.</p>
+        <div id="occasionGrid" class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+        <input id="qOccasionOther" class="field mt-3 hidden" type="text" placeholder="Tell us the occasion" autocomplete="off" />
+      </section>
+
+      <!-- STEP 3: themes -->
+      <section class="step" data-step="3">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Which themes resonate?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Pick up to five. <span id="themeCount" class="font-700 text-claret">0 of 5 selected</span></p>
+        <div id="themeGrid" class="mt-6 flex flex-wrap gap-2.5"></div>
+      </section>
+
+      <!-- STEP 4: style + tempo -->
+      <section class="step" data-step="4">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose your style</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">The sound the song is built on.</p>
+        <div id="styleGrid" class="mt-6 grid grid-cols-3 gap-2.5"></div>
+        <p class="mt-7 font-700 text-ink text-[.95rem]">Tempo</p>
+        <div id="tempoGrid" class="mt-2 grid grid-cols-3 gap-2.5"></div>
+      </section>
+
+      <!-- STEP 5: voice -->
+      <section class="step" data-step="5">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose the voice</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Who should sing their song?</p>
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <button type="button" class="optcard text-center" data-voice="Female">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-blush/50 text-claret mx-auto" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>
+            <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Female voice</span>
+          </button>
+          <button type="button" class="optcard text-center" data-voice="Male">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-blush/50 text-claret mx-auto" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>
+            <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Male voice</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 6: favorite thing -->
+      <section class="step" data-step="6">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">What's your favorite thing about <span id="favName">them</span>?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">One sentence is all it takes. We'll weave it into the heart of the song.</p>
+        <input id="qFavorite" class="field mt-6" type="text" placeholder="She makes everyone feel like family" autocomplete="off" />
+      </section>
+
+      <!-- STEP 7: story -->
+      <section class="step" data-step="7">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Share your story</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Tell us about the person, moment, or message you want to capture.</p>
+        <textarea id="qStory" class="field mt-6 min-h-[11rem] resize-y" placeholder="Describe the memory, the person, or what you want this song to say. The more detail you share, the more personal your song will be."></textarea>
+        <div class="mt-3">
+          <div class="flex items-center justify-between text-[.82rem] font-600">
+            <span id="meterHint" class="text-ink-soft">Start typing to fill the meter</span>
+            <span id="meterPct" class="text-claret font-700">0%</span>
+          </div>
+          <div class="mt-1.5 h-2 rounded-full bg-claret/12 overflow-hidden">
+            <div id="meterFill" class="h-full rounded-full bg-gradient-to-r from-gold to-claret" style="width:0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz nav -->
+      <div class="mt-9 flex items-center gap-3">
+        <button type="button" id="backBtn" class="btn btn-ghost !px-6" hidden>Back</button>
+        <button type="button" id="nextBtn" class="btn btn-primary flex-1" disabled>Next</button>
+      </div>
+      <p id="stepNote" class="mt-3 text-center text-ink-soft text-[.85rem]">No account needed. Your answers are saved as you go.</p>
+    </div>
+  </main>
+
+  <!-- ================= PHASE 2: EMAIL ================= -->
+  <main id="phaseEmail" class="phase">
+    <div class="max-w-lg mx-auto px-5 py-10 md:py-14">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 bg-white border border-claret/15 text-claret text-[.8rem] font-700 px-3.5 py-1.5 rounded-full shadow-lift">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Your answers are saved
+        </span>
+        <p class="mt-4 text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">Step 2 of 3</p>
+        <h1 class="mt-3 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Where should we send <span id="emailOccasion">the song</span>?</h1>
+        <p class="mt-2.5 text-ink/70 text-[1.02rem]">Your private song page arrives by email within 24 hours.</p>
+      </div>
+
+      <div class="mt-7">
+        <label for="qEmail" class="sr-only">Your email</label>
+        <input id="qEmail" class="field text-center" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
+        <button type="button" id="emailNext" class="btn btn-primary w-full mt-4" disabled>Continue</button>
+        <p class="mt-4 text-center text-ink-soft text-[.85rem] flex items-center justify-center gap-3">
+          <span class="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure and private</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>Our happiness promise</span>
+        </p>
+      </div>
+
+      <figure class="m-0 mt-9 bg-white rounded-[18px] border border-claret/12 shadow-keepsake p-5">
+        <blockquote class="font-display italic text-claret text-[1.15rem] leading-relaxed">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</blockquote>
+        <figcaption class="mt-3 flex items-center gap-2.5">
+          <span class="grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory font-display text-[.95rem]" aria-hidden="true">B</span>
+          <div><p class="font-700 text-ink text-[.9rem]">Bob</p><p class="text-ink-soft text-[.8rem]">An anniversary song for Patricia</p></div>
+        </figcaption>
+      </figure>
+    </div>
+  </main>
+
+  <!-- ================= PHASE 3: CHECKOUT ================= -->
+  <main id="phaseCheckout" class="phase">
+    <div class="max-w-5xl mx-auto px-5 py-8 md:py-12">
+      <div class="text-center max-w-2xl mx-auto">
+        <p class="text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">Step 3 of 3</p>
+        <h1 class="mt-3 font-display font-500 text-claret text-[2rem] md:text-[2.5rem] leading-[1.1] tracking-tight">Almost there, one last step</h1>
+        <p class="mt-2.5 text-ink/75 text-[1.05rem]">Imagine <span class="coPoss font-700 text-claret">their</span> face when the song plays for the first time.</p>
+      </div>
+
+      <div class="mt-9 grid md:grid-cols-[1fr_22rem] gap-7 items-start">
+
+        <!-- Order card: first on mobile, sticky right on desktop -->
+        <aside class="md:order-2 md:sticky md:top-20">
+          <div class="bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6">
+            <h2 class="font-display text-claret text-[1.3rem] leading-tight"><span class="coPoss" data-cap>Their</span> song is reserved</h2>
+            <p class="mt-1 text-ink-soft text-[.88rem]">We'll send it to <span id="coEmail" class="font-700 text-ink">you</span> &middot; <button type="button" id="changeEmail" class="text-claret font-700 underline decoration-gold/60 underline-offset-2 cursor-pointer">change</button></p>
+
+            <p class="mt-5 font-700 text-ink text-[.92rem]">Pick your package</p>
+            <div id="pkgList" class="mt-2.5 space-y-2"></div>
+
+            <button type="button" id="payBtn" class="btn btn-primary w-full mt-5">Complete my purchase</button>
+            <p id="payErr" class="hidden mt-3 text-center text-[.85rem] font-700 text-claret bg-blush/40 rounded-lg py-2 px-3"></p>
+            <p class="mt-3.5 text-center text-ink-soft text-[.82rem] flex items-center justify-center gap-3">
+              <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Stripe secure checkout</span>
+              <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>Happiness promise</span>
+            </p>
+            <p class="mt-2.5 text-center text-ink-soft text-[.78rem]">One free revision included. If you still don't love it, we keep working until you do.</p>
+          </div>
+          <p class="mt-3 text-center text-ink-soft text-[.82rem]">Delivered within 24 hours of your order.</p>
+        </aside>
+
+        <!-- Content column -->
+        <div class="md:order-1 space-y-7">
+
+          <!-- Letter -->
+          <div class="bg-white rounded-[20px] border border-gold/40 shadow-lift p-6 md:p-7">
+            <p class="font-display text-claret text-[1.1rem]">Dear friend,</p>
+            <div class="mt-3 space-y-3 text-ink/85 text-[.98rem]">
+              <p>We can tell you've put real thought into this gift for <span class="coFirst font-700">them</span>. Songs like this are usually commissioned from professional songwriters for hundreds of dollars. We built Heart Note so a gift this personal doesn't have to cost that.</p>
+              <p>Thank you for trusting us with <span class="coPoss font-700">their</span> story. We can't wait to bring it to life.</p>
+            </div>
+            <p class="mt-4 font-display italic text-claret text-[1.05rem]">Paul and the Heart Note team</p>
+          </div>
+
+          <!-- Reviews -->
+          <div>
+            <h2 class="font-display text-claret text-[1.35rem] flex items-center gap-2"><span class="text-gold" aria-hidden="true">&#9733;</span> Real customer replies</h2>
+            <div class="mt-4 space-y-3">
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-4.5 p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Bob &middot; an anniversary song for Patricia</figcaption>
+              </figure>
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;I thought all 3 songs were great!&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Daniel &middot; three versions for Cheryl</figcaption>
+              </figure>
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;This was WONDERFUL!&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Dianne &middot; a song for Bill</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <!-- Samples -->
+          <div class="bg-claret-deep rounded-[20px] p-6 text-ivory">
+            <h2 class="font-display text-[1.35rem] flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              Hear real <span id="coOccasionSongs">Heart Notes</span>
+            </h2>
+            <p class="mt-1.5 text-ivory/70 text-[.9rem]">Imagine <span class="coFirst">them</span> hearing a song like this, made only for <span id="coPronoun">them</span>.</p>
+            <div id="coSamples" class="mt-4 space-y-2.5"></div>
+            <p class="mt-3.5 text-gold-soft text-[.85rem] text-center font-600">Your song will be just as personal.</p>
+          </div>
+
+          <!-- Reaction video -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem]">See what this moment looks like</h2>
+            <p class="mt-1.5 text-ink/75 text-[.95rem]">Watch a real mom hear her family's anniversary song. This could be <span class="coFirst font-700">them</span>.</p>
+            <button type="button" id="coVideo" class="vcard group relative block w-full mt-4 aspect-video rounded-[14px] overflow-hidden cursor-pointer"
+                    data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary"
+                    aria-label="Watch the full reaction video. Opens a larger player with sound.">
+              <img src="videos/poster-ugc-claire.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-[50%_22%]" loading="lazy" />
+              <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/60 via-transparent to-transparent" aria-hidden="true"></span>
+              <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform group-hover:scale-105" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+              <span class="absolute inset-x-0 bottom-0 p-3.5 text-ivory font-600 text-[.9rem]" aria-hidden="true">Watch the full reaction, sound on</span>
+            </button>
+          </div>
+
+          <!-- Regular gift vs Heart Note -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem] text-center">The difference is unmistakable</h2>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-[14px] border border-claret/12 p-4">
+                <p class="text-[.72rem] font-700 tracking-[.1em] uppercase text-ink-soft">A regular gift</p>
+                <ul class="mt-2.5 space-y-2 text-[.88rem] text-ink/70">
+                  <li>Forgotten in days</li>
+                  <li>Says &ldquo;I grabbed something&rdquo;</li>
+                  <li>A polite thank you, then nothing</li>
+                </ul>
+              </div>
+              <div class="rounded-[14px] bg-claret text-ivory p-4">
+                <p class="text-[.72rem] font-700 tracking-[.1em] uppercase text-gold-soft">A Heart Note</p>
+                <ul class="mt-2.5 space-y-2 text-[.88rem]">
+                  <li>Treasured forever</li>
+                  <li>Says &ldquo;I truly see you&rdquo;</li>
+                  <li>Happy tears, played on repeat</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Promise -->
+          <div class="bg-white rounded-[20px] border border-gold/40 shadow-lift p-6 flex gap-4">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale shrink-0" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <div>
+              <h2 class="font-display text-claret text-[1.2rem]">Our promise to you</h2>
+              <p class="mt-1.5 text-ink/80 text-[.92rem]">Every order includes one free revision. If a line isn't right, tell us and we rework it at no cost. If you still don't love it, we keep working until you do.</p>
+            </div>
+          </div>
+
+          <!-- Everything included -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem]">Everything included</h2>
+            <ul class="mt-3.5 space-y-2.5 text-ink/85 text-[.95rem]">
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A fully produced original song, written from your story</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Personal lyrics: <span class="coPoss">their</span> name, your memories, your themes</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A private song page to stream, download, and share forever</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Delivered within 24 hours, one free revision included</li>
+            </ul>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">4.5<span class="text-gold text-[1rem]">&#9733;</span></p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Customer rating</p></div>
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">1,200+</p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Families</p></div>
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">24h</p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Delivery</p></div>
+          </div>
+
+          <p class="text-center text-ink-soft text-[.8rem]">By completing your order you agree to our <a href="terms.html" class="underline decoration-gold/50 underline-offset-2 text-claret font-600">Terms</a> and <a href="privacy.html" class="underline decoration-gold/50 underline-offset-2 text-claret font-600">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div id="vLightbox" class="hidden fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Customer reaction video">
+    <div id="vScrim" class="absolute inset-0 bg-claret-dark/95"></div>
+    <div class="relative h-full grid place-items-center p-4">
+      <video id="vPlayer" class="max-h-[82vh] max-w-[92vw] aspect-[9/16] rounded-2xl ring-1 ring-gold/40 bg-black shadow-keepsake" controls playsinline preload="none"></video>
+      <button type="button" id="vClose" aria-label="Close video" class="absolute top-4 right-4 grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift cursor-pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- state ----------
+  var KEY = 'hn_v2_quiz';
+  var state = { who: '', name: '', rel: '', gender: '', occasion: '', occasionOther: '', themes: [], style: '', tempo: '', voice: '', favorite: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
+  try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var STORY_TARGET = 280; // roughly three to four sentences
+
+  // ---------- data ----------
+  var OCCASIONS = [
+    { n: 'Anniversary', badge: 'hot' }, { n: 'Wedding', badge: 'trend' }, { n: 'Birthday', badge: 'trend' },
+    { n: 'Just because' }, { n: 'Encouragement' }, { n: 'Memorial' }, { n: 'Worship' },
+    { n: "Mother's Day" }, { n: "Father's Day" }, { n: 'Retirement' }, { n: 'Baptism' },
+    { n: 'Baby lullaby' }, { n: 'Engagement' }, { n: 'Other' }
+  ];
+  var THEMES = ['Faith','Hope','Love','Peace','Joy','Gratitude','Healing','Comfort','Strength','Guidance','Forgiveness','Grace','Family legacy','New beginnings','Remembrance','Celebration','Courage'];
+  var STYLES = ['Worship','Gospel','Contemporary','Acoustic','Country','R&B','Pop','Cinematic','Lullaby'];
+  var TEMPOS = ['Slow','Medium','Upbeat'];
+  var PKGS = [
+    { key: 'single',     name: 'Single',     price: 59, was: 89,  desc: 'One song, MP3' },
+    { key: 'deluxe',     name: 'Deluxe',     price: 69, was: 99,  desc: 'Two versions, premium files' },
+    { key: 'experience', name: 'Experience', price: 89, was: 139, desc: 'Three versions, remastered', best: true }
+  ];
+  var SAMPLES = [
+    { title: 'Forever Looks Like You', src: 'audio/sample-forever-looks-like-you.mp3' },
+    { title: "Here's to Us", src: 'audio/sample-heres-to-us.mp3' },
+    { title: 'Underneath These Lucky Stars', src: 'audio/sample-underneath-these-lucky-stars.mp3' },
+    { title: "Forever's Favorite Ride", src: 'audio/sample-forevers-favorite-ride.mp3' }
+  ];
+
+  // ---------- build grids ----------
+  OCCASIONS.forEach(function (o) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = o.n; b.dataset.occasion = o.n;
+    if (o.badge === 'hot') b.insertAdjacentHTML('beforeend', '<span class="badge badge-hot">Hot</span>');
+    if (o.badge === 'trend') b.insertAdjacentHTML('beforeend', '<span class="badge badge-trend">Trending</span>');
+    $('occasionGrid').appendChild(b);
+  });
+  THEMES.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = t; b.dataset.theme = t;
+    $('themeGrid').appendChild(b);
+  });
+  STYLES.forEach(function (s) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = s; b.dataset.style = s;
+    $('styleGrid').appendChild(b);
+  });
+  TEMPOS.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = t; b.dataset.tempo = t;
+    $('tempoGrid').appendChild(b);
+  });
+
+  // ---------- step engine ----------
+  var TOTAL = 7;
+  function validStep(n) {
+    switch (n) {
+      case 1: return state.who === 'myself' || (state.who === 'someone' && state.name.trim().length > 0);
+      case 2: return !!state.occasion && (state.occasion !== 'Other' || state.occasionOther.trim().length > 0);
+      case 3: return state.themes.length > 0;
+      case 4: return !!state.style && !!state.tempo;
+      case 5: return !!state.voice;
+      case 6: return state.favorite.trim().length > 2;
+      case 7: return state.story.trim().length >= STORY_TARGET;
+      default: return false;
+    }
+  }
+  function firstName() { return (state.who === 'myself' ? 'you' : (state.name.trim().split(/\s+/)[0] || 'them')); }
+  function renderStep() {
+    document.querySelectorAll('.step').forEach(function (s) { s.classList.toggle('live', +s.dataset.step === state.step); });
+    $('stepLabel').textContent = 'Step ' + state.step + ' of ' + TOTAL;
+    $('stepBar').style.width = Math.round(state.step / TOTAL * 100) + '%';
+    $('backBtn').hidden = state.step === 1;
+    $('nextBtn').textContent = state.step === TOTAL ? 'Create my song' : 'Next';
+    $('nextBtn').disabled = !validStep(state.step);
+    $('favName').textContent = firstName() === 'you' ? 'yourself' : firstName();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    save();
+  }
+  function refreshNext() { $('nextBtn').disabled = !validStep(state.step); }
+
+  // step 1
+  document.querySelectorAll('[data-who]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.who = c.dataset.who;
+      document.querySelectorAll('[data-who]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+      refreshNext(); save();
+    });
+  });
+  $('qName').addEventListener('input', function () { state.name = this.value; refreshNext(); save(); });
+  $('qRel').addEventListener('input', function () { state.rel = this.value; save(); });
+  document.querySelectorAll('[data-gender]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.gender = c.dataset.gender;
+      document.querySelectorAll('[data-gender]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      save();
+    });
+  });
+
+  // step 2
+  $('occasionGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-occasion]'); if (!b) return;
+    state.occasion = b.dataset.occasion;
+    document.querySelectorAll('[data-occasion]').forEach(function (x) { x.classList.toggle('on', x === b); });
+    $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
+    refreshNext(); save();
+  });
+  $('qOccasionOther').addEventListener('input', function () { state.occasionOther = this.value; refreshNext(); save(); });
+
+  // step 3
+  function paintThemes() {
+    var max = state.themes.length >= 5;
+    document.querySelectorAll('[data-theme]').forEach(function (x) {
+      var on = state.themes.indexOf(x.dataset.theme) !== -1;
+      x.classList.toggle('on', on);
+      x.classList.toggle('dim', max && !on);
+    });
+    $('themeCount').textContent = state.themes.length + ' of 5 selected';
+  }
+  $('themeGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-theme]'); if (!b) return;
+    var t = b.dataset.theme, i = state.themes.indexOf(t);
+    if (i !== -1) state.themes.splice(i, 1);
+    else if (state.themes.length < 5) state.themes.push(t);
+    paintThemes(); refreshNext(); save();
+  });
+
+  // step 4
+  $('styleGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-style]'); if (!b) return;
+    state.style = b.dataset.style;
+    document.querySelectorAll('[data-style]').forEach(function (x) { x.classList.toggle('on', x.dataset.style === state.style); });
+    refreshNext(); save();
+  });
+  $('tempoGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tempo]'); if (!b) return;
+    state.tempo = b.dataset.tempo;
+    document.querySelectorAll('[data-tempo]').forEach(function (x) { x.classList.toggle('on', x.dataset.tempo === state.tempo); });
+    refreshNext(); save();
+  });
+
+  // step 5
+  document.querySelectorAll('[data-voice]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.voice = c.dataset.voice;
+      document.querySelectorAll('[data-voice]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      refreshNext(); save();
+    });
+  });
+
+  // step 6
+  $('qFavorite').addEventListener('input', function () { state.favorite = this.value; refreshNext(); save(); });
+
+  // step 7
+  $('qStory').addEventListener('input', function () {
+    state.story = this.value;
+    var pct = Math.min(100, Math.round(this.value.trim().length / STORY_TARGET * 100));
+    $('meterFill').style.width = pct + '%';
+    $('meterPct').textContent = pct + '%';
+    $('meterHint').textContent = pct >= 100 ? 'Beautiful. That is plenty to work with.'
+      : pct > 0 ? 'Keep going, the details make the song' : 'Start typing to fill the meter';
+    refreshNext(); save();
+  });
+
+  // nav
+  $('backBtn').addEventListener('click', function () { if (state.step > 1) { state.step--; renderStep(); } });
+  $('nextBtn').addEventListener('click', function () {
+    if (!validStep(state.step)) return;
+    if (state.step < TOTAL) { state.step++; renderStep(); }
+    else { setPhase('email'); }
+  });
+
+  // ---------- phases ----------
+  function occasionLabel() {
+    var o = state.occasion === 'Other' ? state.occasionOther : state.occasion;
+    return o ? o.toLowerCase() : '';
+  }
+  function setPhase(ph) {
+    state.phase = ph; save();
+    ['Quiz', 'Email', 'Checkout'].forEach(function (p) {
+      $('phase' + p).classList.toggle('live', ph === p.toLowerCase());
+    });
+    window.scrollTo(0, 0);
+    if (ph === 'email') {
+      var o = occasionLabel();
+      $('emailOccasion').textContent = o ? 'the ' + o + ' song' : 'the song';
+      $('qEmail').value = state.email;
+      $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
+    }
+    if (ph === 'checkout') paintCheckout();
+  }
+
+  // email phase
+  $('qEmail').addEventListener('input', function () {
+    state.email = this.value.trim();
+    $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
+    save();
+  });
+  $('emailNext').addEventListener('click', function () { if (/.+@.+\..+/.test(state.email)) setPhase('checkout'); });
+  $('changeEmail').addEventListener('click', function () { setPhase('email'); });
+
+  // checkout phase
+  function paintCheckout() {
+    var isSelf = state.who === 'myself';
+    var n = firstName();
+    var first = isSelf ? 'you' : n;
+    var poss = isSelf ? 'your' : n + "'s";
+    document.querySelectorAll('.coFirst').forEach(function (el) { el.textContent = first; });
+    document.querySelectorAll('.coPoss').forEach(function (el) {
+      var v = poss;
+      if (el.hasAttribute('data-cap')) v = v.charAt(0).toUpperCase() + v.slice(1);
+      el.textContent = v;
+    });
+    $('coEmail').textContent = state.email;
+    var o = occasionLabel();
+    $('coOccasionSongs').textContent = o === 'anniversary' ? 'anniversary Heart Notes' : 'Heart Notes';
+    $('coPronoun').textContent = state.who === 'myself' ? 'you' : (state.gender === 'Male' ? 'him' : state.gender === 'Female' ? 'her' : 'them');
+    paintPkgs();
+  }
+  function paintPkgs() {
+    var wrap = $('pkgList'); wrap.innerHTML = '';
+    PKGS.forEach(function (p) {
+      var on = state.tier === p.key;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'w-full text-left rounded-[14px] p-3.5 cursor-pointer transition-colors border-[1.5px] relative ' +
+        (on ? 'bg-claret text-ivory border-claret' : 'bg-white border-claret/20 hover:border-claret/50');
+      b.innerHTML =
+        (p.best ? '<span class="absolute -top-2 right-3 bg-gold text-claret-dark text-[.58rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Best value</span>' : '') +
+        '<span class="flex items-center justify-between gap-3">' +
+          '<span><span class="block font-display text-[1.05rem] leading-tight">' + p.name + '</span>' +
+          '<span class="block text-[.78rem] mt-0.5 ' + (on ? 'text-ivory/75' : 'text-ink-soft') + '">' + p.desc + '</span></span>' +
+          '<span class="text-right shrink-0"><span class="font-700 text-[1.05rem]">$' + p.price + '</span> ' +
+          '<span class="block line-through text-[.8rem] ' + (on ? 'text-ivory/55' : 'text-ink-soft/70') + '">$' + p.was + '</span></span>' +
+        '</span>';
+      b.addEventListener('click', function () { state.tier = p.key; save(); paintPkgs(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  // pay
+  var paying = false;
+  $('payBtn').addEventListener('click', async function () {
+    if (paying) return;
+    paying = true;
+    var btn = $('payBtn'); btn.textContent = 'Opening secure checkout...';
+    $('payErr').classList.add('hidden');
+    try {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      var attr = (window.HN_ATTR && HN_ATTR.data && HN_ATTR.data()) || undefined;
+      var checkoutEventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'ic_' + Date.now();
+      var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
+      if (typeof hnTrack === 'function') {
+        hnTrack('add_to_cart', { tier: state.tier, value_cents: pkg.price * 100, label: 'v2 quiz: complete my purchase' });
+      }
+      if (typeof fbq === 'function') {
+        fbq('track', 'InitiateCheckout', { value: pkg.price, currency: 'USD', content_name: state.tier }, { eventID: checkoutEventId });
+      }
+      var themes = state.themes.join(', ');
+      var other = [
+        'Ordered through the v2 quiz.',
+        'Song is for: ' + (state.who === 'myself' ? 'the buyer themselves' : 'someone else'),
+        state.gender ? 'Gender: ' + state.gender : '',
+        themes ? 'Themes: ' + themes : '',
+        state.tempo ? 'Tempo: ' + state.tempo : '',
+        state.voice ? 'Voice preference: ' + state.voice + ' voice' : ''
+      ].filter(Boolean).join('\n');
+      var res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          tier: state.tier,
+          occasion: state.occasion,
+          occasionOther: state.occasionOther,
+          recipient: state.who === 'myself' ? 'The buyer (a song for themselves)' : state.name,
+          relationship: state.rel,
+          style: state.style + (state.tempo ? ' (' + state.tempo.toLowerCase() + ' tempo)' : ''),
+          mood: themes.slice(0, 78),
+          story: state.story,
+          details: state.favorite ? 'Their favorite thing about them: ' + state.favorite : '',
+          other: other,
+          voiceAddon: 'no',
+          email: state.email,
+          from: 'v2',
+          checkoutEventId: checkoutEventId,
+          fbp: fb.fbp, fbc: fb.fbc,
+          attr: attr
+        })
+      });
+      var out = await res.json();
+      if (out && out.url) { window.location = out.url; return; }
+      throw new Error((out && out.error) || 'Could not open checkout');
+    } catch (err) {
+      $('payErr').textContent = 'Something went wrong opening checkout. Please try again, or email paul@heartnote.music.';
+      $('payErr').classList.remove('hidden');
+      $('payBtn').textContent = 'Complete my purchase';
+      paying = false;
+    }
+  });
+
+  // checkout samples
+  var current = null;
+  SAMPLES.forEach(function (s) {
+    var row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'w-full flex items-center gap-3 bg-ivory/5 hover:bg-ivory/10 rounded-[12px] ring-1 ring-ivory/15 p-3 text-left transition-colors cursor-pointer';
+    row.setAttribute('aria-label', 'Play sample: ' + s.title);
+    row.innerHTML = '<span class="grid place-items-center w-9 h-9 rounded-full bg-gold text-claret-dark shrink-0">' +
+      '<svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' +
+      '<svg class="i-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></span>' +
+      '<span class="font-display text-ivory text-[.98rem] leading-snug">' + s.title + '</span>';
+    var audio = new Audio(); audio.preload = 'none';
+    row.addEventListener('click', function () {
+      if (current && current !== audio) {
+        current.pause();
+        current._row.querySelector('.i-play').classList.remove('hidden');
+        current._row.querySelector('.i-pause').classList.add('hidden');
+      }
+      if (audio.paused) {
+        if (!audio.src) audio.src = s.src;
+        audio.play().catch(function () {});
+        current = audio; audio._row = row;
+        row.querySelector('.i-play').classList.add('hidden');
+        row.querySelector('.i-pause').classList.remove('hidden');
+      } else {
+        audio.pause();
+        row.querySelector('.i-play').classList.remove('hidden');
+        row.querySelector('.i-pause').classList.add('hidden');
+      }
+    });
+    audio.addEventListener('ended', function () {
+      row.querySelector('.i-play').classList.remove('hidden');
+      row.querySelector('.i-pause').classList.add('hidden');
+    });
+    $('coSamples').appendChild(row);
+  });
+
+  // lightbox
+  (function () {
+    var box = $('vLightbox'), player = $('vPlayer'), closeBtn = $('vClose');
+    $('coVideo').addEventListener('click', function () {
+      var c = $('coVideo');
+      if (player.getAttribute('src') !== c.dataset.video) player.src = c.dataset.video;
+      box.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+      player.muted = false;
+      player.play().catch(function () {});
+    });
+    function closeBox() { player.pause(); box.classList.add('hidden'); document.body.style.overflow = ''; }
+    closeBtn.addEventListener('click', closeBox);
+    $('vScrim').addEventListener('click', closeBox);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.classList.contains('hidden')) closeBox(); });
+  })();
+
+  // ---------- restore UI from saved state ----------
+  function restore() {
+    if (state.who) {
+      var c = document.querySelector('[data-who="' + state.who + '"]');
+      if (c) c.classList.add('on');
+      $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+    }
+    $('qName').value = state.name; $('qRel').value = state.rel;
+    if (state.gender) { var g = document.querySelector('[data-gender="' + state.gender + '"]'); if (g) g.classList.add('on'); }
+    if (state.occasion) {
+      var o = document.querySelector('[data-occasion="' + state.occasion + '"]'); if (o) o.classList.add('on');
+      $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
+    }
+    $('qOccasionOther').value = state.occasionOther;
+    paintThemes();
+    if (state.style) { var s = document.querySelector('[data-style="' + state.style + '"]'); if (s) s.classList.add('on'); }
+    if (state.tempo) { var t = document.querySelector('[data-tempo="' + state.tempo + '"]'); if (t) t.classList.add('on'); }
+    if (state.voice) { var v = document.querySelector('[data-voice="' + state.voice + '"]'); if (v) v.classList.add('on'); }
+    $('qFavorite').value = state.favorite;
+    $('qStory').value = state.story;
+    $('qStory').dispatchEvent(new Event('input'));
+    if (!validStep(1) && state.step > 1) state.step = 1;
+    renderStep();
+    if (state.phase === 'email' || (state.phase === 'checkout' && !/.+@.+\..+/.test(state.email))) setPhase('email');
+    else if (state.phase === 'checkout') setPhase('checkout');
+  }
+  restore();
+
+  // returning from a canceled Stripe session lands back on checkout
+  if (new URLSearchParams(location.search).get('canceled') === '1' && /.+@.+\..+/.test(state.email)) setPhase('checkout');
+
+  // first-party AddToCart parity with the classic order form
+  (function () {
+    if (typeof hnTrack !== 'function') return;
+    var fb = (window.HN_META && HN_META.data()) || {};
+    hnTrack('reached_form', { tier: state.tier, label: 'Reached the v2 quiz', fbp: fb.fbp, fbc: fb.fbc });
+    if (typeof fbq === 'function') fbq('track', 'AddToCart', { content_name: 'v2-quiz' });
+  })();
+})();
+</script>
+</body>
+</html>

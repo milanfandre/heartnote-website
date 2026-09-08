@@ -134,6 +134,19 @@ When this file and an older spec disagree, **this file wins**.
   revision, 4.5 from 1,200+, $59/$69/$89). Replaces nothing; index.html stays
   the real homepage until told otherwise.
 
+- **Sep 8 — v2 gets the competitor's quiz checkout and true desktop layouts.**
+  v2-order.html replicates the rival's flow: 7-step quiz, then email capture,
+  then an "Almost there" page (letter, reviews, samples, Claire video, package
+  picker in a sticky rail). It submits to the existing create-checkout-session
+  API (extra quiz fields ride mood/details/other so Paul's brief view needs no
+  change; buyer email prefills Stripe). The v2 homepage compare chart became
+  three continuous columns with "up to $50 off comparable services" instead of
+  named prices, and the static phone mockup became a 33s cursor-driven screen
+  recording of the real quiz (videos/demo-checkout.mp4). Both v2 pages now
+  carry full desktop layouts. Deliberately NOT copied: the rival's fake
+  scarcity bar and their 30-day money-back guarantee; our happiness-promise
+  wording stands until the client approves a refund commitment in writing.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
