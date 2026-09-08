@@ -147,6 +147,14 @@ When this file and an older spec disagree, **this file wins**.
   scarcity bar and their 30-day money-back guarantee; our happiness-promise
   wording stands until the client approves a refund commitment in writing.
 
+- **Sep 8 — v2 hides its prices until checkout.** Client call, copying the
+  rival's reveal pattern: the v2 homepage now shows only savings framing ("up
+  to $50 off"), never $59/$69/$89; the tier picker on the quiz's final
+  "Almost there" page is the single place prices appear. The order demo video
+  was re-cut to end on the email step so no price leaks through the recording,
+  and the occasions CTA became a solid 2px claret-outline button. The classic
+  homepage and order.html keep visible prices; only v2 runs the experiment.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

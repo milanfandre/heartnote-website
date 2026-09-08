@@ -80,6 +80,9 @@
     .btn-ivory:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.4); }
     .btn-ivory:active { transform: translateY(0); }
     .btn-gold { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; box-shadow: 0 10px 24px -10px rgba(198,151,63,.7); }
+    .btn-outline { background: transparent; color: #6E1423; border: 2px solid #6E1423; }
+    .btn-outline:hover { background: rgba(110,20,35,.07); transform: translateY(-2px); box-shadow: 0 10px 24px -14px rgba(110,20,35,.5); }
+    .btn-outline:active { transform: translateY(0); }
     .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -12px rgba(198,151,63,.85); }
     a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
 
@@ -412,7 +415,7 @@
         <h2 class="mt-5 font-display font-500 italic text-ivory text-[2.5rem] md:text-[3rem] leading-[1.12] tracking-tight reveal">
           What do you give the person who has <span class="text-gold-soft">everything</span>?
         </h2>
-        <p class="mt-6 text-ivory/80 text-[1.1rem] reveal">One honest answer: a song about them. Watch a real order below, from the first question to picking a package.</p>
+        <p class="mt-6 text-ivory/80 text-[1.1rem] reveal">One honest answer: a song about them. Watch a real order below, question by question.</p>
         <p class="mt-4 text-ivory/60 text-[.88rem] reveal hidden md:block">The real order, exactly as you'll see it. About five minutes start to finish.</p>
         <a href="v2-order.html" data-cta="v2-walkthrough" class="btn btn-gold w-full md:w-auto mt-7 reveal hidden md:inline-flex">Start with the first question</a>
       </div>
@@ -421,7 +424,7 @@
         <div class="phone">
           <div class="phone-screen relative" style="aspect-ratio:390/780">
             <video id="demoVid" src="videos/demo-checkout.mp4" poster="videos/demo-checkout-poster.jpg" autoplay muted loop playsinline preload="metadata"
-                   class="absolute inset-0 w-full h-full object-cover" aria-label="A screen recording of the Heart Note order: choosing who the song is for, the occasion, the themes and style, sharing the story, and picking a package"></video>
+                   class="absolute inset-0 w-full h-full object-cover" aria-label="A screen recording of the Heart Note order: choosing who the song is for, the occasion, the themes and style, and sharing the story"></video>
           </div>
         </div>
       </div>
@@ -505,7 +508,7 @@
       <div class="mt-8 md:mt-0 bg-claret-dark rounded-[18px] shadow-keepsake ring-1 ring-gold/40 p-6 text-left text-ivory reveal" style="transform:rotate(.5deg)">
         <div class="flex items-center justify-between">
           <p class="font-display text-[1.5rem]">A Heart Note</p>
-          <p class="font-700 text-gold-soft text-[1.15rem]">from $59</p>
+          <p class="bg-gold/20 text-gold-soft text-[.72rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full">Up to $50 off</p>
         </div>
         <p class="text-ivory/60 text-[.8rem] receipt-font mt-0.5">Where it plays, once it's theirs</p>
         <div class="border-t border-dashed border-ivory/25 my-4"></div>
@@ -697,7 +700,7 @@
       </div>
 
       <p class="mt-8 text-ink/80 text-[1rem] reveal">Don't see your occasion? <span class="font-700">Every story is welcome.</span></p>
-      <a href="v2-order.html" data-cta="v2-occasions" class="btn btn-ghost w-full mt-5 reveal">Create yours</a>
+      <a href="v2-order.html" data-cta="v2-occasions" class="btn btn-outline w-full mt-5 reveal">Create yours</a>
     </div>
   </section>
 
@@ -756,9 +759,8 @@
       <div class="mt-8 md:max-w-lg md:mx-auto bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6 text-left reveal">
         <p class="text-center font-display text-claret text-[1.4rem]">Your Heart Note</p>
         <p class="text-center text-ink-soft text-[.9rem]">No monthly fees. No subscriptions.</p>
-        <div class="mt-4 flex items-end justify-center gap-2.5">
-          <span class="font-display text-claret text-[2.6rem] leading-none">from $59</span>
-          <span class="font-display text-ink-soft/80 text-[1.5rem] leading-none line-through decoration-claret/70 decoration-2 pb-1">$89</span>
+        <div class="mt-4 text-center">
+          <span class="inline-block bg-gold/18 text-claret font-700 text-[.95rem] tracking-[.02em] px-4 py-1.5 rounded-full">Up to $50 off for a limited time</span>
         </div>
         <ul class="mt-5 space-y-2.5 text-ink/85 text-[.98rem]">
           <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Original lyrics from your story</li>
@@ -768,7 +770,7 @@
           <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Yours to keep forever, no subscription</li>
         </ul>
         <a href="v2-order.html" data-cta="v2-package" class="btn btn-primary w-full mt-6">Create your Heart Note</a>
-        <p class="mt-3 text-center text-ink-soft text-[.85rem]">Single $59 &middot; Deluxe $69 &middot; Experience $89</p>
+        <p class="mt-3 text-center text-ink-soft text-[.85rem]">Pick your package at checkout: Single, Deluxe, or Experience.</p>
       </div>
     </div>
   </section>
