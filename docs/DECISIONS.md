@@ -121,6 +121,19 @@ When this file and an older spec disagree, **this file wins**.
   below the carousel to sit between hero and reactions (ivory → claret →
   claret-dark ramp).
 
+- **Sep 8 — /v2 competitor-format concept page.** Client asked for a duplicate
+  of the site replicating timelesssong.com's entire mobile UX, skinned in Heart
+  Note's brand. Built as unlinked, noindexed `v2.html` (live for review, not in
+  any nav): montage hero cut from the six UGC hook edits (15.6s, own audio
+  behind a tap-to-unmute chip), reaction carousel, swipeable 4-step deck, dark
+  "a question" section with a phone-frame walkthrough of the real order form,
+  Claire story feature, gift-receipt vs song-ticket comparison, pain-point
+  cards, 3-column compare chart, occasions grid, sample list, deliverables +
+  package card, FAQ, sticky bottom CTA. All copy written fresh (structure
+  copied, words not); every claim kept to approved ones (24 hours, one free
+  revision, 4.5 from 1,200+, $59/$69/$89). Replaces nothing; index.html stays
+  the real homepage until told otherwise.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

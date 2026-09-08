@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heart Note: The song they'll keep forever</title>
+  <meta name="description" content="A personal song made from your story, delivered within 24 hours. Watch real families hear theirs for the first time." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+
+  <script src="/pixel.js"></script>
+  <script src="/promo-bar.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Pinyon+Script&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+            gold: { DEFAULT: '#C6973F', soft: '#E4C67F', pale: '#EFDCA9' },
+            ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+            blush: '#E9CBC0',
+            ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
+            script: ['"Pinyon Script"', 'cursive'],
+          },
+          boxShadow: {
+            keepsake: '0 1px 2px rgba(54,9,17,.06), 0 12px 28px -12px rgba(110,20,35,.28), 0 40px 64px -32px rgba(110,20,35,.22)',
+            lift: '0 2px 4px rgba(54,9,17,.05), 0 18px 40px -16px rgba(110,20,35,.30)',
+            gold: '0 8px 24px -8px rgba(198,151,63,.45)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root { --ivory:#F7F1E6; --claret:#6E1423; --gold:#C6973F; }
+    html { scroll-behavior: smooth; font-size: 17px; }
+    body {
+      background-color: var(--ivory);
+      color: #2B2019;
+      font-family: 'Nunito Sans', system-ui, sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', Georgia, serif; }
+
+    /* Paper grain */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60;
+      opacity: .05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .script-accent { font-family: 'Pinyon Script', cursive; font-weight: 400; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      font-weight: 700; letter-spacing: .01em; border-radius: 999px;
+      padding: 1rem 1.9rem; font-size: 1.06rem; line-height: 1;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease, background-color .3s ease, color .3s ease;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--claret); color: #F7F1E6; box-shadow: 0 10px 24px -10px rgba(110,20,35,.6); }
+    .btn-primary:hover { background: #5a0f1c; transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(110,20,35,.7); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost { background: transparent; color: #6E1423; border-color: rgba(110,20,35,.28); }
+    .btn-ghost:hover { background: rgba(110,20,35,.06); border-color: rgba(110,20,35,.5); transform: translateY(-2px); }
+    .btn-ghost:active { transform: translateY(0); }
+    .btn-ivory { background: #F7F1E6; color: #6E1423; box-shadow: 0 10px 24px -10px rgba(0,0,0,.35); }
+    .btn-ivory:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.4); }
+    .btn-ivory:active { transform: translateY(0); }
+    .btn-gold { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; box-shadow: 0 10px 24px -10px rgba(198,151,63,.7); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -12px rgba(198,151,63,.85); }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+    .hero-bg {
+      background-color: #F7F1E6;
+      background-image:
+        radial-gradient(60% 55% at 82% 12%, rgba(233,203,192,.55) 0%, rgba(233,203,192,0) 60%),
+        radial-gradient(45% 45% at 8% 88%, rgba(198,151,63,.18) 0%, rgba(198,151,63,0) 60%);
+    }
+
+    /* Reveal on scroll (opacity + transform only) */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .heroPulse { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    @keyframes heroPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+    .heroPulse { animation: heroPulse 2.4s ease-in-out infinite; }
+    .vcard .heroPulse { animation: heroPulse 2.4s ease-in-out infinite; }
+
+    /* Horizontal snap tracks, scrollbar hidden */
+    .snaptrack { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .snaptrack::-webkit-scrollbar { display: none; }
+    .snaptrack > * { scroll-snap-align: center; }
+
+    .vposter { transition: transform .6s cubic-bezier(.22,1,.36,1); }
+    .vcard:hover .vposter { transform: scale(1.045); }
+
+    /* Card-deck stack (the two sheets behind the current card) */
+    .deckwrap::before, .deckwrap::after {
+      content: ''; position: absolute; left: 8%; right: 8%; bottom: -9px; height: 40px;
+      background: #fff; border: 1px solid rgba(110,20,35,.16); border-radius: 20px; z-index: 0;
+    }
+    .deckwrap::after { left: 13%; right: 13%; bottom: -18px; z-index: -1; opacity: .7; }
+
+    .receipt-font { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    /* Phone frame */
+    .phone {
+      width: 272px; border-radius: 2.4rem; background: #1d0508;
+      padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,.4), 0 30px 60px -20px rgba(0,0,0,.55), inset 0 0 0 1.5px rgba(228,198,127,.5);
+    }
+    .phone-screen { border-radius: 1.9rem; overflow: hidden; background: #F7F1E6; }
+    .mini-field { background:#fff; border:1px solid rgba(110,20,35,.18); border-radius:.55rem; }
+
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(110,20,35,.25); transition: background .3s ease, transform .3s ease; }
+    .dot.on { background: #6E1423; transform: scale(1.25); }
+    .dot-ivory { background: rgba(247,241,230,.35); }
+    .dot-ivory.on { background: #E4C67F; }
+
+    /* Sticky bottom CTA */
+    #stickyCta { transform: translateY(110%); transition: transform .45s cubic-bezier(.22,1,.36,1); }
+    #stickyCta.show { transform: translateY(0); }
+
+    /* Compare chart center column lift */
+    .compare-hn { background: linear-gradient(180deg, rgba(110,20,35,.05), rgba(110,20,35,.02)); }
+  </style>
+</head>
+<body id="top">
+
+  <!-- ============ PROMO BAR ============ -->
+  <div class="bg-claret-dark text-ivory text-center px-4 py-2.5 relative z-50">
+    <p class="text-[.92rem] leading-snug font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</p>
+    <p class="text-[.8rem] text-ivory/80 flex items-center justify-center gap-1.5">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Ends Sunday at midnight &middot; <span data-promo-countdown class="font-700 tabular-nums text-ivory"></span>
+    </p>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-claret/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <a href="#top" class="flex items-center gap-2.5" aria-label="Heart Note home">
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:34px;width:auto" onerror="this.style.display='none'" />
+        <span class="font-display text-claret text-[1.35rem] font-500 tracking-tight">Heart&nbsp;Note</span>
+      </a>
+      <div class="flex items-center gap-2.5">
+        <a href="order.html" data-cta="v2-header" class="btn btn-primary !py-2.5 !px-5 !text-[.95rem]">Create</a>
+        <button id="navBtn" aria-label="Open menu" aria-expanded="false" class="grid place-items-center w-11 h-11 rounded-xl border border-claret/20 text-claret cursor-pointer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav id="navPanel" class="hidden bg-ivory border-t border-claret/10 shadow-lift">
+      <div class="max-w-6xl mx-auto px-6 py-4 grid gap-1 text-[1.05rem] font-600 text-claret">
+        <a class="py-2.5" href="index.html">Home</a>
+        <a class="py-2.5" href="order.html">Create your song</a>
+        <a class="py-2.5" href="story.html">Our story</a>
+        <a class="py-2.5" href="contact.html">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero-bg pt-10 pb-12">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <h1 class="font-display font-500 text-claret text-[2.35rem] leading-[1.1] tracking-tight reveal">
+        Watch the moment they hear <span class="script-accent text-gold text-[1.15em]">their</span> song.
+      </h1>
+
+      <div class="relative mt-7 rounded-[24px] overflow-hidden shadow-keepsake ring-1 ring-claret/15 reveal" style="aspect-ratio:720/800">
+        <video id="mv" src="videos/hero-montage.mp4" poster="videos/hero-montage-poster.jpg" autoplay muted loop playsinline preload="metadata"
+               class="w-full h-full object-cover" aria-label="A montage of Heart Note customers reacting as they hear their songs for the first time"></video>
+        <span class="absolute left-3.5 bottom-3.5 bg-claret-dark/70 text-ivory/95 text-[.7rem] font-700 tracking-[.09em] uppercase px-2.5 py-1.5 rounded-full pointer-events-none">Real customer reactions</span>
+        <div class="absolute right-3 bottom-3 flex gap-2">
+          <button id="mvPause" aria-label="Pause the reaction montage" aria-pressed="false" class="grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+            <svg id="mvPauseIcon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+            <svg id="mvPlayIcon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="hidden"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button id="mvSound" aria-label="Play the montage with sound" aria-pressed="false" class="heroPulse grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+            <svg id="mvSoundOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+            <svg id="mvSoundOn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="hidden"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="mt-7 text-claret font-700 tracking-[.14em] uppercase text-[.78rem] reveal">Handcrafted keepsake songs</p>
+      <p class="mt-2.5 text-ink/80 text-[1.12rem] leading-relaxed reveal">A song written just for the ones you love, made from your memories and delivered within 24 hours.</p>
+
+      <div class="mt-6 reveal">
+        <a href="order.html" id="heroCta" data-cta="v2-hero" class="btn btn-primary w-full !py-4 !text-[1.12rem]">Create your Heart Note</a>
+        <p class="mt-3 text-ink-soft text-[.9rem]">Delivered within 24 hours &middot; One free revision included</p>
+      </div>
+
+      <div class="mt-7 flex items-center justify-center gap-3 reveal">
+        <div class="flex text-gold" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="halfStar"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="currentColor" stop-opacity=".28"/></linearGradient></defs><path fill="url(#halfStar)" d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+        </div>
+        <p class="text-ink-soft font-600 text-[.98rem]"><span class="text-claret font-700">4.5</span> from 1,200+ families</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REACTIONS CAROUSEL ============ -->
+  <section id="reactions" class="py-16 bg-claret-dark relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(55% 60% at 12% 0%, rgba(198,151,63,.16) 0%, rgba(198,151,63,0) 60%), radial-gradient(50% 55% at 90% 100%, rgba(110,20,35,.5) 0%, rgba(110,20,35,0) 65%);" aria-hidden="true"></div>
+    <div class="relative">
+      <div class="max-w-xl mx-auto px-5 text-center reveal">
+        <p class="text-gold-soft font-700 tracking-[.16em] uppercase text-[.75rem]">Real reactions</p>
+        <h2 class="mt-3 font-display font-500 text-ivory text-[2.05rem] leading-[1.1] tracking-tight">Real families, real first listens</h2>
+        <p class="mt-3 text-ivory/75 text-[1.02rem]">Filmed by our customers themselves. Tap a video to watch it full size, sound on.</p>
+      </div>
+
+      <div class="relative mt-8 reveal">
+        <div id="vtrack" class="snaptrack flex gap-4 overflow-x-auto px-5 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary" aria-label="Watch: For their anniversary. Mom's reaction, in full. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-claire.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For their anniversary</span><span class="block text-ivory/80 text-sm mt-0.5">Mom's reaction, in full</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-pauls-aunt.mp4" data-title="For his aunt" aria-label="Watch: For his aunt. A thank-you, set to music. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-pauls-aunt.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For his aunt</span><span class="block text-ivory/80 text-sm mt-0.5">A thank-you, set to music</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-jill.mp4" data-title="For Jill" aria-label="Watch: For Jill. Their whole life, in one song. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-jill.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For Jill</span><span class="block text-ivory/80 text-sm mt-0.5">Their whole life, in one song</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-husband.mp4" data-title="For her husband" aria-label="Watch: For her husband. Hearing their story. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-husband.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For her husband</span><span class="block text-ivory/80 text-sm mt-0.5">Hearing their story</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-car.mp4" data-title="First listen, in the car" aria-label="Watch: First listen, in the car. A song for her husband. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-car.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">First listen, in the car</span><span class="block text-ivory/80 text-sm mt-0.5">A song for her husband</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-dad-birthday.mp4" data-title="For Dad's birthday" aria-label="Watch: For Dad's birthday. His reaction to the lyrics. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-dad-birthday.jpg" alt="" loading="lazy" width="540" height="960" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For Dad's birthday</span><span class="block text-ivory/80 text-sm mt-0.5">His reaction to the lyrics</span></span>
+          </button>
+        </div>
+        <p class="mt-4 text-center text-ivory/60 text-[.9rem]">Swipe to see more reactions</p>
+      </div>
+
+      <div class="max-w-xl mx-auto px-5 mt-8 text-center reveal">
+        <p class="text-ivory text-[1.08rem] leading-relaxed"><span class="font-700">Someone you love deserves this moment.</span> The smile, the tears, the story they will tell about it.</p>
+        <a href="order.html" data-cta="v2-reactions" class="btn btn-ivory w-full mt-5">Create this moment for someone</a>
+        <p class="mt-3 text-ivory/65 text-[.88rem]">Every order comes with our happiness promise.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS: SWIPE DECK ============ -->
+  <section id="how" class="py-16">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">How it works</p>
+      <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">From your story to their song</h2>
+      <p class="mt-3 text-ink/75 text-[1.02rem] reveal">Four steps. One unforgettable gift. Ready within 24 hours.</p>
+
+      <div class="deckwrap relative mt-10 reveal">
+        <div id="deck" class="snaptrack relative z-10 flex gap-4 overflow-x-auto pb-1" aria-label="The four steps, swipe sideways">
+          <article class="shrink-0 w-full bg-white rounded-[20px] border border-claret/15 shadow-keepsake p-6 text-left">
+            <div class="flex items-center justify-between">
+              <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale font-display text-xl">1</span>
+              <span class="text-ink-soft text-[.72rem] font-700 tracking-[.14em] uppercase">It's easy</span>
+            </div>
+            <h3 class="mt-4 font-display text-claret text-[1.45rem] leading-tight">Tell us their story</h3>
+            <div class="mt-2 h-px w-24 bg-gold/60" aria-hidden="true"></div>
+            <p class="mt-3 text-ink/80 text-[1rem]">Answer a short set of questions about the person and the occasion. The little details you'd never put on a card do the heavy lifting.</p>
+            <p class="mt-5 pt-4 border-t border-dashed border-claret/15 text-ink-soft text-[.85rem] receipt-font">Takes about 5 minutes</p>
+          </article>
+          <article class="shrink-0 w-full bg-white rounded-[20px] border border-claret/15 shadow-keepsake p-6 text-left">
+            <div class="flex items-center justify-between">
+              <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale font-display text-xl">2</span>
+              <span class="text-ink-soft text-[.72rem] font-700 tracking-[.14em] uppercase">The craft</span>
+            </div>
+            <h3 class="mt-4 font-display text-claret text-[1.45rem] leading-tight">We write and produce it</h3>
+            <div class="mt-2 h-px w-24 bg-gold/60" aria-hidden="true"></div>
+            <p class="mt-3 text-ink/80 text-[1rem]">Paul and his team turn your words into an original song in the style and voice you chose, written fresh for your story.</p>
+            <p class="mt-5 pt-4 border-t border-dashed border-claret/15 text-ink-soft text-[.85rem] receipt-font">Real songwriting, real production</p>
+          </article>
+          <article class="shrink-0 w-full bg-white rounded-[20px] border border-claret/15 shadow-keepsake p-6 text-left">
+            <div class="flex items-center justify-between">
+              <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale font-display text-xl">3</span>
+              <span class="text-ink-soft text-[.72rem] font-700 tracking-[.14em] uppercase">The delivery</span>
+            </div>
+            <h3 class="mt-4 font-display text-claret text-[1.45rem] leading-tight">It arrives within 24 hours</h3>
+            <div class="mt-2 h-px w-24 bg-gold/60" aria-hidden="true"></div>
+            <p class="mt-3 text-ink/80 text-[1rem]">Your private gift page lands in your email, ready to play on any device and yours to keep forever.</p>
+            <p class="mt-5 pt-4 border-t border-dashed border-claret/15 text-ink-soft text-[.85rem] receipt-font">One free revision included</p>
+          </article>
+          <article class="shrink-0 w-full bg-white rounded-[20px] border border-claret/15 shadow-keepsake p-6 text-left">
+            <div class="flex items-center justify-between">
+              <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale font-display text-xl">4</span>
+              <span class="text-ink-soft text-[.72rem] font-700 tracking-[.14em] uppercase">The moment</span>
+            </div>
+            <h3 class="mt-4 font-display text-claret text-[1.45rem] leading-tight">You watch their reaction</h3>
+            <div class="mt-2 h-px w-24 bg-gold/60" aria-hidden="true"></div>
+            <p class="mt-3 text-ink/80 text-[1rem]">Play it at dinner, in the car, or over a phone call. That look on their face is the whole point.</p>
+            <p class="mt-5 pt-4 border-t border-dashed border-claret/15 text-ink-soft text-[.85rem] receipt-font">Have tissues ready</p>
+          </article>
+        </div>
+      </div>
+      <div id="deckDots" class="mt-7 flex justify-center gap-2.5" aria-hidden="true"></div>
+      <p class="mt-3 text-ink-soft text-[.8rem] font-700 tracking-[.16em] uppercase receipt-font">&larr; Swipe the deck &rarr;</p>
+
+      <a href="order.html" data-cta="v2-how" class="btn btn-primary w-full mt-8 reveal">Start your song</a>
+      <p class="mt-3 text-ink-soft text-[.9rem] reveal">Takes less than five minutes to start</p>
+    </div>
+  </section>
+
+  <!-- ============ IN THEIR OWN WORDS (EMAILS) ============ -->
+  <section id="inbox" class="py-16 bg-ivory-deep">
+    <div class="max-w-xl mx-auto px-4">
+      <div class="text-center reveal">
+        <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem]">Real customers &middot; in their own words</p>
+        <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight">Straight from our inbox</h2>
+        <p class="mt-3 text-ink/75 text-[1.02rem]">Real replies from real orders.</p>
+      </div>
+
+      <div class="mt-10 space-y-7">
+        <figure class="m-0 reveal" style="transform:rotate(-.7deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-bob.png" alt="Email from Bob: Thank you so much. This afternoon will be fine. The song was PERFECT!!! She will love it." class="max-w-full h-auto rounded-lg" width="812" height="212" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Bob, an anniversary song for Patricia<span class="sm:hidden block text-ink/80 font-400 mt-0.5">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</span></figcaption>
+        </figure>
+        <figure class="m-0 reveal" style="transform:rotate(.6deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-daniel.png" alt="Email from Daniel: I thought all 3 songs were great! Cheryl won't hear them until September 15!" class="max-w-full h-auto rounded-lg" width="467" height="194" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Daniel, three versions for Cheryl</figcaption>
+        </figure>
+        <figure class="m-0 reveal" style="transform:rotate(-.5deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-dianne.png" alt="Email from Dianne: This was WONDERFUL!" class="max-w-full h-auto rounded-lg" width="252" height="198" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Dianne, a song for Bill</figcaption>
+        </figure>
+        <figure class="m-0 reveal" style="transform:rotate(.7deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-thomas.png" alt="Email from Thomas: Hi Paul The songs are very cool!!!" class="max-w-full h-auto rounded-lg" width="289" height="177" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Thomas, after hearing his three versions</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A QUESTION + ORDER WALKTHROUGH ============ -->
+  <section class="py-20 bg-claret-dark relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(70% 55% at 50% 0%, rgba(198,151,63,.14) 0%, rgba(198,151,63,0) 60%);" aria-hidden="true"></div>
+    <div class="relative max-w-xl mx-auto px-5 text-center">
+      <p class="text-gold font-700 tracking-[.2em] uppercase text-[.75rem] reveal">A question</p>
+      <h2 class="mt-5 font-display font-500 italic text-ivory text-[2.5rem] leading-[1.12] tracking-tight reveal">
+        What do you give the person who has <span class="text-gold-soft">everything</span>?
+      </h2>
+      <p class="mt-6 text-ivory/80 text-[1.1rem] reveal">One honest answer: a song about them. Here is the whole order, screen by screen.</p>
+
+      <div class="mt-10 flex justify-center reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="flex items-center justify-between px-4 pt-3 pb-2 border-b border-claret/10">
+              <span class="font-display text-claret text-[.95rem]">Heart&nbsp;Note</span>
+              <span class="text-ink-soft text-[.62rem] font-700 tracking-[.1em] uppercase" id="phoneStep">Step 1 of 6</span>
+            </div>
+            <div id="phoneTrack" class="snaptrack flex overflow-x-auto" aria-label="Order form walkthrough, swipe sideways" tabindex="0">
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Choose the occasion</p>
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                  <span class="px-3 py-1.5 rounded-full bg-claret text-ivory text-[.72rem] font-700">Anniversary</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Birthday</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Wedding</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Proposal</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-claret/20 text-ink/70 text-[.72rem] font-600">Just because</span>
+                </div>
+                <div class="mt-4 mini-field px-3 py-2.5">
+                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">Their name</p>
+                  <p class="text-[.85rem] text-ink font-600">Patricia</p>
+                </div>
+                <p class="mt-8 text-[.72rem] text-ink-soft text-center">No account needed</p>
+              </div>
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Share your story</p>
+                <div class="mt-3 mini-field px-3 py-2.5">
+                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">Your favorite memories together</p>
+                  <p class="text-[.8rem] text-ink/75 italic leading-snug mt-1">The road trip where the map was wrong and it became the best day of the whole...</p>
+                </div>
+                <div class="mt-2.5 mini-field px-3 py-2.5">
+                  <p class="text-[.62rem] font-700 tracking-[.08em] uppercase text-ink-soft">The little things you love about them</p>
+                  <p class="text-[.8rem] text-ink/75 italic leading-snug mt-1">She hums while she cooks. She never lets anyone leave without a hug...</p>
+                </div>
+                <p class="mt-6 text-[.72rem] text-ink-soft text-center">A few sentences is plenty</p>
+              </div>
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Pick the music style</p>
+                <div class="mt-3 grid grid-cols-3 gap-1.5 text-center">
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Pop</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Country</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Folk</span>
+                  <span class="px-1 py-2 rounded-lg bg-claret text-ivory text-[.66rem] font-700">Piano ballad</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Soul</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Rock</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Indie</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">Hip-hop</span>
+                  <span class="px-1 py-2 rounded-lg bg-white border border-claret/20 text-ink/70 text-[.66rem] font-600">More...</span>
+                </div>
+                <p class="mt-6 text-[.72rem] text-ink-soft text-center">Not sure? Leave it to us</p>
+              </div>
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Choose a voice</p>
+                <div class="mt-3 space-y-1.5">
+                  <div class="mini-field px-3 py-2 flex items-center justify-between">
+                    <div><p class="text-[.8rem] font-700 text-ink">Brett</p><p class="text-[.66rem] text-ink-soft">Male &middot; country</p></div>
+                  </div>
+                  <div class="px-3 py-2 flex items-center justify-between rounded-[.55rem] bg-claret text-ivory">
+                    <div><p class="text-[.8rem] font-700">Gabriel</p><p class="text-[.66rem] text-ivory/75">Female &middot; pop</p></div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <div class="mini-field px-3 py-2 flex items-center justify-between">
+                    <div><p class="text-[.8rem] font-700 text-ink">Justin</p><p class="text-[.66rem] text-ink-soft">Male &middot; soul</p></div>
+                  </div>
+                  <div class="mini-field px-3 py-2 flex items-center justify-between opacity-50">
+                    <div><p class="text-[.8rem] font-700 text-ink">Lily</p><p class="text-[.66rem] text-ink-soft">Female &middot; joyful pop</p></div>
+                    <span class="text-[.6rem] font-700 uppercase tracking-[.06em] text-ink-soft">Unavailable</span>
+                  </div>
+                </div>
+                <p class="mt-4 text-[.72rem] text-ink-soft text-center">Hear a sample of each</p>
+              </div>
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Pick your package</p>
+                <div class="mt-3 space-y-1.5">
+                  <div class="mini-field px-3 py-2 flex items-center justify-between">
+                    <p class="text-[.8rem] font-700 text-ink">Single</p><p class="text-[.8rem] font-700 text-claret">$59 <span class="text-ink-soft font-400 line-through text-[.7rem]">$89</span></p>
+                  </div>
+                  <div class="mini-field px-3 py-2 flex items-center justify-between">
+                    <p class="text-[.8rem] font-700 text-ink">Deluxe</p><p class="text-[.8rem] font-700 text-claret">$69 <span class="text-ink-soft font-400 line-through text-[.7rem]">$99</span></p>
+                  </div>
+                  <div class="px-3 py-2.5 rounded-[.55rem] bg-claret text-ivory relative">
+                    <span class="absolute -top-2 right-2 bg-gold text-claret-dark text-[.55rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Best value</span>
+                    <div class="flex items-center justify-between">
+                      <p class="text-[.8rem] font-700">Experience</p><p class="text-[.8rem] font-700">$89 <span class="text-ivory/60 font-400 line-through text-[.7rem]">$139</span></p>
+                    </div>
+                    <p class="text-[.64rem] text-ivory/75 mt-0.5">Three versions, remastered</p>
+                  </div>
+                </div>
+                <p class="mt-5 text-[.72rem] text-ink-soft text-center">One free revision on every package</p>
+              </div>
+
+              <div class="shrink-0 w-full p-4 text-left">
+                <p class="font-display text-claret text-[1.05rem] leading-snug">Secure checkout</p>
+                <div class="mt-3 mini-field px-3 py-2.5">
+                  <div class="flex items-center justify-between"><p class="text-[.78rem] font-600 text-ink">Experience Package</p><p class="text-[.78rem] font-700 text-ink">$89</p></div>
+                  <div class="flex items-center justify-between mt-1 pt-1 border-t border-claret/10"><p class="text-[.78rem] font-700 text-claret">Total</p><p class="text-[.78rem] font-700 text-claret">$89</p></div>
+                </div>
+                <div class="mt-3 rounded-[.55rem] bg-claret text-ivory text-center py-2.5 text-[.8rem] font-700">Pay securely</div>
+                <p class="mt-3 text-[.68rem] text-ink-soft text-center leading-snug">Payment and email handled by Stripe. Your song is on its way within 24 hours.</p>
+              </div>
+
+            </div>
+            <div id="phoneDots" class="flex justify-center gap-2 py-3 border-t border-claret/10" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-5 text-ivory/60 text-[.88rem] reveal">The real order, screen by screen. About five minutes start to finish.</p>
+      <a href="order.html" data-cta="v2-walkthrough" class="btn btn-gold w-full mt-7 reveal">Start with the first question</a>
+    </div>
+  </section>
+
+  <!-- ============ ONE FAMILY'S HEART NOTE ============ -->
+  <section class="py-16">
+    <div class="max-w-xl mx-auto px-5">
+      <p class="text-center text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">One family's Heart Note</p>
+
+      <figure class="m-0 mt-8 relative reveal" style="transform:rotate(-1.2deg)">
+        <span class="absolute -top-3 left-8 w-24 h-6 bg-gold-pale/70 rotate-[-4deg] rounded-[2px]" aria-hidden="true"></span>
+        <span class="absolute -top-3 right-8 w-24 h-6 bg-gold-pale/70 rotate-[3deg] rounded-[2px]" aria-hidden="true"></span>
+        <div class="bg-white rounded-[18px] shadow-keepsake border border-claret/10 p-3 pb-5">
+          <button type="button" id="storyPlay" class="vcard group relative block w-full aspect-[4/5] rounded-[12px] overflow-hidden cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary"
+                  aria-label="Watch the full reaction video. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-claire.jpg" alt="A mom at a garden table, laughing as her family's anniversary song begins to play" class="vposter absolute inset-0 w-full h-full object-cover" width="540" height="960" loading="lazy" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/50 via-transparent to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-16 h-16 rounded-full bg-ivory/95 text-claret shadow-lift" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          </button>
+          <figcaption class="text-center mt-4">
+            <p class="font-display text-claret text-[1.35rem]">For their mom, on her anniversary</p>
+            <p class="text-ink-soft text-[.92rem] mt-0.5">Filmed by her family</p>
+          </figcaption>
+        </div>
+      </figure>
+
+      <div class="mt-10 reveal">
+        <p class="text-ink-soft text-[.78rem] font-700 tracking-[.16em] uppercase receipt-font">The moment, as it happened</p>
+        <h2 class="mt-3 font-display font-500 text-claret text-[1.9rem] leading-[1.15] tracking-tight">She thought it was just lunch in the garden.</h2>
+        <div class="mt-5 space-y-4 text-ink/85 text-[1.05rem]">
+          <p>Her family had a song made about her marriage: the years, the inside jokes, the things everyone loves about her but nobody ever says out loud.</p>
+          <p>They pressed play at the table. First she laughs, because hearing your own name in a song is the strangest thing. Then the lyrics land, and you can see the exact second they do.</p>
+        </div>
+        <blockquote class="mt-6 border-l-[3px] border-claret pl-5 font-display italic text-claret text-[1.25rem] leading-relaxed">
+          By the last chorus she is holding the card in both hands, and nobody at the table is saying a word.
+        </blockquote>
+        <button type="button" id="storyWatch" class="btn btn-ghost w-full mt-7">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          Watch the full reaction
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FLOWERS VS SONG ============ -->
+  <section class="py-16 bg-ivory-deep">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">Why a song</p>
+      <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Flowers last a week. A song plays for years.</h2>
+      <p class="mt-4 text-ink/75 text-[1.02rem] reveal">A traditional gift is a moment. A song about the person is a soundtrack: replayed on birthdays, anniversaries, and the quiet days in between.</p>
+
+      <!-- The usual route: receipt -->
+      <div class="mt-10 bg-ivory rounded-[18px] border border-claret/20 shadow-keepsake p-6 text-left receipt-font reveal" style="transform:rotate(-.6deg)">
+        <p class="text-center text-ink-soft text-[.72rem] tracking-[.2em] uppercase">&#9733; Traditional Gift Co.</p>
+        <p class="text-center font-display text-claret text-[1.6rem] mt-1" style="font-family:'Fraunces',serif">The usual route</p>
+        <p class="text-center text-ink-soft text-[.75rem] mt-0.5">Order #4471 &middot; Thank you!</p>
+        <div class="border-t border-dashed border-ink/30 my-4"></div>
+        <dl class="space-y-3.5 text-[.9rem] text-ink">
+          <div><div class="flex justify-between"><dt class="line-through decoration-claret/60">Two dozen roses</dt><dd>$89.00</dd></div><p class="text-ink-soft italic text-[.82rem]" style="font-family:'Fraunces',serif">wilted by Friday</p></div>
+          <div><div class="flex justify-between"><dt class="line-through decoration-claret/60">Box of chocolates</dt><dd>$32.00</dd></div><p class="text-ink-soft italic text-[.82rem]" style="font-family:'Fraunces',serif">gone by Thursday</p></div>
+          <div><div class="flex justify-between"><dt class="line-through decoration-claret/60">Scented candle</dt><dd>$28.00</dd></div><p class="text-ink-soft italic text-[.82rem]" style="font-family:'Fraunces',serif">never lit</p></div>
+          <div><div class="flex justify-between"><dt class="line-through decoration-claret/60">A nice card</dt><dd>$7.00</dd></div><p class="text-ink-soft italic text-[.82rem]" style="font-family:'Fraunces',serif">a drawer, eventually</p></div>
+        </dl>
+        <div class="border-t border-dashed border-ink/30 my-4"></div>
+        <div class="flex justify-between text-[.9rem]"><span class="tracking-[.1em] uppercase text-ink-soft">Subtotal</span><span class="font-700">$156.00</span></div>
+        <div class="flex justify-between items-end mt-2 text-[.9rem]"><span class="tracking-[.1em] uppercase text-ink-soft">Lifespan</span><span class="font-display italic text-claret text-[1.2rem]" style="font-family:'Fraunces',serif">about a week</span></div>
+      </div>
+
+      <!-- The Heart Note ticket -->
+      <div class="mt-8 bg-claret-dark rounded-[18px] shadow-keepsake ring-1 ring-gold/40 p-6 text-left text-ivory reveal" style="transform:rotate(.5deg)">
+        <div class="flex items-center justify-between">
+          <p class="font-display text-[1.5rem]">A Heart Note</p>
+          <p class="font-700 text-gold-soft text-[1.15rem]">from $59</p>
+        </div>
+        <p class="text-ivory/60 text-[.8rem] receipt-font mt-0.5">Where it plays, once it's theirs</p>
+        <div class="border-t border-dashed border-ivory/25 my-4"></div>
+        <ol class="space-y-3 text-[.95rem]">
+          <li class="flex gap-3"><span class="receipt-font text-gold-soft text-[.8rem] pt-0.5">01</span><div>The first listen, hand over mouth<p class="text-ivory/55 text-[.72rem] receipt-font uppercase tracking-[.08em]">Day one</p></div></li>
+          <li class="flex gap-3"><span class="receipt-font text-gold-soft text-[.8rem] pt-0.5">02</span><div>Sent to everyone they love<p class="text-ivory/55 text-[.72rem] receipt-font uppercase tracking-[.08em]">Week one</p></div></li>
+          <li class="flex gap-3"><span class="receipt-font text-gold-soft text-[.8rem] pt-0.5">03</span><div>Their birthday, played at the table<p class="text-ivory/55 text-[.72rem] receipt-font uppercase tracking-[.08em]">Every year</p></div></li>
+          <li class="flex gap-3"><span class="receipt-font text-gold-soft text-[.8rem] pt-0.5">04</span><div>The anniversary, slow danced to<p class="text-ivory/55 text-[.72rem] receipt-font uppercase tracking-[.08em]">Every year</p></div></li>
+          <li class="flex gap-3"><span class="receipt-font text-gold-soft text-[.8rem] pt-0.5">05</span><div>A hard Tuesday that needed it<p class="text-ivory/55 text-[.72rem] receipt-font uppercase tracking-[.08em]">Whenever</p></div></li>
+        </ol>
+        <div class="border-t border-dashed border-ivory/25 my-4"></div>
+        <div class="flex justify-between items-end"><span class="receipt-font tracking-[.1em] uppercase text-ivory/60 text-[.85rem]">Lifespan</span><span class="font-display italic text-gold-soft text-[1.3rem]">forever</span></div>
+      </div>
+
+      <p class="mt-9 font-display italic text-claret text-[1.35rem] leading-snug reveal">The difference is five minutes of telling us your story.</p>
+      <a href="order.html" data-cta="v2-flowers" class="btn btn-primary w-full mt-6 reveal">Start your song</a>
+      <p class="mt-3 text-ink-soft text-[.9rem] reveal">Delivered within 24 hours &middot; One free revision included</p>
+    </div>
+  </section>
+
+  <!-- ============ WE'VE ALL BEEN THERE ============ -->
+  <section class="py-16">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">We've all been there</h2>
+      <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Standing in a store the night before, thinking <em>nothing here is good enough for them.</em></p>
+
+      <div class="mt-9 space-y-4 text-left">
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 flex gap-4 reveal">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M7.5 8a2.5 2.5 0 1 1 4.5-1.5A2.5 2.5 0 1 1 16.5 8"/></svg></span>
+          <div><h3 class="font-display text-claret text-[1.2rem]">Generic gifts say generic things</h3><p class="text-ink/75 text-[.95rem] mt-1">Another candle. Another gift card. Another way of saying you didn't know what to get.</p></div>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 flex gap-4 reveal">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><h3 class="font-display text-claret text-[1.2rem]">Meaningful takes weeks</h3><p class="text-ink/75 text-[.95rem] mt-1">You'd love to make something personal. Between work and life, it never quite happens.</p></div>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 flex gap-4 reveal">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
+          <div><h3 class="font-display text-claret text-[1.2rem]">Words don't come easy</h3><p class="text-ink/75 text-[.95rem] mt-1">You feel it all. Getting it onto paper in a way that sounds like you is the hard part.</p></div>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 flex gap-4 reveal">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg></span>
+          <div><h3 class="font-display text-claret text-[1.2rem]">They already have everything</h3><p class="text-ink/75 text-[.95rem] mt-1">What do you buy the person who can buy themselves anything? Something money can't copy.</p></div>
+        </div>
+      </div>
+
+      <div class="mt-12 reveal">
+        <p class="text-gold font-700 tracking-[.16em] uppercase text-[.75rem] flex items-center justify-center gap-2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>
+          Imagine instead
+        </p>
+        <h2 class="mt-4 font-display font-500 text-claret text-[1.9rem] leading-[1.15] tracking-tight">The little things you love about them, turned into a song they keep forever.</h2>
+        <p class="mt-4 text-ink/80 text-[1.05rem]"><span class="font-700">Five minutes</span> of your memories. A finished song <span class="font-700">within 24 hours</span>.</p>
+      </div>
+
+      <figure class="m-0 mt-8 bg-white rounded-[20px] border border-claret/12 shadow-keepsake p-6 text-left reveal">
+        <blockquote class="font-display italic text-claret text-[1.3rem] leading-relaxed">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</blockquote>
+        <figcaption class="mt-4 flex items-center gap-3">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-claret text-ivory font-display" aria-hidden="true">B</span>
+          <div><p class="font-700 text-ink text-[.95rem]">Bob</p><p class="text-ink-soft text-[.85rem]">An anniversary song for Patricia</p></div>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ HOW WE COMPARE ============ -->
+  <section class="py-16 bg-ivory-deep">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem] reveal">How we compare</p>
+      <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">More personal than an app. A fraction of a studio commission.</h2>
+      <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Instant song apps are fast but faceless. Studio commissions are beautiful but cost a fortune. Heart Note sits in the sweet spot.</p>
+
+      <p class="mt-8 script-accent text-claret text-[1.5rem] leading-none reveal">the one they'll replay forever<span class="block text-gold text-[1.1rem] rotate-6 -mt-1" aria-hidden="true">&#8600;</span></p>
+
+      <div class="mt-2 grid grid-cols-[1fr_1.35fr_1fr] gap-2 text-left items-stretch reveal">
+        <div class="pt-6">
+          <div class="bg-white rounded-[16px] border border-claret/12 p-3 h-full">
+            <p class="font-display text-claret text-[.95rem] leading-tight">Instant song apps</p>
+            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Fast, faceless</span>
+          </div>
+        </div>
+        <div class="relative">
+          <span class="absolute -top-0.5 left-1/2 -translate-x-1/2 bg-claret text-ivory text-[.62rem] font-700 tracking-[.12em] uppercase px-3 py-1 rounded-full whitespace-nowrap z-10">#1 choice</span>
+          <div class="compare-hn bg-white rounded-[16px] ring-2 ring-claret p-3 pt-5 h-full mt-2.5 shadow-keepsake">
+            <p class="font-display text-claret text-[1.1rem] leading-tight">Heart&nbsp;Note</p>
+            <span class="inline-block mt-1.5 bg-gold/20 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">The sweet spot</span>
+          </div>
+        </div>
+        <div class="pt-6">
+          <div class="bg-white rounded-[16px] border border-claret/12 p-3 h-full">
+            <p class="font-display text-claret text-[.95rem] leading-tight">Studio commissions</p>
+            <span class="inline-block mt-1.5 bg-blush/60 text-claret text-[.6rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Slow, costly</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-2 space-y-2 text-left reveal">
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Price</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">$10 to $30, plus upsells</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">$59 to $89, everything included</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">$500 and up</div>
+          </div>
+        </div>
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Delivery</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Instant, and it sounds like it</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">Within 24 hours</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Weeks, when the calendar opens</div>
+          </div>
+        </div>
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Who makes it</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Software, no person in the loop</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">Paul and his team, every order</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">One artist, one style</div>
+          </div>
+        </div>
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Personalization</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A prompt box and a gamble</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">A guided brief: right names, right memories, your choice of style and voice</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A brief, read once</div>
+          </div>
+        </div>
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">If it's not right</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Re-roll and hope</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">One free revision, then we keep working until you love it</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Often billed per round</div>
+          </div>
+        </div>
+        <div>
+          <p class="text-center text-ink-soft text-[.66rem] font-700 tracking-[.14em] uppercase py-1.5">Keeping it</p>
+          <div class="grid grid-cols-[1fr_1.35fr_1fr] gap-2">
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">A file to misplace</div>
+            <div class="compare-hn bg-white rounded-[14px] ring-1 ring-claret/40 p-3 text-[.85rem] text-ink font-600">A private gift page: stream, download, share, forever</div>
+            <div class="bg-white rounded-[14px] border border-claret/10 p-3 text-[.82rem] text-ink/70">Files handed off at the end</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-8 text-ink/85 text-[1.05rem] reveal">Keepsake quality, without the keepsake price tag.</p>
+      <a href="order.html" data-cta="v2-compare" class="btn btn-primary w-full max-w-xl mt-5 reveal">Create your Heart Note</a>
+    </div>
+  </section>
+
+  <!-- ============ EVERY MEANINGFUL MOMENT ============ -->
+  <section class="py-16">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Perfect for every meaningful moment</h2>
+      <p class="mt-4 text-ink/75 text-[1.02rem] reveal">Whatever the occasion, we'll help you put it to music.</p>
+
+      <div class="mt-9 grid grid-cols-2 gap-3.5 text-left">
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Anniversaries</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">Your years together, verse by verse.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">1st, 25th, 50th, every one</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Birthdays</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">A year of them, worth singing about.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">Milestones and every year between</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="16.5" cy="8.5" r="2.5"/><path d="M3 20c0-3.5 2.5-6 6-6s6 2.5 6 6M14 14.5c2.8.3 5 2.5 5 5.5"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">For parents</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">Everything you never quite said.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">Mother's Day, Father's Day, retirement</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M6 8c4-3 8 3 12 0v8c-4 3-8-3-12 0"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Weddings</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">A first dance nobody else has.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">First dance, rehearsal, the toast</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.7 3.9 4.3.4-3.2 2.8.9 4.2L12 12l-3.7 2.3.9-4.2L6 7.3l4.3-.4z"/><path d="M12 14v7"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Proposals</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">The question, set to your story.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">Before, during, or the day after yes</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Faith</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">Gratitude and grace, put to music.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">Baptisms, confirmations, blessings</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">For the kids</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">A song they'll grow up knowing.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">New babies, graduations, big days</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-4 reveal">
+          <span class="grid place-items-center w-10 h-10 rounded-full bg-blush/50 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+          <h3 class="mt-3 font-display text-claret text-[1.15rem]">Just because</h3>
+          <p class="text-ink/70 text-[.85rem] mt-1">No occasion. That's the point.</p>
+          <p class="text-ink-soft italic text-[.78rem] mt-2">An ordinary Tuesday, made theirs</p>
+        </div>
+      </div>
+
+      <p class="mt-8 text-ink/80 text-[1rem] reveal">Don't see your occasion? <span class="font-700">Every story is welcome.</span></p>
+      <a href="order.html" data-cta="v2-occasions" class="btn btn-ghost w-full mt-5 reveal">Create yours</a>
+    </div>
+  </section>
+
+  <!-- ============ LISTEN ============ -->
+  <section id="listen" class="py-16 bg-claret-deep text-ivory relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[.12] pointer-events-none" style="background-image: radial-gradient(50% 60% at 80% 20%, #C6973F 0%, transparent 60%), radial-gradient(45% 55% at 10% 90%, #E9CBC0 0%, transparent 55%);" aria-hidden="true"></div>
+    <div class="relative max-w-xl mx-auto px-5 text-center">
+      <p class="text-gold font-700 tracking-[.16em] uppercase text-[.75rem] reveal">Hear it for yourself</p>
+      <h2 class="mt-3 font-display font-500 text-ivory text-[2.05rem] leading-[1.1] tracking-tight reveal">The kind of song you'll receive</h2>
+      <p class="mt-3 text-gold-soft text-[.95rem] reveal">Press play on any of these to hear a real song we made.</p>
+
+      <div id="sampleList" class="mt-9 space-y-3 text-left reveal"></div>
+
+      <p class="mt-6 text-ivory/60 text-[.88rem] reveal">Every song is written fresh for your own story. These are just a taste.</p>
+      <a href="order.html" data-cta="v2-listen" class="btn btn-ivory w-full mt-6 reveal">Ready to create yours?</a>
+    </div>
+  </section>
+
+  <!-- ============ EVERYTHING YOU GET ============ -->
+  <section class="py-16">
+    <div class="max-w-xl mx-auto px-5 text-center">
+      <h2 class="font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight reveal">Everything you get</h2>
+      <p class="mt-3 text-ink/75 text-[1.02rem] reveal">One price. No subscriptions. No surprises.</p>
+
+      <div class="mt-9 grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left">
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 reveal">
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-10 h-10 rounded-full bg-claret/8 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+            <h3 class="font-display text-claret text-[1.15rem]">Your custom song</h3>
+          </div>
+          <p class="text-ink/75 text-[.95rem] mt-2.5">A fully produced original song, written from your story. Up to three versions, depending on your package.</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 reveal">
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-10 h-10 rounded-full bg-claret/8 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
+            <h3 class="font-display text-claret text-[1.15rem]">Their details, woven in</h3>
+          </div>
+          <p class="text-ink/75 text-[.95rem] mt-2.5">Names, memories, and inside jokes from your brief become the lyrics. No two Heart Notes are alike.</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 reveal">
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-10 h-10 rounded-full bg-claret/8 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <h3 class="font-display text-claret text-[1.15rem]">A private gift page</h3>
+          </div>
+          <p class="text-ink/75 text-[.95rem] mt-2.5">Your song lives on its own page: stream it, download it, and share it with family whenever you like.</p>
+        </div>
+        <div class="bg-white rounded-[18px] border border-claret/12 shadow-lift p-5 reveal">
+          <div class="flex items-center gap-3">
+            <span class="grid place-items-center w-10 h-10 rounded-full bg-claret/8 text-claret" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 3v6h-6"/></svg></span>
+            <h3 class="font-display text-claret text-[1.15rem]">One free revision</h3>
+          </div>
+          <p class="text-ink/75 text-[.95rem] mt-2.5">If a detail is off or a line doesn't sound like them, tell us. We rework it at no cost.</p>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6 text-left reveal">
+        <p class="text-center font-display text-claret text-[1.4rem]">Your Heart Note</p>
+        <p class="text-center text-ink-soft text-[.9rem]">No monthly fees. No subscriptions.</p>
+        <div class="mt-4 flex items-end justify-center gap-2.5">
+          <span class="font-display text-claret text-[2.6rem] leading-none">from $59</span>
+          <span class="font-display text-ink-soft/80 text-[1.5rem] leading-none line-through decoration-claret/70 decoration-2 pb-1">$89</span>
+        </div>
+        <ul class="mt-5 space-y-2.5 text-ink/85 text-[.98rem]">
+          <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Original lyrics from your story</li>
+          <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Your choice of music style and voice</li>
+          <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Professionally produced, start to finish</li>
+          <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Delivered within 24 hours</li>
+          <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Yours to keep forever, no subscription</li>
+        </ul>
+        <a href="order.html" data-cta="v2-package" class="btn btn-primary w-full mt-6">Create your Heart Note</a>
+        <p class="mt-3 text-center text-ink-soft text-[.85rem]">Single $59 &middot; Deluxe $69 &middot; Experience $89</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="py-16 bg-ivory-deep">
+    <div class="max-w-xl mx-auto px-5">
+      <div class="text-center reveal">
+        <p class="text-claret font-700 tracking-[.16em] uppercase text-[.75rem]">Good to know</p>
+        <h2 class="mt-3 font-display font-500 text-claret text-[2.05rem] leading-[1.1] tracking-tight">Questions, answered</h2>
+      </div>
+      <div class="mt-8 divide-y divide-claret/12 border-y border-claret/12">
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-[1.15rem] gap-4">Is the song really made just for us?<span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none shrink-0">+</span></summary>
+          <p class="mt-3 text-ink/80 text-[1rem]">Yes. Every song is made around the names, details, and memories you share, so no two Heart Notes are ever alike.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-[1.15rem] gap-4">How long does it take to arrive?<span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none shrink-0">+</span></summary>
+          <p class="mt-3 text-ink/80 text-[1rem]">Most songs are ready within 24 hours of your order. If you're on a tight timeline for a special date, <a href="contact.html" class="text-claret font-700 underline decoration-gold/50 underline-offset-2">contact our team</a> and we'll do our best to help.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-[1.15rem] gap-4">Can I request changes to my song?<span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none shrink-0">+</span></summary>
+          <p class="mt-3 text-ink/80 text-[1rem]">Yes. Every order includes one free revision, so if a name is wrong, a detail is off, or a line doesn't sound like them, just reply to your delivery email and tell us what to change. We'll rework it and send it back at no cost.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-[1.15rem] gap-4">What exactly do I receive?<span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none shrink-0">+</span></summary>
+          <p class="mt-3 text-ink/80 text-[1rem]">A beautifully produced song on your own private gift page, with the link sent straight to your email. You can play it on any device, keep it forever, and share it with family and friends however you like.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-[1.15rem] gap-4">Is it easy to order?<span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none shrink-0">+</span></summary>
+          <p class="mt-3 text-ink/80 text-[1rem]">Wonderfully easy. If you can write a few sentences about your loved one, you can create a Heart Note. Our team is always here if you'd like a hand.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="py-20 bg-claret-dark relative overflow-hidden text-center">
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(60% 50% at 50% 100%, rgba(198,151,63,.18) 0%, rgba(198,151,63,0) 60%);" aria-hidden="true"></div>
+    <div class="relative max-w-xl mx-auto px-5">
+      <h2 class="font-display font-500 text-ivory text-[2.2rem] leading-[1.12] tracking-tight reveal">Someone you love has a song waiting.</h2>
+      <p class="mt-4 text-ivory/75 text-[1.05rem] reveal">Start tonight, and it can be in your inbox by tomorrow.</p>
+      <a href="order.html" data-cta="v2-final" class="btn btn-gold w-full mt-7 reveal">Create your Heart Note</a>
+      <p class="mt-3 text-ivory/60 text-[.88rem] reveal">Delivered within 24 hours &middot; One free revision included</p>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-claret-dark text-ivory/75 border-t border-ivory/10 pb-28">
+    <div class="max-w-xl mx-auto px-5 py-12">
+      <p class="font-display text-ivory text-[1.4rem]">Heart&nbsp;Note</p>
+      <p class="mt-2 text-[.95rem]">A song written just for the ones you love, made from your story and delivered within 24 hours.</p>
+      <div class="mt-7 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[.95rem]">
+        <a class="py-1" href="index.html">Home</a>
+        <a class="py-1" href="order.html">Create your song</a>
+        <a class="py-1" href="story.html">Our story</a>
+        <a class="py-1" href="contact.html">Contact</a>
+        <a class="py-1" href="privacy.html">Privacy</a>
+        <a class="py-1" href="terms.html">Terms</a>
+      </div>
+      <div class="mt-8 bg-ivory/5 rounded-[16px] border border-ivory/15 p-5">
+        <p class="font-display text-ivory text-[1.1rem]">Need a hand with your song?</p>
+        <p class="text-[.9rem] mt-1">Write to us any time: <a href="mailto:paul@heartnote.music" class="text-gold-soft font-700">paul@heartnote.music</a></p>
+      </div>
+      <p class="mt-8 text-[.8rem] text-ivory/50">&copy; 2026 Heart Note. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ============ STICKY BOTTOM CTA ============ -->
+  <div id="stickyCta" class="fixed bottom-0 inset-x-0 z-40 bg-ivory/95 backdrop-blur border-t border-claret/15 px-4 pt-3 pb-4" style="padding-bottom: max(1rem, env(safe-area-inset-bottom))">
+    <a href="order.html" data-cta="v2-sticky" class="btn btn-primary w-full max-w-xl mx-auto !py-3.5">Create your Heart Note</a>
+  </div>
+
+  <!-- ============ LIGHTBOX ============ -->
+  <div id="vLightbox" class="hidden fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Customer reaction video">
+    <div id="vScrim" class="absolute inset-0 bg-claret-dark/95"></div>
+    <div class="relative h-full grid place-items-center p-4">
+      <figure class="m-0 w-auto">
+        <video id="vPlayer" class="max-h-[82vh] max-w-[92vw] aspect-[9/16] rounded-2xl ring-1 ring-gold/40 bg-black shadow-keepsake" controls playsinline preload="none"></video>
+        <figcaption id="vCaption" class="mt-3 text-center text-ivory font-display text-lg"></figcaption>
+      </figure>
+      <button type="button" id="vClose" aria-label="Close video"
+              class="absolute top-4 right-4 grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+
+<script>
+  // ---- Reveal on scroll ----
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: .12 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+
+  // ---- Menu ----
+  (function () {
+    var btn = document.getElementById('navBtn'), panel = document.getElementById('navPanel');
+    function setOpen(open) {
+      panel.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn.addEventListener('click', function () { setOpen(panel.classList.contains('hidden')); });
+    panel.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+  })();
+
+  // ---- Hero montage controls ----
+  (function () {
+    var v = document.getElementById('mv');
+    var pauseBtn = document.getElementById('mvPause');
+    var soundBtn = document.getElementById('mvSound');
+    if (!v) return;
+    var everUnmuted = false;
+    function syncPause() {
+      var paused = v.paused;
+      document.getElementById('mvPauseIcon').classList.toggle('hidden', paused);
+      document.getElementById('mvPlayIcon').classList.toggle('hidden', !paused);
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      pauseBtn.setAttribute('aria-label', paused ? 'Play the reaction montage' : 'Pause the reaction montage');
+    }
+    function setMuted(m) {
+      v.muted = m;
+      document.getElementById('mvSoundOff').classList.toggle('hidden', !m);
+      document.getElementById('mvSoundOn').classList.toggle('hidden', m);
+      soundBtn.setAttribute('aria-pressed', String(!m));
+      soundBtn.setAttribute('aria-label', m ? 'Play the montage with sound' : 'Mute the montage');
+    }
+    pauseBtn.addEventListener('click', function () { if (v.paused) { v.play().catch(function () {}); } else { v.pause(); } syncPause(); });
+    soundBtn.addEventListener('click', function () {
+      soundBtn.classList.remove('heroPulse');
+      if (v.muted) {
+        if (!everUnmuted) { everUnmuted = true; try { v.currentTime = 0; } catch (e) {} }
+        setMuted(false);
+        v.play().catch(function () {});
+        syncPause();
+      } else {
+        setMuted(true);
+      }
+    });
+    window.__muteMontage = function () { if (!v.muted) setMuted(true); };
+  })();
+
+  // ---- Lightbox (carousel + story card) ----
+  (function () {
+    var box = document.getElementById('vLightbox');
+    var player = document.getElementById('vPlayer');
+    var caption = document.getElementById('vCaption');
+    var closeBtn = document.getElementById('vClose');
+    var lastFocus = null;
+    function openBox(card) {
+      lastFocus = card;
+      if (window.__muteMontage) window.__muteMontage();
+      if (player.getAttribute('src') !== card.dataset.video) player.src = card.dataset.video;
+      caption.textContent = card.dataset.title;
+      box.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+      player.muted = false;
+      player.play().catch(function () {});
+    }
+    function closeBox() {
+      player.pause();
+      box.classList.add('hidden');
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus();
+    }
+    document.querySelectorAll('.vcard[data-video]').forEach(function (c) { c.addEventListener('click', function () { openBox(c); }); });
+    var storyWatch = document.getElementById('storyWatch');
+    if (storyWatch) storyWatch.addEventListener('click', function () { openBox(document.getElementById('storyPlay')); });
+    closeBtn.addEventListener('click', closeBox);
+    document.getElementById('vScrim').addEventListener('click', closeBox);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.classList.contains('hidden')) closeBox(); });
+  })();
+
+  // ---- Dots for snap tracks ----
+  function wireDots(trackId, dotsId, dotClass, onChange) {
+    var track = document.getElementById(trackId), dots = document.getElementById(dotsId);
+    if (!track || !dots) return;
+    var slides = track.children.length;
+    for (var i = 0; i < slides; i++) {
+      var d = document.createElement('span');
+      d.className = 'dot' + (dotClass ? ' ' + dotClass : '') + (i === 0 ? ' on' : '');
+      dots.appendChild(d);
+    }
+    var ticking = false;
+    track.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var g = parseFloat(getComputedStyle(track).columnGap);
+        if (isNaN(g)) g = 0;
+        var w = track.children[0].getBoundingClientRect().width + g;
+        var idx = Math.round(track.scrollLeft / (w || 1));
+        idx = Math.max(0, Math.min(slides - 1, idx));
+        [].forEach.call(dots.children, function (el, j) { el.classList.toggle('on', j === idx); });
+        if (onChange) onChange(idx);
+      });
+    }, { passive: true });
+  }
+  wireDots('deck', 'deckDots');
+  wireDots('phoneTrack', 'phoneDots', null, function (idx) {
+    var el = document.getElementById('phoneStep');
+    if (el) el.textContent = 'Step ' + (idx + 1) + ' of 6';
+  });
+
+  // ---- Sample songs ----
+  (function () {
+    var songs = [
+      { title: 'Forever Looks Like You',       src: 'audio/sample-forever-looks-like-you.mp3' },
+      { title: "Here's to Us",                 src: 'audio/sample-heres-to-us.mp3' },
+      { title: 'Underneath These Lucky Stars', src: 'audio/sample-underneath-these-lucky-stars.mp3' },
+      { title: 'Steal Another Saturday Night', src: 'audio/sample-steal-another-saturday-night.mp3' },
+      { title: 'Solid Ground',                 src: 'audio/sample-solid-ground.mp3' },
+      { title: "Forever's Favorite Ride",      src: 'audio/sample-forevers-favorite-ride.mp3' },
+    ];
+    var wrap = document.getElementById('sampleList');
+    if (!wrap) return;
+    var current = null;
+    songs.forEach(function (s) {
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'w-full flex items-center gap-4 bg-ivory/5 hover:bg-ivory/10 rounded-[16px] ring-1 ring-ivory/15 p-4 text-left transition-colors cursor-pointer';
+      row.setAttribute('aria-label', 'Play sample: ' + s.title);
+      row.innerHTML =
+        '<span class="chip grid place-items-center w-11 h-11 rounded-full bg-gold text-claret-dark shrink-0">' +
+          '<svg class="i-play" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' +
+          '<svg class="i-pause hidden" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>' +
+        '</span>' +
+        '<span class="flex-1 min-w-0"><span class="block font-display text-ivory text-[1.05rem] leading-snug">' + s.title + '</span>' +
+        '<span class="block text-ivory/55 text-[.8rem] mt-0.5">Anniversary &middot; a real Heart Note</span></span>';
+      var audio = new Audio();
+      audio.preload = 'none';
+      row.addEventListener('click', function () {
+        if (current && current !== audio) {
+          current.pause();
+          var b = current._row;
+          b.querySelector('.i-play').classList.remove('hidden');
+          b.querySelector('.i-pause').classList.add('hidden');
+        }
+        if (audio.paused) {
+          if (!audio.src) audio.src = s.src;
+          audio.play().catch(function () {});
+          current = audio; audio._row = row;
+          row.querySelector('.i-play').classList.add('hidden');
+          row.querySelector('.i-pause').classList.remove('hidden');
+        } else {
+          audio.pause();
+          row.querySelector('.i-play').classList.remove('hidden');
+          row.querySelector('.i-pause').classList.add('hidden');
+        }
+      });
+      audio.addEventListener('ended', function () {
+        row.querySelector('.i-play').classList.remove('hidden');
+        row.querySelector('.i-pause').classList.add('hidden');
+      });
+      wrap.appendChild(row);
+    });
+  })();
+
+  // ---- Sticky CTA: appears once the hero CTA scrolls out of view ----
+  (function () {
+    var bar = document.getElementById('stickyCta');
+    var hero = document.getElementById('heroCta');
+    if (!bar || !hero || !('IntersectionObserver' in window)) { if (bar) bar.classList.add('show'); return; }
+    var io = new IntersectionObserver(function (entries) {
+      bar.classList.toggle('show', !entries[0].isIntersecting && entries[0].boundingClientRect.top < 0);
+    }, { threshold: 0 });
+    io.observe(hero);
+  })();
+</script>
+</body>
+</html>

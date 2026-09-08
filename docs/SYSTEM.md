@@ -43,6 +43,7 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 | order.html | /order.html | Order form → Stripe. Duplicated TIERS object (see Money) |
 | funnel.html, lp-*.html | /lp, /lp/anniversary, /lp/birthday(-milestone), /lp/faith | Paid-traffic landing pages. **Intentionally lag the homepage** in places (still "Three simple steps", older hero); see DECISIONS before "fixing" |
 | story.html | /story.html | Our Story (Paul; NYU Tisch + Columbia College Chicago) |
+| v2.html | /v2.html | **Unlinked concept page** (noindex): the homepage rebuilt in a competitor's mobile-first journey format (montage hero videos/hero-montage.mp4, swipe deck, order walkthrough phone mockup, receipt comparison, compare chart, sticky CTA). Same brand tokens; CTAs point at order.html; not in any nav |
 | privacy.html, terms.html, contact.html | — | Legal/trust. privacy.html still has `[LEGAL ENTITY NAME]` / `[MAILING ADDRESS]` placeholders |
 | success.html | post-checkout | Fires browser Purchase pixel with `eid` for CAPI dedup |
 | dashboard.html | /dashboard | Reporting (Lucra palette). Ranges 7/30/90/MTD; funnel is all-Meta from landing-page views |
