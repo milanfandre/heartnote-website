@@ -113,8 +113,11 @@
     /* Reveal on scroll (opacity + transform only) */
     /* aspect-ratio fallbacks for iOS 14 Safari and earlier, where these
        boxes would otherwise collapse to zero height. Ignored elsewhere. */
+    /* Height set here rather than via aspect-ratio: engines that skip
+       aspect-ratio on <button> would otherwise collapse these to nothing.
+       15.5rem x 16/9 = 27.5556rem. */
+    #vtrack .vcard { height: 27.5556rem; }
     @supports not (aspect-ratio: 1 / 1) {
-      #vtrack .vcard { height: 27.6rem; }
       #storyPlay { padding-top: 125%; }
       .phone-screen { padding-top: 200%; }
     }
