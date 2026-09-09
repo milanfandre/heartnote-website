@@ -723,6 +723,11 @@
         window.__revealIO = io;
         document.documentElement.classList.add('reveal-armed');
         document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+        // Failsafe: reveal anything the observer has not shown within two
+        // seconds. Content must never stay invisible.
+        setTimeout(() => {
+          document.querySelectorAll('.reveal:not(.in), .draw:not(.in)').forEach((el) => el.classList.add('in'));
+        }, 2000);
       }
     } catch (e) {}
 

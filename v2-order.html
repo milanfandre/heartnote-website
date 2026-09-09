@@ -101,7 +101,9 @@
     @media (prefers-reduced-motion: reduce) { .step.live { animation: none; } }
 
     #meterFill { transition: width .3s ease; }
-    @supports not (aspect-ratio: 1 / 1) { #coVideo { padding-top: 56.25%; } }
+    /* Owns its height rather than inferring it from aspect-ratio: this is a
+       <button> whose children are all absolutely positioned. */
+    #coVideo { padding-top: 56.25%; }                    /* 16:9, width varies */
     .phase { display: none; }
     .phase.live { display: block; }
   </style>
@@ -362,7 +364,7 @@
           <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
             <h2 class="font-display text-claret text-[1.35rem]">See what this moment looks like</h2>
             <p class="mt-1.5 text-ink/75 text-[.95rem]">Watch a real mom hear her family's anniversary song. This could be <span class="coFirst font-700">them</span>.</p>
-            <button type="button" id="coVideo" class="vcard group relative block w-full mt-4 aspect-video rounded-[14px] overflow-hidden cursor-pointer"
+            <button type="button" id="coVideo" class="vcard group relative block w-full mt-4 rounded-[14px] overflow-hidden cursor-pointer"
                     data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary"
                     aria-label="Watch the full reaction video. Opens a larger player with sound.">
               <img src="videos/poster-ugc-claire.jpg" alt="" class="absolute inset-0 w-full h-full object-cover object-[50%_22%]" loading="lazy" />

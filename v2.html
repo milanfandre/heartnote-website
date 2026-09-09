@@ -117,10 +117,13 @@
        aspect-ratio on <button> would otherwise collapse these to nothing.
        15.5rem x 16/9 = 27.5556rem. */
     #vtrack .vcard { height: 27.5556rem; }
-    @supports not (aspect-ratio: 1 / 1) {
-      #storyPlay { padding-top: 125%; }
-      .phone-screen { padding-top: 200%; }
-    }
+    /* Every box below owns its height outright. Nothing here infers a size
+       from aspect-ratio, because an engine that declines to apply it (notably
+       on <button>) would collapse these to zero and clip their absolutely
+       positioned contents away entirely. */
+    #storyPlay { padding-top: 125%; }                    /* 4:5, width varies */
+    .phone-screen { height: 504px; }                     /* .phone 272 - 20 padding, 390:780 */
+    @media (min-width: 768px) { .phone-screen { height: 600px; } }
 
     /* Visible by default; hides for the entrance animation only after the
        observer arms (html.reveal-armed), so broken or blocked scripts never
@@ -454,7 +457,7 @@
 
       <div class="mt-10 md:mt-0 flex justify-center reveal">
         <div class="phone">
-          <div class="phone-screen relative" style="aspect-ratio:390/780">
+          <div class="phone-screen relative">
             <video id="demoVid" src="videos/demo-checkout.mp4" poster="videos/demo-checkout-poster.jpg" autoplay muted loop playsinline preload="metadata"
                    class="absolute inset-0 w-full h-full object-cover" aria-label="A screen recording of the Heart Note order: choosing who the song is for, the occasion, the themes and style, and sharing the story"></video>
           </div>
@@ -478,7 +481,7 @@
         <span class="absolute -top-3 left-8 w-24 h-6 bg-gold-pale/70 rotate-[-4deg] rounded-[2px]" aria-hidden="true"></span>
         <span class="absolute -top-3 right-8 w-24 h-6 bg-gold-pale/70 rotate-[3deg] rounded-[2px]" aria-hidden="true"></span>
         <div class="bg-white rounded-[18px] shadow-keepsake border border-claret/10 p-3 pb-5">
-          <button type="button" id="storyPlay" class="vcard group relative block w-full aspect-[4/5] rounded-[12px] overflow-hidden cursor-pointer"
+          <button type="button" id="storyPlay" class="vcard group relative block w-full rounded-[12px] overflow-hidden cursor-pointer"
                   data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary"
                   aria-label="Watch the full reaction video. Opens a larger player with sound.">
             <img src="videos/poster-ugc-claire.jpg" alt="A mom at a garden table, laughing as her family's anniversary song begins to play" class="vposter absolute inset-0 w-full h-full object-cover" width="540" height="960" decoding="async" />

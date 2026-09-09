@@ -200,6 +200,20 @@ When this file and an older spec disagree, **this file wins**.
   **disproved** (cards measured 288x512), which is why the real cause was found
   rather than guessed at a third time.
 
+- **Sep 9 — The rendering standard is now project-wide and enforced.** After
+  the carousel bug, every page was audited for the same two failure classes.
+  Fixed beyond index/v2: `#storyPlay` (v2) and `#coVideo` (v2-order) were
+  `<button>`s sized only by `aspect-ratio` with absolutely-positioned children,
+  the same collapse waiting to happen; `.phone-screen` got an explicit height;
+  v3 gained the 2s reveal failsafe. The rule is written into CLAUDE.md and
+  enforced by `tools/render-check.mjs` (`npm run check:render`), which tests
+  every critical element on index/v2/v2-order/v3 across two viewports and both
+  engines under three simulated failures. Validated by reintroducing the
+  original bug: the checker reported `height 0px`, so it is not a no-op.
+  Landing pages (funnel, lp-*) and story.html use `aspect-ratio` only on
+  `<div>`s whose children are in-flow, which degrades to natural size rather
+  than collapsing, so they were deliberately left alone.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

@@ -79,6 +79,9 @@ D=/tmp/wk && mkdir -p $D && cd $D && npm init -y && npm i playwright && npx play
 #   const ctx = await (await webkit.launch()).newContext({ ...devices['iPhone 13'] });
 ```
 
+`npm run check:render [url]` automates all of this; set `HN_PLAYWRIGHT_DIR` to
+the folder above so it covers WebKit as well as Chromium.
+
 Simulate the failure modes real phones produce, not just the happy path:
 `addInitScript(() => { delete window.IntersectionObserver })` (blocked script)
 and a stubbed observer that never fires (`class { observe(){} ... }`) — the

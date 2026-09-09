@@ -17,6 +17,31 @@ Pixel/CAPI/ads, and a password-gated reporting dashboard at `/dashboard`.
 ## Always Do First
 - **Invoke the `frontend-design` skill** before writing any frontend code, every session, no exceptions.
 
+## The Rendering Standard (non-negotiable, applies to every page)
+
+Cost three failed fixes and a live conversion problem. Do not relax it.
+
+1. **Revenue-critical content renders with CSS alone.** The carousel, hero
+   media, pricing and CTAs must be visible and correctly sized with **no**
+   dependency on JS running, an observer firing, or a script loading. Animation
+   may only ever *add* to an already-visible baseline, never reveal it.
+2. **Never let a box infer its height.** `aspect-[x/y]` / `aspect-video` alone
+   is not a height. Engines may decline to apply `aspect-ratio` (notably to
+   `<button>`), and since these boxes hold absolutely-positioned children under
+   `overflow-hidden`, a failure collapses them to zero and clips everything
+   away. Set `height` outright for fixed widths, `padding-top: %` for fluid
+   ones. **`@supports not (aspect-ratio)` does NOT protect you** — a browser
+   that supports the property but skips it on an element passes that guard.
+3. **Scroll reveals need a failsafe.** `.reveal` starts visible; it may only be
+   hidden once JS adds `html.reveal-armed`, and a 2s timer must reveal anything
+   the observer missed.
+4. **Verify in WebKit, not just Chrome.** Chromium with an iOS user-agent is
+   not iOS Safari and has missed a Safari-only bug here twice.
+
+Before shipping any visual change: `npm run check:render` (add
+`HN_PLAYWRIGHT_DIR=...` for WebKit coverage; see RUNBOOK). It re-tests every
+critical element with aspect-ratio disabled and the observer broken.
+
 ## Standing Rules (user-set, non-negotiable)
 - **Never mention AI** anywhere on the site, in any form.
 - **No em dashes** in any customer-facing copy or email. Use period, comma, or colon.
@@ -47,6 +72,10 @@ Pixel/CAPI/ads, and a password-gated reporting dashboard at `/dashboard`.
   duplicated-hero ghosts in the capture are artifacts, not page bugs).
 - One section at real size: `node tools/shot-section.mjs "#sel" out.png 390 [url]`.
 - Console/network sanity: `node tools/console-check.mjs <url>`.
+- **Rendering invariants: `npm run check:render [url]`** — critical elements
+  across index/v2/v2-order/v3, both viewports, both engines, under simulated
+  failure (aspect-ratio ignored, observer dead, observer absent). Must pass
+  before any visual change ships.
 - After screenshotting, Read the PNG and compare specifically ("gap is 16px,
   should be 24px"). **At least 2 comparison rounds**; verify mobile (390px) and
   desktop for anything visual.
