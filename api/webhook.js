@@ -291,7 +291,11 @@ export default async function handler(req, res) {
     try {
       const stopped = await markRecovered(order.customer_email);
       if (stopped && stopped.rows) {
-        console.log(`recovery: closed ${stopped.rows} abandoned row(s), cancelled ${stopped.cancelled} email(s)`);
+        console.log(`recovery: closed ${stopped.rows} abandoned row(s) for this buyer`);
+        // Anything left uncancelled is mail heading to someone who has paid.
+        if (stopped.uncancelled) {
+          console.error(`recovery: ${stopped.uncancelled} follow-up(s) could NOT be cancelled and will still reach ${order.customer_email}`);
+        }
       }
     } catch (err) {
       console.error('recovery: could not cancel follow-ups:', err.message);
