@@ -207,8 +207,20 @@ curl -s "https://api.resend.com/emails/<id>" -H "Authorization: Bearer $RESEND_K
 ```
 
 Gotcha: cancelling a Resend email within a second or two of creating it returns
-422 "not scheduled". In production the gap is minutes or hours, so this only
-bites in tests. `cancelEmail` logs and returns false rather than throwing.
+422 "not scheduled", so `cancelEmail` retries. It gives up immediately on
+401/403, which means the Resend key lacks permission to cancel: a key with
+"sending access" can schedule but not call off, which silently lets follow-ups
+reach someone who has bought or unsubscribed. **The Vercel RESEND_API_KEY must
+have full access.**
+
+Health check for exactly that leak (a closed row that still has pending mail):
+```sql
+select email, status, scheduled_email_ids from abandoned_checkouts
+ where status in ('recovered','unsubscribed')
+   and array_length(scheduled_email_ids, 1) > 0;
+```
+Any row returned means real email is still queued to someone it should not
+reach. Cancel those ids by hand and fix the key.
 
 ## Data-collection change? Update the privacy policy
 
