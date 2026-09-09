@@ -37,8 +37,18 @@ const server = createServer(async (req, res) => {
       res.writeHead(403).end('Forbidden');
       return;
     }
-    const data = await readFile(filePath);
-    const type = TYPES[extname(filePath).toLowerCase()] || 'application/octet-stream';
+    // Extensionless paths resolve to their .html file, mirroring the clean-URL
+    // rewrites in vercel.json so local testing matches production.
+    let resolved = filePath;
+    let data;
+    try {
+      data = await readFile(resolved);
+    } catch (err) {
+      if (extname(resolved)) throw err;
+      resolved = `${filePath}.html`;
+      data = await readFile(resolved);
+    }
+    const type = TYPES[extname(resolved).toLowerCase()] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
     res.end(data);
   } catch (err) {

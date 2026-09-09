@@ -169,6 +169,20 @@ When this file and an older spec disagree, **this file wins**.
   index, v2, and v2-order. Standing rule: never gate baseline visibility on
   JS succeeding.
 
+- **Sep 9 — Clean URLs for paid traffic, and a v3 control.** v2 runs as an ad
+  landing page, so `/v2`, `/v2-order` and `/v3` were added to vercel.json
+  rewrites (flat, not nested: a nested `/v2/order` would break every relative
+  asset path on that page). serve.mjs now resolves extensionless paths to
+  `.html` so local matches production. v2 gained the og/twitter block it was
+  missing, which the ad's link preview needs. **Bug caught during this work:**
+  the v2 quiz read `window.HN_ATTR`, which does not exist; the real global is
+  `hnAttribution()`. Every v2 order was therefore losing its utm/fbclid
+  attribution. Fixed and verified end to end with a simulated ad click.
+  v3.html is index.html restored from b6bebee (pre-video), kept as a control
+  for an A/B test: no montage, no carousel, static hero, CTAs to order.html.
+  It carries the Sep 8 progressive-enhancement fixes deliberately, because
+  shipping a known blank-page bug as a "control" would poison the test.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

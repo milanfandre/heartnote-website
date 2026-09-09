@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heart Note: A song written just for the ones you love</title>
+  <meta name="description" content="We turn your story into a personal song to give as a gift, for birthdays, weddings, and the little moments in between." />
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <meta name="facebook-domain-verification" content="c1tfre45vnpv6p2nd5ao73ts9jucql" />
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://heartnote.music/" />
+
+  <!-- Open Graph / social sharing (Facebook, iMessage, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Heart Note" />
+  <meta property="og:url" content="https://heartnote.music/" />
+  <meta property="og:title" content="Heart Note: A song written just for the ones you love" />
+  <meta property="og:description" content="Personal keepsake songs to give as a gift, for birthdays, weddings, and the little moments in between." />
+  <meta property="og:image" content="https://heartnote.music/brand_assets/og-image.jpg" />
+  <meta property="og:image:width" content="2400" />
+  <meta property="og:image:height" content="1260" />
+  <meta property="og:image:alt" content="Heart Note, a song written just for the ones you love" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Heart Note: A song written just for the ones you love" />
+  <meta name="twitter:description" content="Personal keepsake songs to give as a gift, for birthdays, weddings, and the little moments in between." />
+  <meta name="twitter:image" content="https://heartnote.music/brand_assets/og-image.jpg" />
+
+  <script src="/pixel.js"></script>
+  <script src="/promo-bar.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Pinyon+Script&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+            gold: { DEFAULT: '#C6973F', soft: '#E4C67F', pale: '#EFDCA9' },
+            ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+            blush: '#E9CBC0',
+            ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
+            script: ['"Pinyon Script"', 'cursive'],
+          },
+          boxShadow: {
+            keepsake: '0 1px 2px rgba(54,9,17,.06), 0 12px 28px -12px rgba(110,20,35,.28), 0 40px 64px -32px rgba(110,20,35,.22)',
+            lift: '0 2px 4px rgba(54,9,17,.05), 0 18px 40px -16px rgba(110,20,35,.30)',
+            gold: '0 8px 24px -8px rgba(198,151,63,.45)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --ivory: #F7F1E6;
+      --claret: #6E1423;
+      --gold: #C6973F;
+    }
+    html { scroll-behavior: smooth; font-size: 18px; }
+    body {
+      background-color: var(--ivory);
+      color: #2B2019;
+      font-family: 'Nunito Sans', system-ui, sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', Georgia, serif; }
+
+    /* Paper grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: .05;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Headline flourish */
+    .script-accent { font-family: 'Pinyon Script', cursive; font-weight: 400; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      font-weight: 700; letter-spacing: .01em; border-radius: 999px;
+      padding: .95rem 1.9rem; font-size: 1.06rem; line-height: 1;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease, background-color .3s ease, color .3s ease;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--claret); color: #F7F1E6; box-shadow: 0 10px 24px -10px rgba(110,20,35,.6); }
+    .btn-primary:hover { background: #5a0f1c; transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(110,20,35,.7); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    .btn-ghost { background: transparent; color: #6E1423; border-color: rgba(110,20,35,.28); }
+    .btn-ghost:hover { background: rgba(110,20,35,.06); border-color: rgba(110,20,35,.5); transform: translateY(-2px); }
+    .btn-ghost:active { transform: translateY(0); }
+    .btn-ghost:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    .btn-gold { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; box-shadow: 0 10px 24px -10px rgba(198,151,63,.7); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -12px rgba(198,151,63,.85); }
+    .btn-gold:focus-visible { outline: 3px solid #6E1423; outline-offset: 3px; }
+
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+    /* Hero atmosphere */
+    .hero-bg {
+      background-color: #F7F1E6;
+      background-image:
+        radial-gradient(60% 55% at 82% 18%, rgba(233,203,192,.55) 0%, rgba(233,203,192,0) 60%),
+        radial-gradient(45% 45% at 8% 82%, rgba(198,151,63,.20) 0%, rgba(198,151,63,0) 60%),
+        radial-gradient(80% 70% at 50% -10%, rgba(110,20,35,.10) 0%, rgba(110,20,35,0) 55%);
+    }
+
+    /* Lifestyle image treatment */
+    .lifestyle { position: relative; overflow: hidden; }
+    .lifestyle img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .lifestyle::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(54,9,17,.42) 0%, rgba(54,9,17,.06) 45%, rgba(54,9,17,0) 100%);
+    }
+    .lifestyle::before {
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background: #6E1423; mix-blend-mode: multiply; opacity: .14;
+    }
+
+    /* Staff ribbon divider */
+    .staff path, .staff line { stroke: #C6973F; }
+    .staff .note { fill: #C6973F; }
+
+    /* Reveal on scroll. Content is visible by default and only hides for the
+       entrance animation once the script has armed the observer, so a blocked
+       or failed script can never leave the page blank. */
+    .reveal { transition: opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
+    html.reveal-armed .reveal:not(.in) { opacity: 0; transform: translateY(22px); }
+
+    /* iOS 14 Safari and earlier lack aspect-ratio; keep the hero from collapsing. */
+    @supports not (aspect-ratio: 1 / 1) { .lifestyle { height: 27rem; } }
+
+    /* Occasion + testimonial cards */
+    .card {
+      background: #FBF7EE; border: 1px solid rgba(110,20,35,.10); border-radius: 20px;
+      transition: transform .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 2px 4px rgba(54,9,17,.05), 0 22px 44px -18px rgba(110,20,35,.32); border-color: rgba(198,151,63,.5); }
+
+    .occasion { position: relative; display: block; border-radius: 20px; overflow: hidden; }
+    .occasion img { transition: transform .8s cubic-bezier(.22,.61,.36,1); }
+    .occasion:hover img { transform: scale(1.06); }
+    .occasion:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    /* Equalizer (sample player mock) */
+    .eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 22px; }
+    .eq span { width: 3px; background: #C6973F; border-radius: 2px; height: 30%; }
+    .playing .eq span { animation: bounce 1s ease-in-out infinite; }
+    .playing .eq span:nth-child(2){ animation-delay:.12s } .playing .eq span:nth-child(3){ animation-delay:.28s }
+    .playing .eq span:nth-child(4){ animation-delay:.42s } .playing .eq span:nth-child(5){ animation-delay:.6s }
+    @keyframes bounce { 0%,100%{ height:25% } 50%{ height:100% } }
+
+    /* Sample audio cards */
+    .samp-card { background: rgba(247,241,230,.06); border:1px solid rgba(198,151,63,.3); border-radius:20px; padding:1.25rem 1.4rem; backdrop-filter: blur(4px); transition: border-color .3s ease, background .3s ease, transform .3s ease; display:flex; flex-direction:column; }
+    .samp-card:hover { border-color: rgba(198,151,63,.6); background: rgba(247,241,230,.09); transform: translateY(-3px); }
+    .samp-play { display:grid; place-items:center; width:52px; height:52px; border-radius:999px; background:#C6973F; color:#360911; flex:0 0 auto; box-shadow:0 8px 24px -8px rgba(198,151,63,.55); transition: transform .25s ease, opacity .25s ease; cursor:pointer; }
+    .samp-play:hover { transform: scale(1.06); }
+    .samp-play:active { transform: scale(.95); }
+    .samp-progress { position:relative; height:6px; border-radius:999px; background: rgba(247,241,230,.16); cursor:pointer; }
+    .samp-fill { position:absolute; inset:0 auto 0 0; width:0%; background:#C6973F; border-radius:999px; }
+    .samp-card.pending { opacity:.72; }
+    .samp-card.pending .samp-play { opacity:.4; cursor:default; box-shadow:none; }
+    .samp-card.pending .samp-play:hover { transform:none; }
+    .samp-card.pending .samp-progress { cursor:default; }
+
+    /* Floating keepsake card */
+    @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
+    .floaty { animation: floaty 6s ease-in-out infinite; }
+    #heroCard.playing .note { animation: notebob 1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    #heroCard.playing .note:nth-of-type(even) { animation-delay: .35s; }
+    @keyframes notebob { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-3px) } }
+
+    /* Nudge toward the play control: testers did not read a bare triangle as
+       something they could press. */
+    @keyframes heroPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(110,20,35,.4); } 50% { box-shadow: 0 0 0 12px rgba(110,20,35,0); } }
+    .heroPulse { animation: heroPulse 2.6s ease-out infinite; }
+    .heroPulse:hover, #heroCard.playing .heroPulse { animation: none; }
+
+    /* Draw-in staff line */
+    html.reveal-armed .draw:not(.in) { stroke-dasharray: 1200; stroke-dashoffset: 1200; }
+    .draw { transition: stroke-dashoffset 2.4s ease; }
+    .draw.in { stroke-dashoffset: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; scroll-behavior: auto !important; }
+      html.reveal-armed .reveal:not(.in) { opacity: 1; transform: none; transition: none; }
+      .draw { stroke-dashoffset: 0; transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============ NAV ============ -->
+  <!-- ============ PROMO BANNER ============ -->
+  <div class="sticky top-0 z-50">
+    <div class="bg-claret-deep text-ivory relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-70" style="background-image: radial-gradient(60% 180% at 15% 50%, rgba(198,151,63,.28) 0%, rgba(198,151,63,0) 70%), radial-gradient(50% 160% at 88% 50%, rgba(233,203,192,.16) 0%, rgba(233,203,192,0) 72%);"></div>
+      <p class="relative max-w-6xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0 text-center leading-snug">
+        <span class="text-[.88rem] sm:text-[.95rem] font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</span>
+        <span class="inline-flex items-center gap-1.5 text-[.8rem] sm:text-[.86rem] text-ivory/80">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Ends Sunday at midnight &middot; <span data-promo-countdown class="font-700 text-ivory tabular-nums tracking-wide">--:--:--</span>
+        </span>
+      </p>
+    </div>
+    <header class="backdrop-blur-md bg-ivory/85 border-b border-claret/10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-2 sm:gap-6">
+      <a href="#top" class="flex items-center gap-3 shrink-0" aria-label="Heart Note home">
+        <!-- Logo (client-provided mark, recolored claret for light backgrounds) -->
+        <img src="brand_assets/heartnote-mark.png" alt="" class="shrink-0 h-9 sm:h-[46px] w-auto" />
+        <span class="font-display text-xl sm:text-2xl font-500 text-claret tracking-tight leading-none">Heart&nbsp;Note</span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-[1.02rem] font-600 text-ink/80">
+        <a href="#how" class="hover:text-claret transition-colors">How it works</a>
+        <a href="#pricing" class="hover:text-claret transition-colors">Pricing</a>
+        <a href="#listen" class="hover:text-claret transition-colors">Examples</a>
+        <a href="story.html" class="hover:text-claret transition-colors">Our story</a>
+      </nav>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="order.html" class="btn btn-primary !py-3 !px-5 !text-base"><span class="sm:hidden">Create</span><span class="hidden sm:inline">Create your Heart Note</span></a>
+        <button type="button" id="navToggle" class="lg:hidden grid place-items-center w-11 h-11 rounded-xl border border-claret/20 text-claret"
+                aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+          <svg id="navIconOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg id="navIconClose" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div id="mobileNav" class="lg:hidden hidden border-b border-claret/10 bg-ivory shadow-[0_18px_36px_-18px_rgba(110,20,35,.35)]">
+      <nav class="max-w-6xl mx-auto px-6 py-3 flex flex-col text-[1.05rem] font-600 text-ink/85">
+        <a href="#how"     class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">How it works</a>
+        <a href="#pricing" class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">Pricing</a>
+        <a href="#listen"  class="py-2.5 border-b border-claret/10 hover:text-claret transition-colors">Examples</a>
+        <a href="#faq"     class="py-2.5 hover:text-claret transition-colors">Questions</a>
+        <a href="story.html" class="py-2.5 border-t border-claret/10 hover:text-claret transition-colors">Our story</a>
+      </nav>
+    </div>
+
+  </div>
+
+  <span id="top"></span>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero-bg relative">
+    <div class="max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28 grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-16 items-center">
+      <!-- Copy -->
+      <div class="reveal">
+        <p class="inline-flex items-center gap-2 text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-6">
+          <span class="h-px w-8 bg-gold"></span> Handcrafted keepsake songs
+        </p>
+        <h1 class="font-display font-500 text-claret leading-[1.02] tracking-tight text-[3rem] sm:text-[3.7rem] lg:text-[4.15rem]">
+          A song written just for<br class="hidden sm:block" />
+          the ones you <span class="script-accent text-gold text-[1.15em] leading-none">love</span>.
+        </h1>
+        <p class="mt-7 text-ink/85 text-[1.22rem] max-w-xl leading-[1.65]">
+          Tell us about someone you love. Make a heartfelt gift for anniversaries,
+          birthdays, and the little moments in between.
+        </p>
+
+        <div class="mt-9 flex flex-wrap items-center gap-4">
+          <a href="order.html" class="btn btn-primary">Create your Heart Note</a>
+          <a href="#listen" class="btn btn-ghost">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Hear an example
+          </a>
+        </div>
+
+        <div class="mt-10 flex items-center gap-4">
+          <div class="flex text-gold" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="halfStar"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="currentColor" stop-opacity=".28"/></linearGradient></defs><path fill="url(#halfStar)" d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+          </div>
+          <p class="text-ink-soft font-600"><span class="text-claret font-700">4.5</span> from 1,200+ families</p>
+        </div>
+      </div>
+
+      <!-- Lifestyle image + keepsake card -->
+      <div class="relative reveal">
+        <div class="lifestyle rounded-[26px] shadow-keepsake aspect-[4/5] ring-1 ring-claret/10">
+          <img src="brand_assets/hero-anniversary.jpg" alt="A husband giving his wife roses at golden hour on their anniversary" loading="eager" style="object-position:center 40%" />
+        </div>
+
+        <!-- Now playing keepsake card -->
+        <div id="heroCard" class="absolute z-10 -bottom-8 -left-4 sm:-left-8 w-[19rem] max-w-[85%] bg-ivory rounded-2xl shadow-lift border border-gold/40 p-4">
+          <div class="flex items-center gap-3">
+            <button type="button" id="heroPlay" aria-label="Play an anniversary sample song" class="heroPulse grid place-items-center w-12 h-12 rounded-full bg-claret text-ivory shrink-0 transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+              <svg id="heroPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="min-w-0">
+              <p class="text-[.72rem] uppercase tracking-[.14em] text-gold font-700">Now playing</p>
+              <p class="font-display text-claret text-lg leading-tight truncate">For Sarah, 25 years</p>
+            </div>
+          </div>
+          <svg class="staff mt-3 w-full" height="34" viewBox="0 0 300 34" fill="none" aria-hidden="true">
+            <line x1="0" y1="6" x2="300" y2="6" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="13" x2="300" y2="13" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="20" x2="300" y2="20" stroke-width="1" opacity=".5"/>
+            <line x1="0" y1="27" x2="300" y2="27" stroke-width="1" opacity=".5"/>
+            <circle class="note" cx="40" cy="20" r="4"/><rect class="note" x="43" y="6" width="1.5" height="15"/>
+            <circle class="note" cx="110" cy="13" r="4"/><rect class="note" x="113" y="2" width="1.5" height="12"/>
+            <circle class="note" cx="180" cy="24" r="4"/><rect class="note" x="183" y="10" width="1.5" height="15"/>
+            <circle class="note" cx="250" cy="16" r="4"/><rect class="note" x="253" y="4" width="1.5" height="13"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Play prompt: sits under the hero so it follows the card rather than
+       competing with the headline. Testers were missing the control. -->
+  <div class="bg-blush/45 border-y border-claret/12">
+    <p class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-center gap-3 text-center text-claret font-600 text-[1.02rem]">
+      <span class="grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+      <span>Press play on the card above to hear a real anniversary song.</span>
+    </p>
+  </div>
+
+  <!-- ============ TRUST BAR ============ -->
+  <section class="bg-claret text-ivory">
+    <div class="max-w-6xl mx-auto px-6 py-7 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-center">
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Professionally produced for you</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Delivered in 24 hours</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Our happiness promise</p>
+      </div>
+      <div class="flex flex-col items-center gap-1.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+        <p class="text-sm font-600 text-ivory/90">Yours to keep forever</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how" class="py-24 md:py-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">How it works</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          A heartfelt gift, in four simple steps
+        </h2>
+      </div>
+
+      <!-- staff ribbon -->
+      <svg class="staff mx-auto mt-14 mb-2 w-full max-w-4xl" height="24" viewBox="0 0 1000 24" fill="none" aria-hidden="true">
+        <line class="draw" x1="0" y1="12" x2="1000" y2="12" stroke-width="1.5" opacity=".55"/>
+      </svg>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mt-10">
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">01</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 18.4c-1.7-1.1-2.9-2.1-2.9-3.4a1.55 1.55 0 0 1 2.9-.8 1.55 1.55 0 0 1 2.9.8c0 1.3-1.2 2.3-2.9 3.4z"/></svg></span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl">Choose the occasion</h3>
+        </div>
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">02</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.2C10.2 5.9 8 5.2 5.8 5.2H3v13h2.8c2.2 0 4.4.7 6.2 2 1.8-1.3 4-2 6.2-2H21v-13h-2.8c-2.2 0-4.4.7-6.2 2z"/><path d="M12 7.2v13"/></svg></span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl">Share your story</h3>
+        </div>
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">03</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12a8.6 8.6 0 1 1-2.7-6.2"/><path d="M20.8 3.1v4.3h-4.3"/><text x="11.6" y="15.1" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="7.6" font-weight="600" fill="#C6973F" stroke="none">24</text></svg></span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl">Receive your song</h3>
+        </div>
+        <div class="reveal text-center md:text-left">
+          <div class="flex items-center gap-3.5 justify-center md:justify-start mb-4">
+            <span class="font-display text-gold text-[2.6rem] leading-none font-500">04</span>
+            <span aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10.4 9.2v5.6l4.4-2.8z" fill="#C6973F" stroke="none"/></svg></span>
+            <span class="h-px flex-1 bg-gold/40 hidden md:block"></span>
+          </div>
+          <h3 class="font-display text-claret text-2xl">Play it anywhere</h3>
+        </div>
+      </div>
+
+      <div class="text-center mt-14 reveal">
+        <a href="order.html" class="btn btn-primary">Start your Heart Note</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT YOU RECEIVE ============ -->
+  <section id="receive" class="py-20 md:py-24 bg-ivory-deep">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">After you order</p>
+        <h2 class="font-display font-500 text-claret text-[2rem] md:text-[2.5rem] leading-[1.1] tracking-tight">What arrives, and when</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-6 mt-12">
+        <div class="card p-7 reveal">
+          <p class="font-700 tracking-[.12em] uppercase text-[.72rem] text-gold mb-2">Straight away</p>
+          <h3 class="font-display text-claret text-xl mb-2">A confirmation email</h3>
+          <p class="text-ink/80 text-[1rem]">Sent to the address you pay with, so you know the brief reached us.</p>
+        </div>
+        <div class="card p-7 reveal">
+          <p class="font-700 tracking-[.12em] uppercase text-[.72rem] text-gold mb-2">Within 24 hours</p>
+          <h3 class="font-display text-claret text-xl mb-2">A link to your own page</h3>
+          <p class="text-ink/80 text-[1rem]">Your song lives on a private page. Press play there, or download it. Nothing to install and no account to make.</p>
+        </div>
+        <div class="card p-7 reveal">
+          <p class="font-700 tracking-[.12em] uppercase text-[.72rem] text-gold mb-2">Yours to keep</p>
+          <h3 class="font-display text-claret text-xl mb-2">The files, forever</h3>
+          <p class="text-ink/80 text-[1rem]">Download it to your phone, put it in a playlist, send it to family. The link doesn't expire.</p>
+        </div>
+      </div>
+
+      <p class="text-center mt-9 text-ink-soft reveal">
+        Not quite right? Every order includes a free revision. Just reply to the email and tell us what to change.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section id="pricing" class="py-24 md:py-32 bg-ivory-deep">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Simple, honest pricing</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          Choose the gift that fits the moment
+        </h2>
+        <p class="mt-5 text-ink/80 text-[1.15rem]">One price, no surprises. Every song is made just for you and backed by our happiness promise.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 lg:gap-7 mt-14 items-stretch">
+        <!-- Single -->
+        <div class="card p-8 flex flex-col reveal">
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-ink-soft">Single</p>
+          <div class="mt-3 flex items-end gap-3 flex-wrap">
+            <span class="font-display text-claret text-[3rem] leading-none font-500">$59</span>
+            <span class="font-display text-ink-soft/80 text-[2rem] leading-none line-through decoration-claret/70 decoration-[3px] pb-1">$89</span>
+            <span class="bg-gold/18 text-claret text-[.7rem] font-700 tracking-[.1em] uppercase px-2.5 py-1 rounded-full mb-1.5">Save $30</span>
+          </div>
+          <p class="mt-3 text-ink/75 text-[1.02rem]">A single personalized song.</p>
+          <ul class="mt-6 space-y-3 text-ink/85 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>One complete, personalized song (MP3)</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Delivered within 24 hours</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Yours to download &amp; keep forever</li>
+          </ul>
+          <a href="order.html?tier=single" class="btn btn-ghost mt-8 w-full">Choose Single</a>
+        </div>
+
+        <!-- Deluxe (most popular) -->
+        <div class="relative bg-claret text-ivory rounded-[22px] p-8 flex flex-col shadow-keepsake ring-1 ring-gold/40 reveal">
+          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gold text-claret-dark text-[.72rem] font-700 tracking-[.12em] uppercase px-4 py-1.5 rounded-full shadow-gold whitespace-nowrap">Most popular</span>
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-gold-soft">Deluxe</p>
+          <div class="mt-3 flex items-end gap-3 flex-wrap">
+            <span class="font-display text-ivory text-[3.4rem] leading-none font-500">$69</span>
+            <span class="font-display text-ivory/75 text-[2.1rem] leading-none line-through decoration-gold decoration-[3px] pb-1">$109</span>
+            <span class="bg-gold text-claret-dark text-[.7rem] font-700 tracking-[.1em] uppercase px-2.5 py-1 rounded-full mb-1.5">Save $40</span>
+          </div>
+          <p class="mt-3 text-ivory/80 text-[1.02rem]">Two versions, premium sound.</p>
+          <ul class="mt-6 space-y-3 text-ivory/90 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Two versions to choose from</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Premium WAV sound quality files for easy sharing</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Delivered within 24 hours</li>
+            <li class="flex gap-3"><span class="text-gold-soft shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Yours to download &amp; keep forever</li>
+          </ul>
+          <a href="order.html?tier=deluxe" class="btn btn-gold mt-8 w-full">Choose Deluxe</a>
+        </div>
+
+        <!-- Experience Package -->
+        <div class="relative card p-8 flex flex-col reveal">
+          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-claret text-ivory text-[.72rem] font-700 tracking-[.12em] uppercase px-4 py-1.5 rounded-full shadow-[0_8px_20px_-8px_rgba(110,20,35,.55)] whitespace-nowrap">Best value</span>
+          <p class="font-700 tracking-[.14em] uppercase text-[.78rem] text-ink-soft">Experience Package</p>
+          <div class="mt-3 flex items-end gap-3 flex-wrap">
+            <span class="font-display text-claret text-[3rem] leading-none font-500">$89</span>
+            <span class="font-display text-ink-soft/80 text-[2rem] leading-none line-through decoration-claret/70 decoration-[3px] pb-1">$139</span>
+            <span class="bg-gold/18 text-claret text-[.7rem] font-700 tracking-[.1em] uppercase px-2.5 py-1 rounded-full mb-1.5">Save $50</span>
+          </div>
+          <p class="mt-3 text-ink/75 text-[1.02rem]">Everything included, start to finish.</p>
+          <ul class="mt-6 space-y-3 text-ink/85 text-[1.02rem] flex-1">
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Three versions to choose from</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Premium WAV sound quality files for easy sharing</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Songs remastered for that radio-quality finish</li>
+            <li class="flex gap-3"><span class="text-gold shrink-0 mt-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>Delivered within 24 hours, yours to keep forever</li>
+          </ul>
+          <a href="order.html?tier=experience" class="btn btn-ghost mt-8 w-full">Choose Experience</a>
+        </div>
+      </div>
+
+      <!-- CD add-on, available on every package -->
+
+      <p class="text-center mt-10 text-ink-soft flex items-center justify-center gap-2 reveal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Every order comes with our happiness promise.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ FROM OUR INBOX ============ -->
+  <section id="inbox" class="py-20 md:py-24 bg-ivory-deep">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">From our inbox</p>
+        <h2 class="font-display font-500 text-claret text-[2.2rem] md:text-[2.7rem] leading-[1.08] tracking-tight">
+          Straight from the people we wrote for
+        </h2>
+        <p class="mt-4 text-ink/75 text-[1.05rem]">Real replies from real orders.</p>
+      </div>
+
+      <div class="mt-12 space-y-8">
+        <figure class="m-0 reveal" style="transform:rotate(-.7deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-bob.png" alt="Email from Bob: Thank you so much. This afternoon will be fine. The song was PERFECT!!! She will love it." class="max-w-full h-auto rounded-lg" width="812" height="212" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Bob, an anniversary song for Patricia<span class="sm:hidden block text-ink/80 font-400 mt-0.5">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</span></figcaption>
+        </figure>
+
+        <figure class="m-0 reveal" style="transform:rotate(.6deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-daniel.png" alt="Email from Daniel: I thought all 3 songs were great! Cheryl won't hear them until September 15!" class="max-w-full h-auto rounded-lg" width="467" height="194" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Daniel, three versions for Cheryl</figcaption>
+        </figure>
+
+        <figure class="m-0 reveal" style="transform:rotate(-.5deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-dianne.png" alt="Email from Dianne: This was WONDERFUL!" class="max-w-full h-auto rounded-lg" width="252" height="198" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Dianne, a song for Bill</figcaption>
+        </figure>
+
+        <figure class="m-0 reveal" style="transform:rotate(.7deg)">
+          <div class="bg-white rounded-xl border border-claret/10 shadow-keepsake p-2.5 sm:p-4 w-fit max-w-full">
+            <img src="brand_assets/inbox-thomas.png" alt="Email from Thomas: Hi Paul The songs are very cool!!!" class="max-w-full h-auto rounded-lg" width="289" height="177" loading="lazy" />
+          </div>
+          <figcaption class="mt-2.5 text-claret font-600 text-[.92rem] pl-1">Thomas, after hearing his three versions</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- ============ LISTEN / SAMPLE ============ -->
+  <section id="listen" class="py-24 md:py-32 bg-claret-deep text-ivory relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[.12] pointer-events-none" style="background-image: radial-gradient(50% 60% at 80% 20%, #C6973F 0%, transparent 60%), radial-gradient(45% 55% at 10% 90%, #E9CBC0 0%, transparent 55%);"></div>
+    <div class="max-w-5xl mx-auto px-6 relative">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <p class="text-gold font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Hear it for yourself</p>
+        <h2 class="font-display font-500 text-ivory text-[2.4rem] md:text-[3rem] leading-[1.08] tracking-tight">
+          The kind of song you'll receive
+        </h2>
+      </div>
+
+      <p class="text-center text-gold-soft text-[1rem] mt-6 flex items-center justify-center gap-2 reveal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.4 8.6v6.8l5-3.4z" fill="#E4C67F" stroke="none"/></svg>
+        Press play on any of these to hear a real song we made.
+      </p>
+      <div id="sampleGrid" class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal"></div>
+
+      <p class="text-center text-ivory/60 text-sm mt-8 reveal">Every song is written fresh for your own story. These are just a taste.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="py-24 md:py-28">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <p class="text-claret font-700 tracking-[.14em] uppercase text-[.82rem] mb-4">Good to know</p>
+        <h2 class="font-display font-500 text-claret text-[2.4rem] md:text-[2.8rem] leading-tight tracking-tight">Questions, answered</h2>
+      </div>
+      <div class="divide-y divide-claret/12 border-y border-claret/12">
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            Is the song really made just for us?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Yes. Every song is made around the names, details, and memories you share, so no two Heart Notes are ever alike.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            How long does it take to arrive?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Most songs are ready within 24 hours of your order. If you're on a tight timeline for a special date, <a href="contact.html" class="text-claret font-700 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">contact our team</a> and we'll do our best to help.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            Can I request changes to my song?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Yes. Every order includes one free revision, so if a name is wrong, a detail is off, or a line doesn't sound like them, just reply to your delivery email and tell us what to change. We'll rework it and send it back at no cost.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            What exactly do I receive?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">A beautifully produced song on your own private gift page, with the link sent straight to your email. You can play it on any device, keep it forever, and share it with family and friends however you like.</p>
+        </details>
+        <details class="group py-5 reveal">
+          <summary class="flex items-center justify-between cursor-pointer list-none font-display text-claret text-xl">
+            Is it easy to order?
+            <span class="text-gold transition-transform group-open:rotate-45 text-3xl leading-none font-300">+</span>
+          </summary>
+          <p class="mt-3 text-ink/80 text-[1.08rem]">Wonderfully easy. If you can write a few sentences about your loved one, you can create a Heart Note. Our team is always here if you'd like a hand.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- ============ GUARANTEE / REASSURANCE ============ -->
+  <section class="py-20 bg-blush/40">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="bg-ivory rounded-[28px] shadow-keepsake border border-gold/30 p-8 md:p-12 grid md:grid-cols-[auto_1fr] gap-8 items-center reveal">
+        <div class="grid place-items-center w-24 h-24 rounded-full bg-claret text-gold-pale mx-auto md:mx-0 shrink-0">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div class="text-center md:text-left">
+          <h2 class="font-display text-claret text-[2rem] md:text-[2.4rem] leading-tight">Our promise to you</h2>
+          <p class="mt-3 text-ink/85 text-[1.15rem] leading-relaxed">
+            Every Heart Note is made with real care. Every order includes a free revision, so if a line isn't right or the feel is off, tell us and we'll rework it at no cost. If you still don't love it, we'll keep working until you do.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-claret-dark text-ivory/75">
+    <div class="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10">
+      <div>
+        <a href="#top" class="flex items-center gap-3 mb-4" aria-label="Heart Note home">
+          <img src="brand_assets/heartnote-mark-reversed.png" alt="" style="height:42px;width:auto" />
+          <span class="font-display text-2xl text-ivory">Heart Note</span>
+        </a>
+        <p class="text-ivory/60 max-w-xs text-[.98rem]">Personal keepsake songs for the people you love.</p>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Occasions</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Birthdays</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Weddings</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Anniversaries</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Christmas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Company</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="#how" class="hover:text-gold-soft transition-colors">How it works</a></li>
+          <li><a href="#pricing" class="hover:text-gold-soft transition-colors">Pricing</a></li>
+          <li><a href="#inbox" class="hover:text-gold-soft transition-colors">Reviews</a></li>
+          <li><a href="#listen" class="hover:text-gold-soft transition-colors">Hear a song</a></li>
+          <li><a href="#" class="hover:text-gold-soft transition-colors">Our story</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-700 text-ivory mb-4 text-sm uppercase tracking-wider">Help</p>
+        <ul class="space-y-2.5 text-[.98rem]">
+          <li><a href="contact.html" class="hover:text-gold-soft transition-colors">Contact us</a></li>
+          <li><a href="order.html" class="hover:text-gold-soft transition-colors">Order a Heart Note</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-ivory/10">
+      <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-ivory/50">
+        <p>© 2026 Heart Note. Made with love.</p>
+        <div class="flex gap-6">
+          <a href="terms.html" class="hover:text-ivory/80 transition-colors">Terms &amp; Refund Policy</a>
+            <a href="privacy.html" class="hover:text-ivory/80 transition-colors">Privacy</a>
+          <a href="story.html" class="hover:text-gold-soft transition-colors">Our story</a>
+            <a href="contact.html" class="hover:text-ivory/80 transition-colors">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal on scroll. Armed only when the observer really exists, so a
+    // browser without it still shows every section, minus the animation.
+    try {
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.14 });
+        window.__revealIO = io;
+        document.documentElement.classList.add('reveal-armed');
+        document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+      }
+    } catch (e) {}
+
+    // ---- Sample audio players ----
+    // To add/replace a sample: drop an MP3 in /audio and update the `src` below.
+    const SAMPLES = [
+      { occasion: 'Anniversary', style: '', title: 'Forever Looks Like You',       context: '', src: 'audio/sample-forever-looks-like-you.mp3' },
+      { occasion: 'Anniversary', style: '', title: 'Here’s to Us',                 context: '', src: 'audio/sample-heres-to-us.mp3' },
+      { occasion: 'Anniversary', style: '', title: 'Underneath These Lucky Stars', context: '', src: 'audio/sample-underneath-these-lucky-stars.mp3' },
+      { occasion: 'Anniversary', style: '', title: 'Steal Another Saturday Night', context: '', src: 'audio/sample-steal-another-saturday-night.mp3' },
+      { occasion: 'Anniversary', style: '', title: 'Solid Ground',                 context: '', src: 'audio/sample-solid-ground.mp3' },
+      { occasion: 'Anniversary', style: '', title: 'Forever’s Favorite Ride',     context: '', src: 'audio/sample-forevers-favorite-ride.mp3' },
+    ];
+    const PLAY_D = 'M8 5v14l11-7z';
+    const PAUSE_D = 'M6 5h4v14H6zM14 5h4v14h-4z';
+    const fmt = (s) => { if (!isFinite(s) || s < 0) return '0:00'; const m = Math.floor(s/60), ss = Math.floor(s%60); return `${m}:${String(ss).padStart(2,'0')}`; };
+    const grid = document.getElementById('sampleGrid');
+    let current = null;
+
+    SAMPLES.forEach((s) => {
+      const card = document.createElement('div');
+      card.className = 'samp-card reveal';
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-gold text-[.72rem] font-700 tracking-[.12em] uppercase">${s.style ? s.occasion + ' · ' + s.style : s.occasion}</p>
+            <p class="font-display text-ivory text-xl leading-tight mt-1">${s.title}</p>
+          </div>
+          <div class="eq mt-1.5" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        ${s.context ? `<p class="text-ivory/65 text-[.92rem] italic mt-2 leading-snug">${s.context}</p>` : ''}
+        <div class="mt-auto pt-5 flex items-center gap-3.5">
+          <button type="button" class="samp-play" aria-label="Play ${s.title}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${PLAY_D}"/></svg>
+          </button>
+          <div class="samp-progress flex-1"><div class="samp-fill"></div></div>
+          <span class="samp-time text-ivory/70 text-sm tabular-nums w-9 text-right">0:00</span>
+        </div>`;
+
+      const audio = new Audio();
+      audio.preload = 'metadata';
+      audio.src = s.src;
+      const btn = card.querySelector('.samp-play');
+      const icon = btn.querySelector('path');
+      const fill = card.querySelector('.samp-fill');
+      const timeEl = card.querySelector('.samp-time');
+      const bar = card.querySelector('.samp-progress');
+
+      audio.addEventListener('loadedmetadata', () => { timeEl.textContent = fmt(audio.duration); });
+      audio.addEventListener('timeupdate', () => {
+        const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+        fill.style.width = pct + '%';
+        timeEl.textContent = fmt(audio.duration - audio.currentTime);
+      });
+      audio.addEventListener('ended', () => { fill.style.width = '0%'; timeEl.textContent = fmt(audio.duration); });
+      audio.addEventListener('error', () => { card.classList.add('pending'); timeEl.textContent = ''; });
+      audio.addEventListener('play', () => { card.classList.add('playing'); icon.setAttribute('d', PAUSE_D); });
+      audio.addEventListener('pause', () => { card.classList.remove('playing'); icon.setAttribute('d', PLAY_D); });
+
+      btn.addEventListener('click', () => {
+        if (card.classList.contains('pending')) return;
+        if (audio.paused) { if (current && current !== audio) current.pause(); current = audio; audio.play(); }
+        else { audio.pause(); }
+      });
+      bar.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const r = bar.getBoundingClientRect();
+        audio.currentTime = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * audio.duration;
+      });
+
+      grid.appendChild(card);
+      if (window.__revealIO) window.__revealIO.observe(card);
+    });
+
+    // Hero anniversary sample preview
+    const heroPlay = document.getElementById('heroPlay');
+    if (heroPlay) {
+      const heroAudio = new Audio('audio/sample-anniversary.mp3');
+      const heroIconPath = document.getElementById('heroPlayIcon').querySelector('path');
+      const heroCard = document.getElementById('heroCard');
+      heroAudio.addEventListener('play', () => { heroIconPath.setAttribute('d', 'M6 5h4v14H6zM14 5h4v14h-4z'); heroCard.classList.add('playing'); });
+      heroAudio.addEventListener('pause', () => { heroIconPath.setAttribute('d', 'M8 5v14l11-7z'); heroCard.classList.remove('playing'); });
+      heroAudio.addEventListener('ended', () => heroAudio.pause());
+      heroPlay.addEventListener('click', () => {
+        if (heroAudio.paused) { if (current && current !== heroAudio) current.pause(); current = heroAudio; heroAudio.play().catch(() => {}); }
+        else { heroAudio.pause(); }
+      });
+    }
+  
+    // ---- Mobile menu ----
+    (function () {
+      var btn = document.getElementById('navToggle');
+      var panel = document.getElementById('mobileNav');
+      if (!btn || !panel) return;
+      var iconOpen = document.getElementById('navIconOpen');
+      var iconClose = document.getElementById('navIconClose');
+      function setOpen(on) {
+        panel.classList.toggle('hidden', !on);
+        iconOpen.classList.toggle('hidden', on);
+        iconClose.classList.toggle('hidden', !on);
+        btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+        btn.setAttribute('aria-label', on ? 'Close menu' : 'Open menu');
+      }
+      btn.addEventListener('click', function () { setOpen(panel.classList.contains('hidden')); });
+      // Tapping a link closes the menu rather than leaving it over the target.
+      panel.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
+</script>
+</body>
+</html>
