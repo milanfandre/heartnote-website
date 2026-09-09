@@ -349,12 +349,12 @@
   <section id="reactions" class="py-16 md:py-20 bg-claret-dark relative overflow-hidden">
     <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(55% 60% at 12% 0%, rgba(198,151,63,.16) 0%, rgba(198,151,63,0) 60%), radial-gradient(50% 55% at 90% 100%, rgba(110,20,35,.5) 0%, rgba(110,20,35,0) 65%);" aria-hidden="true"></div>
     <div class="relative">
-      <div class="max-w-6xl mx-auto px-6 text-center reveal">
+      <div class="max-w-6xl mx-auto px-6 text-center">
         <h2 class="font-display font-500 text-ivory text-[2.2rem] md:text-[2.8rem] leading-[1.08] tracking-tight">Real families, real first listens</h2>
         <p class="mt-3 text-ivory/75 text-[1.05rem] max-w-xl mx-auto">Filmed by our customers themselves. Tap a video to watch it full size, sound on.</p>
       </div>
 
-      <div class="relative mt-10 reveal">
+      <div class="relative mt-10">
         <div id="vtrack" class="vtrack flex gap-4 sm:gap-5 overflow-x-auto px-6 sm:px-10 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
         <button type="button" class="vcard group relative shrink-0 w-[16rem] sm:w-[17.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold cursor-pointer"
                 data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary" aria-label="Watch: For their anniversary. Mom's reaction, in full. Opens a larger player with sound.">
@@ -839,6 +839,12 @@
         window.__revealIO = io;
         document.documentElement.classList.add('reveal-armed');
         document.querySelectorAll('.reveal, .draw').forEach((el) => io.observe(el));
+        // Failsafe: if the observer has not revealed something within two
+        // seconds (restored tab, backgrounded page, odd mobile scheduling),
+        // show it anyway. Content must never stay invisible.
+        setTimeout(() => {
+          document.querySelectorAll('.reveal:not(.in), .draw:not(.in)').forEach((el) => el.classList.add('in'));
+        }, 2000);
       }
     } catch (e) {}
 
