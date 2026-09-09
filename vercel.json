@@ -49,14 +49,6 @@
       "destination": "/v3-order.html"
     },
     {
-      "source": "/hear/:token",
-      "destination": "/api/gift?hear=:token"
-    },
-    {
-      "source": "/preview/:token",
-      "destination": "/api/gift?preview=:token"
-    },
-    {
       "source": "/unsubscribe/:token",
       "destination": "/api/gift?unsub=:token"
     }

@@ -7,7 +7,7 @@
 // unlocks that version's files; the rest sit behind the "unlock every version"
 // upsell.
 import { getOrder, updateOrder, supabaseReady } from '../lib/db.js';
-import { requestPreview, findByToken, markUnsubscribed } from '../lib/abandoned.js';
+import { markUnsubscribed } from '../lib/abandoned.js';
 
 const PREVIEW_SECONDS = 120;
 import { esc } from '../lib/mail.js';
@@ -374,45 +374,10 @@ export default async function handler(req, res) {
     return res.status(200).send(shell('Heart Note', message('Not available yet', 'This keepsake page is not configured yet. Please check back soon.')));
   }
 
-  // ── Abandoned-checkout pages (/hear, /preview, /unsubscribe) ──────────────
-  // Routed here rather than into their own handlers because api/ sits at the
-  // 12-function Vercel Hobby ceiling. Each is addressed by an unguessable
-  // token, the same link-is-credential model as the keepsake page itself.
-  if (req.query.hear) {
-    const row = await requestPreview(req.query.hear).catch(() => null);
-    if (!row) return res.status(404).send(shell('Heart Note', message('Link expired', "We couldn't find that request. It may have already been used.")));
-    const who = row.recipient_name ? ` for ${row.recipient_name}` : '';
-    return res.status(200).send(shell('Your preview is on its way', `
-      <div class="bg-white rounded-[26px] shadow-[0_2px_4px_rgba(54,9,17,.05),0_30px_60px_-24px_rgba(110,20,35,.35)] border border-gold/30 px-8 py-12 text-center">
-        <div class="mx-auto grid place-items-center w-16 h-16 rounded-full bg-claret text-gold-pale mb-5" aria-hidden="true">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        </div>
-        <h1 class="font-display font-500 text-claret text-[1.8rem] leading-tight">Paul is on it</h1>
-        <p class="text-ink-soft mt-3">He'll record a short preview${esc(who)} and email it to you at <strong class="text-ink">${esc(row.email)}</strong>. There is nothing to pay, and nothing else you need to do.</p>
-        <p class="text-ink-soft text-sm mt-6">Most previews are with you the same day.</p>
-        <a href="/v3-order" class="btn bg-claret text-ivory px-7 py-3.5 mt-7 hover:bg-claret-deep">Finish your song now instead</a>
-      </div>`));
-  }
-
-  if (req.query.preview) {
-    const row = await findByToken(req.query.preview).catch(() => null);
-    if (!row) return res.status(404).send(shell('Heart Note', message('Link expired', "We couldn't find that preview.")));
-    if (!row.preview_url) {
-      return res.status(200).send(shell('Heart Note', message('Not quite ready', "Paul is still working on this one. We'll email you the moment it's ready.")));
-    }
-    const who = row.recipient_name ? esc(row.recipient_name) : 'you';
-    return res.status(200).send(shell('Your preview', `
-      <div class="bg-white rounded-[26px] shadow-[0_2px_4px_rgba(54,9,17,.05),0_30px_60px_-24px_rgba(110,20,35,.35)] border border-gold/30 px-7 py-10">
-        <p class="text-center text-claret font-700 tracking-[.14em] uppercase text-[.72rem]">A preview for ${who}</p>
-        <h1 class="font-display font-500 text-claret text-[1.9rem] leading-tight text-center mt-2">Have a listen</h1>
-        ${row.preview_note ? `<p class="text-ink-soft text-center mt-3 italic">&ldquo;${esc(row.preview_note)}&rdquo;</p>` : ''}
-        <audio controls preload="metadata" src="${esc(row.preview_url)}" class="w-full mt-7" style="height:44px"></audio>
-        <p class="text-ink-soft text-sm mt-5 text-center">This is a short preview. The full song is written and produced start to finish, and arrives within 24 hours of your order.</p>
-        <a href="/v3-order" class="btn bg-claret text-ivory w-full px-7 py-4 mt-7 hover:bg-claret-deep">Create ${who === 'you' ? 'my' : `${who}'s`} full song</a>
-        <p class="text-center text-ink-soft text-xs mt-4">Your answers are saved, so it takes about a minute.</p>
-      </div>`));
-  }
-
+  // ── Unsubscribe from the abandoned-checkout emails ────────────────────────
+  // Routed here rather than into its own handler because api/ sits at the
+  // 12-function Vercel Hobby ceiling. Addressed by an unguessable token, the
+  // same link-is-credential model as the keepsake page itself.
   if (req.query.unsub) {
     const row = await markUnsubscribed(req.query.unsub).catch(() => null);
     return res.status(200).send(shell('Unsubscribed', message(
