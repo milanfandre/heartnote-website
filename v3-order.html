@@ -514,6 +514,8 @@
   }
   function firstName() { return (state.who === 'myself' ? 'you' : (state.name.trim().split(/\s+/)[0] || 'them')); }
   function renderStep() {
+    // Never let a voice keep playing into the next question.
+    if (typeof stopSinger === 'function') { stopSinger(); if (typeof paintSingers === 'function') paintSingers(); }
     document.querySelectorAll('.step').forEach(function (s) { s.classList.toggle('live', +s.dataset.step === state.step); });
     $('stepLabel').textContent = 'Step ' + state.step + ' of ' + TOTAL;
     $('stepBar').style.width = Math.round(state.step / TOTAL * 100) + '%';
@@ -582,24 +584,37 @@
   // Optional: pick the actual singer. Hidden behind a link so the quick
   // male/female choice stays the fast path.
   var singerAudio = null;
+  var singerPlaying = '';           // which singer is sounding right now
+  function stopSinger() {
+    if (singerAudio) { singerAudio.pause(); singerAudio = null; }
+    singerPlaying = '';
+  }
+  var ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
+  var ICON_PAUSE = '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>';
   function paintSingers() {
     var wrap = $('voiceList'); wrap.innerHTML = '';
     SINGERS.filter(function (v) { return v.voice === state.voice; }).forEach(function (v) {
       var row = document.createElement('div');
       var on = state.singer === v.name;
+      var playing = singerPlaying === v.name;
       row.className = 'flex items-center gap-3 rounded-[12px] border-[1.5px] p-3 ' +
         (v.unavailable ? 'border-claret/10 opacity-50' : (on ? 'border-claret bg-claret/5' : 'border-claret/20'));
       row.innerHTML =
-        '<button type="button" class="sg-play grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0 cursor-pointer" aria-label="Hear ' + v.name + '"' + (v.unavailable ? ' disabled' : '') + '>' +
-          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>' +
+        '<button type="button" class="sg-play grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0 cursor-pointer" aria-label="' + (playing ? 'Stop' : 'Hear') + ' ' + v.name + '"' + (v.unavailable ? ' disabled' : '') + '>' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' + (playing ? ICON_PAUSE : ICON_PLAY) + '</svg></button>' +
         '<span class="flex-1"><span class="block font-700 text-ink text-[.95rem]">' + v.name + '</span>' +
         '<span class="block text-ink-soft text-[.82rem]">' + v.desc + (v.unavailable ? ' &middot; unavailable' : '') + '</span></span>' +
         (v.unavailable ? '' : '<button type="button" class="sg-pick text-claret font-700 text-[.88rem] cursor-pointer">' + (on ? 'Chosen' : 'Choose') + '</button>');
       if (!v.unavailable) {
         row.querySelector('.sg-play').addEventListener('click', function () {
-          if (singerAudio) singerAudio.pause();
+          // Second press on the one that is sounding stops it.
+          if (singerPlaying === v.name) { stopSinger(); paintSingers(); return; }
+          stopSinger();
           singerAudio = new Audio(v.src);
-          singerAudio.play().catch(function () {});
+          singerPlaying = v.name;
+          singerAudio.addEventListener('ended', function () { stopSinger(); paintSingers(); });
+          singerAudio.play().catch(function () { stopSinger(); paintSingers(); });
+          paintSingers();
         });
         row.querySelector('.sg-pick').addEventListener('click', function () {
           state.singer = (state.singer === v.name) ? '' : v.name;
@@ -611,9 +626,10 @@
   }
   $('voiceToggle').addEventListener('click', function () {
     var list = $('voiceList');
-    var showing = list.classList.toggle('hidden');
-    $('voicePickNote').classList.toggle('hidden', showing);
-    this.textContent = showing ? 'Or pick a specific singer' : 'Hide the singers';
+    var nowHidden = list.classList.toggle('hidden');
+    $('voicePickNote').classList.toggle('hidden', nowHidden);
+    this.textContent = nowHidden ? 'Or pick a specific singer' : 'Hide the singers';
+    if (nowHidden) { stopSinger(); paintSingers(); }
   });
 
   // step 5
@@ -641,6 +657,7 @@
     return o ? o.toLowerCase() : '';
   }
   function setPhase(ph) {
+    if (typeof stopSinger === 'function') stopSinger();
     state.phase = ph; save();
     ['Quiz', 'Email', 'Checkout'].forEach(function (p) {
       $('phase' + p).classList.toggle('live', ph === p.toLowerCase());
