@@ -9,6 +9,7 @@
 import { insertEvents, supabaseReady } from '../lib/db.js';
 import { sendMetaEvent, metaReady } from '../lib/meta.js';
 import { captureAbandoned } from '../lib/abandoned.js';
+import { adminAuthed } from '../lib/auth.js';
 
 // 'reached_form' is landing on the order form, which is what we count as an
 // Add to Cart. 'add_to_cart' predates it and means they pressed the pay button;
@@ -73,6 +74,17 @@ export default async function handler(req, res) {
     // Abandoned-checkout capture. Runs alongside the analytics write so the
     // beacon stays one round trip, and is swallowed on failure like every
     // other tracking side effect: a recovery email must never break a page.
+    // With the admin password, report what the capture actually did. Without
+    // it this stays a silent 204, exactly like every other beacon.
+    if (body.type === 'abandon_capture' && body.diag && adminAuthed(req)) {
+      try {
+        const out = await captureAbandoned({ email: body.email, ...(body.brief || {}) }, body.attr);
+        return res.status(200).json(out);
+      } catch (err) {
+        return res.status(200).json({ threw: err.message });
+      }
+    }
+
     const toRecovery = body.type === 'abandon_capture'
       ? captureAbandoned({ email: body.email, ...(body.brief || {}) }, body.attr)
           .catch((err) => console.error('abandon capture failed:', err.message))
