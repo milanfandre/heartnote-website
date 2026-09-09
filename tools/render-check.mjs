@@ -34,7 +34,7 @@ const PAGES = [
     ],
   },
   {
-    path: '/v2',
+    path: '/v3',
     must: [
       { sel: '#vtrack .vcard', name: 'reactions carousel', minH: 380, all: true },
       { sel: '#storyPlay', name: 'story video card', minH: 200 },
@@ -42,14 +42,14 @@ const PAGES = [
     ],
   },
   {
-    path: '/v3',
+    path: '/v1',
     must: [{ sel: '.lifestyle', name: 'hero media', minH: 200 }],
   },
   {
-    path: '/v2-order',
+    path: '/v3-order',
     // The checkout phase only renders once the quiz is complete.
     setup: () => {
-      localStorage.setItem('hn_v2_quiz', JSON.stringify({
+      localStorage.setItem('hn_v3_quiz', JSON.stringify({
         who: 'someone', name: 'Check', rel: '', gender: 'Female', occasion: 'Anniversary',
         occasionOther: '', themes: ['Love'], style: 'Acoustic', tempo: 'Medium', voice: 'Female',
         favorite: 'x', story: 'x'.repeat(300), email: 'check@example.com', tier: 'single',

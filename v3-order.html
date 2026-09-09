@@ -118,7 +118,7 @@
 
   <header class="bg-ivory/95 backdrop-blur border-b border-claret/10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-      <a href="/v2" class="flex items-center gap-2.5" aria-label="Back to Heart Note">
+      <a href="/v3" class="flex items-center gap-2.5" aria-label="Back to Heart Note">
         <img src="brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" onerror="this.style.display='none'" />
         <span class="font-display text-claret text-[1.2rem] font-500 tracking-tight">Heart&nbsp;Note</span>
       </a>
@@ -446,9 +446,10 @@
   'use strict';
 
   // ---------- state ----------
-  var KEY = 'hn_v2_quiz';
+  var KEY = 'hn_v3_quiz';
+  var LEGACY_KEY = 'hn_v2_quiz';   // this page was /v2-order before the rename
   var state = { who: '', name: '', rel: '', gender: '', occasion: '', occasionOther: '', themes: [], style: '', tempo: '', voice: '', favorite: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
-  try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
   var $ = function (id) { return document.getElementById(id); };
@@ -731,7 +732,7 @@
           other: other,
           voiceAddon: 'no',
           email: state.email,
-          from: 'v2',
+          from: 'v3',
           checkoutEventId: checkoutEventId,
           fbp: fb.fbp, fbc: fb.fbc,
           attr: attr

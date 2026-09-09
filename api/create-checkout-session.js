@@ -109,9 +109,11 @@ export default async function handler(req, res) {
     // A CD has to be posted, so Stripe collects and validates the address at
     // payment. Digital-only orders are never asked for one.
 
-    // The v2 quiz flow collects the email before checkout and returns there on
+    // The quiz flow collects the email before checkout and returns there on
     // cancel; the classic form leaves email to Stripe and returns to order.html.
-    const fromV2 = b.from === 'v2';
+    // 'v2' is the pre-rename name of the same page and is still accepted so a
+    // session started on a cached copy does not lose its cancel path.
+    const fromQuiz = b.from === 'v3' || b.from === 'v2';
     const email = clip(b.email, 200);
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -121,8 +123,8 @@ export default async function handler(req, res) {
       allow_promotion_codes: true,
       ...(email && /.+@.+\..+/.test(email) ? { customer_email: email } : {}),
       success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&eid=${metaEventId}`,
-      cancel_url: fromV2
-        ? `${origin}/v2-order.html?canceled=1`
+      cancel_url: fromQuiz
+        ? `${origin}/v3-order?canceled=1`
         : `${origin}/order.html?tier=${tierKey}&canceled=1`,
     });
 

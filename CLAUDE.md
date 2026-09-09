@@ -73,7 +73,7 @@ critical element with aspect-ratio disabled and the observer broken.
 - One section at real size: `node tools/shot-section.mjs "#sel" out.png 390 [url]`.
 - Console/network sanity: `node tools/console-check.mjs <url>`.
 - **Rendering invariants: `npm run check:render [url]`** — critical elements
-  across index/v2/v2-order/v3, both viewports, both engines, under simulated
+  across / (v2), /v1, /v3, /v3-order, both viewports, both engines, under simulated
   failure (aspect-ratio ignored, observer dead, observer absent). Must pass
   before any visual change ships.
 - After screenshotting, Read the PNG and compare specifically ("gap is 16px,

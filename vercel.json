@@ -37,16 +37,33 @@
       "destination": "/deliver.html"
     },
     {
-      "source": "/v2",
-      "destination": "/v2.html"
-    },
-    {
-      "source": "/v2-order",
-      "destination": "/v2-order.html"
+      "source": "/v1",
+      "destination": "/v1.html"
     },
     {
       "source": "/v3",
       "destination": "/v3.html"
+    },
+    {
+      "source": "/v3-order",
+      "destination": "/v3-order.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/v2",
+      "destination": "/v3",
+      "permanent": false
+    },
+    {
+      "source": "/v2-order",
+      "destination": "/v3-order",
+      "permanent": false
+    },
+    {
+      "source": "/v2.html",
+      "destination": "/v3",
+      "permanent": false
     }
   ]
 }

@@ -214,6 +214,19 @@ When this file and an older spec disagree, **this file wins**.
   `<div>`s whose children are in-flow, which degrades to natural size rather
   than collapsing, so they were deliberately left alone.
 
+- **Sep 9 — Version numbering settled (renamed; earlier entries keep the old
+  names because they were accurate when written).** The three variants are now:
+  **v1** = `/v1` (`v1.html`), the original homepage with no UGC video, the A/B
+  control; **v2** = `/` (`index.html`), the live homepage, original structure
+  plus the UGC video hero and reactions carousel; **v3** = `/v3` (`v3.html`)
+  with its quiz at `/v3-order`, the competitor-format rebuild intended to run
+  as an ad. Renames applied to files, clean URLs, canonical/og tags, the 15
+  CTA links, all 13 `data-cta` tracking labels, the `from:` flag and the quiz
+  storage key. `/v2`, `/v2-order` and `/v2.html` now **307-redirect** to the v3
+  equivalents so any ad link already created keeps working; the checkout API
+  still accepts `from:'v2'` for the same reason. The quiz reads the old
+  localStorage key as a fallback so an in-progress order is not lost.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
