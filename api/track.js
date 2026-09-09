@@ -76,6 +76,24 @@ export default async function handler(req, res) {
     // other tracking side effect: a recovery email must never break a page.
     // With the admin password, report what the capture actually did. Without
     // it this stays a silent 204, exactly like every other beacon.
+    // Ask production what its own Resend key can actually do. Reports the raw
+    // response and the key's prefix, so a key that sends but cannot cancel is
+    // visible instead of being inferred.
+    if (body.diag === 'cancel' && adminAuthed(req)) {
+      const key = process.env.RESEND_API_KEY || '';
+      const out = { keyPrefix: key.slice(0, 6), keyLength: key.length };
+      if (body.cancelId) {
+        try {
+          const r = await fetch(`https://api.resend.com/emails/${encodeURIComponent(body.cancelId)}/cancel`, {
+            method: 'POST', headers: { Authorization: `Bearer ${key}` },
+          });
+          out.status = r.status;
+          out.body = (await r.text()).slice(0, 300);
+        } catch (err) { out.threw = err.message; }
+      }
+      return res.status(200).json(out);
+    }
+
     if (body.type === 'abandon_capture' && body.diag && adminAuthed(req)) {
       try {
         const out = await captureAbandoned({ email: body.email, ...(body.brief || {}) }, body.attr);
