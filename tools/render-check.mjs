@@ -56,7 +56,7 @@ const PAGES = [
         phase: 'checkout', step: 7,
       }));
     },
-    must: [{ sel: '#coVideo', name: 'checkout reaction video', minH: 120 }],
+    must: [{ sel: '#vtrack .vcard', name: 'checkout reactions carousel', minH: 380, all: true }],
   },
 ];
 
