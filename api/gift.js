@@ -28,6 +28,10 @@ const LOCK_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" s
 // Supabase for ?download makes it send an attachment header, which iOS honours.
 const dlHref = (url, name) => `${esc(url)}?download=${encodeURIComponent(name)}`;
 
+// A song is delivered as one file that may be an MP3 or a WAV, so the download
+// is named after whatever was actually uploaded.
+const extOf = (url) => (String(url || '').split('?')[0].match(/\.(wav|mp3)$/i) || [, 'mp3'])[1].toLowerCase();
+
 function shell(title, body) {
   return `<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -102,7 +106,7 @@ function downloadLink(url, name, label, primary) {
 }
 
 function versionDownloads(v) {
-  const out = [downloadLink(v.mp3, `${v.title} - Heart Note.mp3`, 'Download your song', true)];
+  const out = [downloadLink(v.mp3, `${v.title} - Heart Note.${extOf(v.mp3)}`, 'Download your song', true)];
   for (const kind of ['wav', 'remastered', 'multitrack']) {
     if (v[kind] && EXTRAS[kind]) out.push(downloadLink(v[kind], EXTRAS[kind].name(v.title), EXTRAS[kind].label, false));
   }
@@ -295,7 +299,7 @@ function keepsakeSongs({ recipient, sender, occasionLabel, songs, extras, fallba
   const fileBase = (s) => s.title || fallbackTitle;
   const blocks = songs.map((s, i) => trackBlock({
     title: s.title, url: s.url, eyebrow: i === 0 ? occasionLabel : '', locked: false, first: i === 0,
-    downloads: [downloadLink(s.url, `${fileBase(s)} - Heart Note.mp3`, many ? 'Download this song' : 'Download your song', true)],
+    downloads: [downloadLink(s.url, `${fileBase(s)} - Heart Note.${extOf(s.url)}`, many ? 'Download this song' : 'Download your song', true)],
   })).join('');
 
   const extraBlock = extras.length ? `<div class="mt-8 pt-6 border-t border-claret/10">

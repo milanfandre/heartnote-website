@@ -171,13 +171,12 @@
             <label for="qRel" class="block font-700 text-ink text-[.95rem] mb-1.5">Your relationship <span class="font-400 text-ink-soft">(optional)</span></label>
             <input id="qRel" class="field" type="text" placeholder="e.g., my mother, a friend, my spouse" autocomplete="off" />
           </div>
-          <div>
-            <p class="font-700 text-ink text-[.95rem] mb-1.5">Their gender <span class="font-400 text-ink-soft">(helps personalize lyrics)</span></p>
-            <div class="grid grid-cols-2 gap-2.5">
-              <button type="button" class="chip" data-gender="Female">Female</button>
-              <button type="button" class="chip" data-gender="Male">Male</button>
-            </div>
-          </div>
+        </div>
+
+        <div id="aboutYou" class="hidden mt-4">
+          <label for="qYourName" class="block font-700 text-ink text-[.95rem] mb-1.5">Your name</label>
+          <input id="qYourName" class="field" type="text" placeholder="Enter your first name" autocomplete="given-name" />
+          <p class="mt-1.5 text-ink-soft text-[.85rem]">So they know who it is from, and so we can address your song page to you.</p>
         </div>
       </section>
 
@@ -189,15 +188,8 @@
         <input id="qOccasionOther" class="field mt-3 hidden" type="text" placeholder="Tell us the occasion" autocomplete="off" />
       </section>
 
-      <!-- STEP 3: themes -->
+      <!-- STEP 3: style + tempo -->
       <section class="step" data-step="3">
-        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Which themes resonate?</h1>
-        <p class="mt-2 text-ink/70 text-[1.02rem]">Pick up to five. <span id="themeCount" class="font-700 text-claret">0 of 5 selected</span></p>
-        <div id="themeGrid" class="mt-6 flex flex-wrap gap-2.5"></div>
-      </section>
-
-      <!-- STEP 4: style + tempo -->
-      <section class="step" data-step="4">
         <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose your style</h1>
         <p class="mt-2 text-ink/70 text-[1.02rem]">The sound the song is built on.</p>
         <div id="styleGrid" class="mt-6 grid grid-cols-3 gap-2.5"></div>
@@ -205,8 +197,8 @@
         <div id="tempoGrid" class="mt-2 grid grid-cols-3 gap-2.5"></div>
       </section>
 
-      <!-- STEP 5: voice -->
-      <section class="step" data-step="5">
+      <!-- STEP 4: voice -->
+      <section class="step" data-step="4">
         <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose the voice</h1>
         <p class="mt-2 text-ink/70 text-[1.02rem]">Who should sing their song?</p>
         <div class="mt-6 grid grid-cols-2 gap-3">
@@ -219,17 +211,16 @@
             <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Male voice</span>
           </button>
         </div>
+
+        <div id="voicePickWrap" class="hidden mt-5">
+          <button type="button" id="voiceToggle" class="text-claret font-700 text-[.95rem] underline decoration-gold/50 underline-offset-2 cursor-pointer">Or pick a specific singer</button>
+          <div id="voiceList" class="hidden mt-3 space-y-2"></div>
+          <p id="voicePickNote" class="hidden mt-2 text-ink-soft text-[.85rem]">Optional. Leave it and we will match the best singer to your style.</p>
+        </div>
       </section>
 
-      <!-- STEP 6: favorite thing -->
-      <section class="step" data-step="6">
-        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">What's your favorite thing about <span id="favName">them</span>?</h1>
-        <p class="mt-2 text-ink/70 text-[1.02rem]">One sentence is all it takes. We'll weave it into the heart of the song.</p>
-        <input id="qFavorite" class="field mt-6" type="text" placeholder="She makes everyone feel like family" autocomplete="off" />
-      </section>
-
-      <!-- STEP 7: story -->
-      <section class="step" data-step="7">
+      <!-- STEP 5: story -->
+      <section class="step" data-step="5">
         <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Share your story</h1>
         <p class="mt-2 text-ink/70 text-[1.02rem]">Tell us about the person, moment, or message you want to capture.</p>
         <textarea id="qStory" class="field mt-6 min-h-[11rem] resize-y" placeholder="Describe the memory, the person, or what you want this song to say. The more detail you share, the more personal your song will be."></textarea>
@@ -322,7 +313,7 @@
 
           <!-- Letter -->
           <div class="bg-white rounded-[20px] border border-gold/40 shadow-lift p-6 md:p-7">
-            <p class="font-display text-claret text-[1.1rem]">Dear friend,</p>
+            <p class="font-display text-claret text-[1.1rem]">Dear <span class="coBuyer">friend</span>,</p>
             <div class="mt-3 space-y-3 text-ink/85 text-[.98rem]">
               <p>We can tell you've put real thought into this gift for <span class="coFirst font-700">them</span>. Songs like this are usually commissioned from professional songwriters for hundreds of dollars. We built Heart Note so a gift this personal doesn't have to cost that.</p>
               <p>Thank you for trusting us with <span class="coPoss font-700">their</span> story. We can't wait to bring it to life.</p>
@@ -448,7 +439,7 @@
   // ---------- state ----------
   var KEY = 'hn_v3_quiz';
   var LEGACY_KEY = 'hn_v2_quiz';   // this page was /v2-order before the rename
-  var state = { who: '', name: '', rel: '', gender: '', occasion: '', occasionOther: '', themes: [], style: '', tempo: '', voice: '', favorite: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
+  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', tempo: '', voice: '', singer: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
   try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
@@ -462,19 +453,31 @@
     { n: "Mother's Day" }, { n: "Father's Day" }, { n: 'Retirement' }, { n: 'Baptism' },
     { n: 'Baby lullaby' }, { n: 'Engagement' }, { n: 'Other' }
   ];
-  var THEMES = ['Faith','Hope','Love','Peace','Joy','Gratitude','Healing','Comfort','Strength','Guidance','Forgiveness','Grace','Family legacy','New beginnings','Remembrance','Celebration','Courage'];
-  var STYLES = ['Worship','Gospel','Contemporary','Acoustic','Country','R&B','Pop','Cinematic','Lullaby'];
+  var STYLES = ['Country','Pop','Acoustic','Rock','Singer-Songwriter','R&B','Faith','Cinematic','Lullaby'];
+  // Optional: a specific singer. Lily is not taking work at the moment.
+  var SINGERS = [
+    { name: 'Harper',  voice: 'Female', desc: 'country',    src: 'audio/voices/voice-harper.mp3' },
+    { name: 'Gabriel', voice: 'Female', desc: 'pop',        src: 'audio/voices/voice-gabriel.mp3' },
+    { name: 'Lily',    voice: 'Female', desc: 'joyful pop', src: 'audio/voices/voice-lily.mp3', unavailable: true },
+    { name: 'Brett',   voice: 'Male',   desc: 'country',    src: 'audio/voices/voice-brett.mp3' },
+    { name: 'Cameron', voice: 'Male',   desc: 'pop',        src: 'audio/voices/voice-cameron.mp3' },
+    { name: 'Justin',  voice: 'Male',   desc: 'soul',       src: 'audio/voices/voice-justin.mp3' },
+    { name: 'Shaun',   voice: 'Male',   desc: 'hip hop',    src: 'audio/voices/voice-shaun.mp3' }
+  ];
   var TEMPOS = ['Slow','Medium','Upbeat'];
   var PKGS = [
-    { key: 'single',     name: 'Single',     price: 59, was: 89,  desc: 'One song, MP3' },
-    { key: 'deluxe',     name: 'Deluxe',     price: 69, was: 99,  desc: 'Two versions, premium files' },
-    { key: 'experience', name: 'Experience', price: 89, was: 139, desc: 'Three versions, remastered', best: true }
+    { key: 'single', name: 'Single', price: 59, was: 89, desc: 'One finished song',
+      gets: ['One complete song, written from your story', 'Yours to download and keep forever', 'One free revision', 'Delivered within 24 hours'] },
+    { key: 'deluxe', name: 'Deluxe', price: 69, was: 99, desc: 'Two versions to choose from',
+      gets: ['Two different versions of your song', 'Premium sound quality files', 'Keep every version you love', 'One free revision', 'Delivered within 24 hours'] },
+    { key: 'experience', name: 'Experience', price: 89, was: 139, desc: 'Three versions, remastered', best: true,
+      gets: ['Three different versions of your song', 'Premium sound quality files', 'Remastered for a radio-quality finish', 'Keep every version you love', 'One free revision', 'Delivered within 24 hours'] }
   ];
   var SAMPLES = [
-    { title: 'Forever Looks Like You', src: 'audio/sample-forever-looks-like-you.mp3' },
-    { title: "Here's to Us", src: 'audio/sample-heres-to-us.mp3' },
-    { title: 'Underneath These Lucky Stars', src: 'audio/sample-underneath-these-lucky-stars.mp3' },
-    { title: "Forever's Favorite Ride", src: 'audio/sample-forevers-favorite-ride.mp3' }
+    { title: 'The Old Man Called David', note: 'Country',    src: 'audio/sample-fathers-day.mp3' },
+    { title: 'Forever Starts Tonight',   note: 'Country pop', src: 'audio/sample-first-dance.mp3' },
+    { title: 'Tonight We Start',         note: 'Upbeat pop',  src: 'audio/sample-reception.mp3' },
+    { title: 'Here Comes Grace',         note: 'Acoustic',    src: 'audio/sample-groom-aisle.mp3' }
   ];
 
   // ---------- build grids ----------
@@ -484,11 +487,6 @@
     if (o.badge === 'hot') b.insertAdjacentHTML('beforeend', '<span class="badge badge-hot">Hot</span>');
     if (o.badge === 'trend') b.insertAdjacentHTML('beforeend', '<span class="badge badge-trend">Trending</span>');
     $('occasionGrid').appendChild(b);
-  });
-  THEMES.forEach(function (t) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'chip'; b.textContent = t; b.dataset.theme = t;
-    $('themeGrid').appendChild(b);
   });
   STYLES.forEach(function (s) {
     var b = document.createElement('button');
@@ -502,16 +500,15 @@
   });
 
   // ---------- step engine ----------
-  var TOTAL = 7;
+  var TOTAL = 5;
   function validStep(n) {
     switch (n) {
-      case 1: return state.who === 'myself' || (state.who === 'someone' && state.name.trim().length > 0);
+      case 1: return !!state.who && state.yourName.trim().length > 0
+                     && (state.who === 'myself' || state.name.trim().length > 0);
       case 2: return !!state.occasion && (state.occasion !== 'Other' || state.occasionOther.trim().length > 0);
-      case 3: return state.themes.length > 0;
-      case 4: return !!state.style && !!state.tempo;
-      case 5: return !!state.voice;
-      case 6: return state.favorite.trim().length > 2;
-      case 7: return state.story.trim().length >= STORY_TARGET;
+      case 3: return !!state.style && !!state.tempo;
+      case 4: return !!state.voice;
+      case 5: return state.story.trim().length >= STORY_TARGET;
       default: return false;
     }
   }
@@ -523,7 +520,6 @@
     $('backBtn').hidden = state.step === 1;
     $('nextBtn').textContent = state.step === TOTAL ? 'Create my song' : 'Next';
     $('nextBtn').disabled = !validStep(state.step);
-    $('favName').textContent = firstName() === 'you' ? 'yourself' : firstName();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     save();
   }
@@ -535,18 +531,13 @@
       state.who = c.dataset.who;
       document.querySelectorAll('[data-who]').forEach(function (x) { x.classList.toggle('on', x === c); });
       $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+      $('aboutYou').classList.remove('hidden');
       refreshNext(); save();
     });
   });
   $('qName').addEventListener('input', function () { state.name = this.value; refreshNext(); save(); });
   $('qRel').addEventListener('input', function () { state.rel = this.value; save(); });
-  document.querySelectorAll('[data-gender]').forEach(function (c) {
-    c.addEventListener('click', function () {
-      state.gender = c.dataset.gender;
-      document.querySelectorAll('[data-gender]').forEach(function (x) { x.classList.toggle('on', x === c); });
-      save();
-    });
-  });
+  $('qYourName').addEventListener('input', function () { state.yourName = this.value; refreshNext(); save(); });
 
   // step 2
   $('occasionGrid').addEventListener('click', function (e) {
@@ -557,24 +548,6 @@
     refreshNext(); save();
   });
   $('qOccasionOther').addEventListener('input', function () { state.occasionOther = this.value; refreshNext(); save(); });
-
-  // step 3
-  function paintThemes() {
-    var max = state.themes.length >= 5;
-    document.querySelectorAll('[data-theme]').forEach(function (x) {
-      var on = state.themes.indexOf(x.dataset.theme) !== -1;
-      x.classList.toggle('on', on);
-      x.classList.toggle('dim', max && !on);
-    });
-    $('themeCount').textContent = state.themes.length + ' of 5 selected';
-  }
-  $('themeGrid').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-theme]'); if (!b) return;
-    var t = b.dataset.theme, i = state.themes.indexOf(t);
-    if (i !== -1) state.themes.splice(i, 1);
-    else if (state.themes.length < 5) state.themes.push(t);
-    paintThemes(); refreshNext(); save();
-  });
 
   // step 4
   $('styleGrid').addEventListener('click', function (e) {
@@ -590,19 +563,60 @@
     refreshNext(); save();
   });
 
-  // step 5
+  // step 4
   document.querySelectorAll('[data-voice]').forEach(function (c) {
     c.addEventListener('click', function () {
       state.voice = c.dataset.voice;
       document.querySelectorAll('[data-voice]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      if (state.singer) {
+        // A singer from the other voice no longer applies.
+        var keep = SINGERS.filter(function (v) { return v.name === state.singer && v.voice === state.voice; });
+        if (!keep.length) state.singer = '';
+      }
+      paintSingers();
+      $('voicePickWrap').classList.remove('hidden');
       refreshNext(); save();
     });
   });
 
-  // step 6
-  $('qFavorite').addEventListener('input', function () { state.favorite = this.value; refreshNext(); save(); });
+  // Optional: pick the actual singer. Hidden behind a link so the quick
+  // male/female choice stays the fast path.
+  var singerAudio = null;
+  function paintSingers() {
+    var wrap = $('voiceList'); wrap.innerHTML = '';
+    SINGERS.filter(function (v) { return v.voice === state.voice; }).forEach(function (v) {
+      var row = document.createElement('div');
+      var on = state.singer === v.name;
+      row.className = 'flex items-center gap-3 rounded-[12px] border-[1.5px] p-3 ' +
+        (v.unavailable ? 'border-claret/10 opacity-50' : (on ? 'border-claret bg-claret/5' : 'border-claret/20'));
+      row.innerHTML =
+        '<button type="button" class="sg-play grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0 cursor-pointer" aria-label="Hear ' + v.name + '"' + (v.unavailable ? ' disabled' : '') + '>' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>' +
+        '<span class="flex-1"><span class="block font-700 text-ink text-[.95rem]">' + v.name + '</span>' +
+        '<span class="block text-ink-soft text-[.82rem]">' + v.desc + (v.unavailable ? ' &middot; unavailable' : '') + '</span></span>' +
+        (v.unavailable ? '' : '<button type="button" class="sg-pick text-claret font-700 text-[.88rem] cursor-pointer">' + (on ? 'Chosen' : 'Choose') + '</button>');
+      if (!v.unavailable) {
+        row.querySelector('.sg-play').addEventListener('click', function () {
+          if (singerAudio) singerAudio.pause();
+          singerAudio = new Audio(v.src);
+          singerAudio.play().catch(function () {});
+        });
+        row.querySelector('.sg-pick').addEventListener('click', function () {
+          state.singer = (state.singer === v.name) ? '' : v.name;
+          paintSingers(); save();
+        });
+      }
+      wrap.appendChild(row);
+    });
+  }
+  $('voiceToggle').addEventListener('click', function () {
+    var list = $('voiceList');
+    var showing = list.classList.toggle('hidden');
+    $('voicePickNote').classList.toggle('hidden', showing);
+    this.textContent = showing ? 'Or pick a specific singer' : 'Hide the singers';
+  });
 
-  // step 7
+  // step 5
   $('qStory').addEventListener('input', function () {
     state.story = this.value;
     var pct = Math.min(100, Math.round(this.value.trim().length / STORY_TARGET * 100));
@@ -666,13 +680,12 @@
           brief: {
             recipient: state.who === 'myself' ? '' : state.name,
             relationship: state.rel,
-            gender: state.gender,
+            yourName: state.yourName,
             occasion: state.occasion === 'Other' ? state.occasionOther : state.occasion,
-            themes: state.themes.join(', '),
+            singer: state.singer,
             style: state.style,
             tempo: state.tempo,
             voice: state.voice,
-            favorite: state.favorite,
             story: state.story,
             tier: state.tier,
           },
@@ -704,7 +717,9 @@
     $('coEmail').textContent = state.email;
     var o = occasionLabel();
     $('coOccasionSongs').textContent = o === 'anniversary' ? 'anniversary Heart Notes' : 'Heart Notes';
-    $('coPronoun').textContent = state.who === 'myself' ? 'you' : (state.gender === 'Male' ? 'him' : state.gender === 'Female' ? 'her' : 'them');
+    $('coPronoun').textContent = isSelf ? 'you' : 'them';
+    var buyer = (state.yourName || '').trim().split(/\s+/)[0];
+    document.querySelectorAll('.coBuyer').forEach(function (el) { el.textContent = buyer || 'friend'; });
     paintPkgs();
   }
   function paintPkgs() {
@@ -722,6 +737,12 @@
           '<span class="block text-[.78rem] mt-0.5 ' + (on ? 'text-ivory/75' : 'text-ink-soft') + '">' + p.desc + '</span></span>' +
           '<span class="text-right shrink-0"><span class="font-700 text-[1.05rem]">$' + p.price + '</span> ' +
           '<span class="block line-through text-[.8rem] ' + (on ? 'text-ivory/55' : 'text-ink-soft/70') + '">$' + p.was + '</span></span>' +
+        '</span>' +
+        '<span class="block mt-2.5 pt-2.5 border-t ' + (on ? 'border-ivory/20' : 'border-claret/10') + '">' +
+          p.gets.map(function (g) {
+            return '<span class="flex gap-2 text-[.82rem] leading-snug mt-1 ' + (on ? 'text-ivory/85' : 'text-ink/75') + '">' +
+              '<svg class="shrink-0 mt-[3px] ' + (on ? 'text-gold-soft' : 'text-gold') + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>' + g + '</span>';
+          }).join('') +
         '</span>';
       b.addEventListener('click', function () { state.tier = p.key; save(); paintPkgs(); });
       wrap.appendChild(b);
@@ -746,14 +767,13 @@
       if (typeof fbq === 'function') {
         fbq('track', 'InitiateCheckout', { value: pkg.price, currency: 'USD', content_name: state.tier }, { eventID: checkoutEventId });
       }
-      var themes = state.themes.join(', ');
       var other = [
-        'Ordered through the v2 quiz.',
+        'Ordered through the v3 quiz.',
         'Song is for: ' + (state.who === 'myself' ? 'the buyer themselves' : 'someone else'),
-        state.gender ? 'Gender: ' + state.gender : '',
-        themes ? 'Themes: ' + themes : '',
+        state.yourName ? 'From: ' + state.yourName : '',
         state.tempo ? 'Tempo: ' + state.tempo : '',
-        state.voice ? 'Voice preference: ' + state.voice + ' voice' : ''
+        state.voice ? 'Voice: ' + state.voice : '',
+        state.singer ? 'Requested singer: ' + state.singer : ''
       ].filter(Boolean).join('\n');
       var res = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -765,9 +785,8 @@
           recipient: state.who === 'myself' ? 'The buyer (a song for themselves)' : state.name,
           relationship: state.rel,
           style: state.style + (state.tempo ? ' (' + state.tempo.toLowerCase() + ' tempo)' : ''),
-          mood: themes.slice(0, 78),
           story: state.story,
-          details: state.favorite ? 'Their favorite thing about them: ' + state.favorite : '',
+          sender: state.yourName,
           other: other,
           voiceAddon: 'no',
           email: state.email,
@@ -798,7 +817,8 @@
     row.innerHTML = '<span class="grid place-items-center w-9 h-9 rounded-full bg-gold text-claret-dark shrink-0">' +
       '<svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' +
       '<svg class="i-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></span>' +
-      '<span class="font-display text-ivory text-[.98rem] leading-snug">' + s.title + '</span>';
+      '<span class="flex-1"><span class="block font-display text-ivory text-[.98rem] leading-snug">' + s.title + '</span>' +
+      '<span class="block text-ivory/55 text-[.78rem]">' + s.note + '</span></span>';
     var audio = new Audio(); audio.preload = 'none';
     row.addEventListener('click', function () {
       if (current && current !== audio) {
@@ -849,19 +869,22 @@
       var c = document.querySelector('[data-who="' + state.who + '"]');
       if (c) c.classList.add('on');
       $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+      $('aboutYou').classList.remove('hidden');
     }
-    $('qName').value = state.name; $('qRel').value = state.rel;
-    if (state.gender) { var g = document.querySelector('[data-gender="' + state.gender + '"]'); if (g) g.classList.add('on'); }
+    $('qName').value = state.name; $('qRel').value = state.rel; $('qYourName').value = state.yourName;
     if (state.occasion) {
       var o = document.querySelector('[data-occasion="' + state.occasion + '"]'); if (o) o.classList.add('on');
       $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
     }
     $('qOccasionOther').value = state.occasionOther;
-    paintThemes();
     if (state.style) { var s = document.querySelector('[data-style="' + state.style + '"]'); if (s) s.classList.add('on'); }
     if (state.tempo) { var t = document.querySelector('[data-tempo="' + state.tempo + '"]'); if (t) t.classList.add('on'); }
-    if (state.voice) { var v = document.querySelector('[data-voice="' + state.voice + '"]'); if (v) v.classList.add('on'); }
-    $('qFavorite').value = state.favorite;
+    if (state.voice) {
+      var v = document.querySelector('[data-voice="' + state.voice + '"]');
+      if (v) v.classList.add('on');
+      paintSingers();
+      $('voicePickWrap').classList.remove('hidden');
+    }
     $('qStory').value = state.story;
     $('qStory').dispatchEvent(new Event('input'));
     if (!validStep(1) && state.step > 1) state.step = 1;

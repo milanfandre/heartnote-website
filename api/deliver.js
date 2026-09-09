@@ -85,10 +85,18 @@ export default async function handler(req, res) {
           ...(v.multitrack ? { multitrack: v.multitrack } : {}),
           ...(v.remastered ? { remastered: v.remastered } : {}),
         }));
-      if (!list.length) return res.status(400).json({ error: 'Each version needs at least an MP3.' });
+      if (!list.length) return res.status(400).json({ error: 'Each version needs a song file.' });
 
       const order = await getOrder(orderId);
       if (!order) return res.status(404).json({ error: 'Order not found' });
+
+      // The package sets how many versions the customer paid for. Extra files
+      // beyond that are welcome; fewer is not.
+      const REQUIRED = { deluxe: 2, experience: 3 };
+      const need = REQUIRED[order.tier] || 1;
+      if (list.length < need) {
+        return res.status(400).json({ error: `This is a ${order.tier} order, so it needs at least ${need} song files. You attached ${list.length}.` });
+      }
 
       await updateOrder(orderId, {
         versions: list,
