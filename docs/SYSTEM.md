@@ -50,6 +50,7 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 | success.html | post-checkout | Fires browser Purchase pixel with `eid` for CAPI dedup |
 | dashboard.html | /dashboard | Reporting (Lucra palette). Ranges 7/30/90/MTD; funnel is all-Meta from landing-page views |
 | deliver.html | /deliver | Paul's fulfillment tool (admin password; no audio players in it) |
+| (no page) | **/hear/:token**, **/preview/:token**, **/unsubscribe/:token** | Abandoned-checkout pages, rendered by api/gift.js (api/ is at the 12-function cap, so they share a handler). Token is the credential, same model as /gift |
 | gift.html | — | Legacy static shell; live keepsake page is rendered by api/gift.js |
 
 ## API (Vercel serverless — **12-function Hobby cap, currently full**)
@@ -58,12 +59,12 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 |---|---|---|
 | create-checkout-session | public | Validates order, builds Stripe session (tier price ID + $10 voice line item), CAPI InitiateCheckout (shared `checkoutEventId`), returns URL. No email field: Stripe collects it |
 | webhook | Stripe sig | Upserts order (idempotent on session id; unknown-column fallback drops field but saves order), confirm email, Paul notification, CAPI Purchase, Google Sheet |
-| track | public beacon | Whitelisted event types → events table; `reached_form` also → CAPI AddToCart |
+| track | public beacon | Whitelisted event types → events table; `reached_form` also → CAPI AddToCart; **`abandon_capture`** starts the recovery sequence (email is written to abandoned_checkouts, never to events) |
 | metrics | admin pw | Dashboard payload (events + paid orders + Meta insights). `?diag=meta` = CAPI diagnostics (function-cap workaround) |
 | gift | link = credential | Keepsake page. Full-length previews; downloads locked until version chosen |
 | choose-version | public | One-time version pick (irreversible by design — protects upsell) |
 | create-upsell-session | public | Unlock-all-versions checkout (UPSELL_CENTS; `allow_promotion_codes`) |
-| deliver | admin pw | Marks delivered, stores versions/files, schedules/sends customer email |
+| deliver | admin pw | Marks delivered, stores versions/files, schedules/sends customer email. Also `action:'abandoned-list'` (Paul's preview queue) and `action:'abandoned-preview'` (send a recorded preview) |
 | upload-url | admin pw | Signed PUT to storage. Songs bucket; also handles Covers via `{cover:true}` |
 | send-lyrics / lyrics | admin pw / link | Lyric approval loop. **Dormant product, live plumbing** (add-on removed from sale Aug 4; keep for ops) |
 | admin-orders, session-info, contact… | — | Small utilities; read the file header comment |
@@ -82,7 +83,12 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
   marketing video hosting — the six UGC reaction videos the homepage carousel
   streams, incl. the full Claire anniversary reaction whose first 6s are the
   hero loop; repo holds only their posters and the hero loop in `videos/`).
-- Migrations = `db/schema.sql` + `db/analytics.sql`, both idempotent, run by hand
+- **abandoned_checkouts** + view `abandoned_queue` — someone who finished the V3
+  quiz and gave an email but did not pay. Holds their brief so Paul can record a
+  real preview, plus the Resend ids of the queued follow-ups so a purchase can
+  cancel them. Statuses: open → preview_requested → preview_ready, or recovered
+  / unsubscribed. Migration: `db/abandoned.sql`.
+- Migrations = `db/schema.sql` + `db/analytics.sql` + `db/abandoned.sql`, all idempotent, run by hand
   in Supabase SQL editor. webhook tolerates missing columns; **send-lyrics does not**.
 
 ## Money

@@ -53,6 +53,13 @@
 
   <!-- Orders -->
   <main id="app" class="max-w-3xl mx-auto px-5 py-8 hidden">
+    <!-- People who asked to hear a preview but have not bought. Hidden unless
+         there is something waiting, so it never adds noise to a normal day. -->
+    <section id="previewSection" class="hidden mb-10">
+      <h2 class="font-display text-claret text-xl mb-1">Preview requests</h2>
+      <p class="text-ink-soft text-sm mb-4">They started a song and asked to hear one first. Record something short, upload it here, and they get it by email straight away.</p>
+      <div id="previewList" class="space-y-5"></div>
+    </section>
     <div id="loading" class="text-ink-soft py-10 text-center">Loading orders…</div>
     <div id="list" class="space-y-6"></div>
   </main>
@@ -86,6 +93,84 @@
         showApp();
         render(orders);
       } catch (err) { $('list').innerHTML = ''; $('loading').textContent = 'Could not load orders: ' + err.message; showApp(); }
+      loadPreviewRequests();
+    }
+
+    // ---- Preview requests (abandoned checkouts) ----
+    // Stays hidden unless someone is actually waiting, and fails silently if
+    // db/abandoned.sql has not been run yet, so it can never block deliveries.
+    async function loadPreviewRequests() {
+      try {
+        const r = await fetch('/api/deliver', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+          body: JSON.stringify({ action: 'abandoned-list' }),
+        });
+        if (!r.ok) return;
+        const { queue } = await r.json();
+        renderPreviewRequests(Array.isArray(queue) ? queue : []);
+      } catch (e) { /* not set up yet; nothing to show */ }
+    }
+
+    function renderPreviewRequests(queue) {
+      const wrap = $('previewList');
+      const waiting = queue.filter((q) => q.status === 'preview_requested');
+      if (!waiting.length) { $('previewSection').classList.add('hidden'); return; }
+      $('previewSection').classList.remove('hidden');
+      wrap.innerHTML = '';
+
+      waiting.forEach((q) => {
+        const who = q.recipient_name || 'them';
+        const bits = [q.occasion, q.music_style, q.tempo, q.voice ? q.voice + ' voice' : '', q.themes]
+          .filter(Boolean).map(esc).join(' &middot; ');
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-claret/12 shadow-sm p-5';
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-display text-claret text-lg leading-tight">A preview for ${esc(who)}</p>
+              <p class="text-ink-soft text-sm mt-0.5">${esc(q.email)} &middot; asked ${esc(when(q.preview_requested_at))}</p>
+            </div>
+            <span class="shrink-0 text-[.68rem] font-700 uppercase tracking-[.08em] bg-blush/60 text-claret px-2.5 py-1 rounded-full">Waiting</span>
+          </div>
+          ${bits ? `<p class="text-ink-soft text-sm mt-3">${bits}</p>` : ''}
+          ${q.favorite_thing ? `<p class="text-ink text-sm mt-3 italic">&ldquo;${esc(q.favorite_thing)}&rdquo;</p>` : ''}
+          ${q.story ? `<details class="mt-3"><summary class="text-claret text-sm font-700 cursor-pointer">Read their story</summary><p class="text-ink-soft text-sm mt-2 whitespace-pre-wrap">${esc(q.story)}</p></details>` : ''}
+          <div class="mt-4 grid gap-2.5">
+            <input type="file" accept="audio/*" class="pv-file text-sm" />
+            <input type="text" class="field pv-note" placeholder="A line to send with it (optional)" />
+            <button class="pv-send btn bg-claret text-ivory px-5 py-3 font-700 rounded-full">Send this preview</button>
+            <p class="pv-status text-sm text-ink-soft"></p>
+          </div>`;
+
+        const fileEl = card.querySelector('.pv-file');
+        const noteEl = card.querySelector('.pv-note');
+        const btn = card.querySelector('.pv-send');
+        const status = card.querySelector('.pv-status');
+
+        btn.addEventListener('click', async () => {
+          const file = fileEl.files && fileEl.files[0];
+          if (!file) { status.textContent = 'Choose the audio file first.'; return; }
+          btn.disabled = true;
+          try {
+            const { url } = await uploadOne(q.id, 'mp3', file, 'the preview', status);
+            status.textContent = 'Sending…';
+            const d = await fetch('/api/deliver', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+              body: JSON.stringify({ action: 'abandoned-preview', abandonedId: q.id, previewUrl: url, note: noteEl.value.trim() }),
+            });
+            const out = await d.json();
+            if (!d.ok) throw new Error(out.error || 'could not send');
+            status.textContent = 'Sent to ' + out.emailedTo + '. A reminder follows in an hour.';
+            btn.remove(); fileEl.remove(); noteEl.remove();
+          } catch (err) {
+            status.textContent = 'Could not send: ' + err.message;
+            btn.disabled = false;
+          }
+        });
+        wrap.appendChild(card);
+      });
     }
 
     function briefRows(b, tier) {

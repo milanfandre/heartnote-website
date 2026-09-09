@@ -183,6 +183,33 @@ content-length matches local. Lightbox assigns `src` on first open, so nothing
 streams until a visitor asks. Card posters live in `videos/`; captions quote
 the burned-in UGC text, never invented stories.
 
+## Abandoned-checkout recovery (V3 only)
+
+Only the V3 quiz asks for an email before payment, so it is the only flow that
+can be recovered. Capture happens when they press Continue on the email step.
+
+**No cron anywhere.** The first three follow-ups (15m / 1h15 / 2h15) are handed
+to Resend at capture time with `scheduled_at`; Resend holds them up to 72h. The
+webhook cancels whatever has not sent when someone buys. This exists because
+api/ is at the 12-function Hobby ceiling with no room for a worker.
+
+The last two emails are **not** scheduled. They say Paul recorded a preview, so
+they only send from the deliver tool once he actually has. Never pre-schedule
+them: the copy would be false.
+
+Checking on it:
+```bash
+# who is in the sequence right now
+curl -s "$U/rest/v1/abandoned_checkouts?select=email,status,created_at,preview_requested_at&order=created_at.desc&limit=20" \
+  -H "apikey: $SB" -H "Authorization: Bearer $SB"
+# did a scheduled follow-up actually cancel? (last_event should be "canceled")
+curl -s "https://api.resend.com/emails/<id>" -H "Authorization: Bearer $RESEND_KEY"
+```
+
+Gotcha: cancelling a Resend email within a second or two of creating it returns
+422 "not scheduled". In production the gap is minutes or hours, so this only
+bites in tests. `cancelEmail` logs and returns false rather than throwing.
+
 ## Data-collection change? Update the privacy policy
 
 privacy.html § tables were written from a code audit (client storage keys,

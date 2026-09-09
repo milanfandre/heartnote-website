@@ -8,11 +8,16 @@
 // a missing database must never throw an error back at a visitor's browser.
 import { insertEvents, supabaseReady } from '../lib/db.js';
 import { sendMetaEvent, metaReady } from '../lib/meta.js';
+import { captureAbandoned } from '../lib/abandoned.js';
 
 // 'reached_form' is landing on the order form, which is what we count as an
 // Add to Cart. 'add_to_cart' predates it and means they pressed the pay button;
 // it is kept under the old name so the dashboard's history stays comparable.
-const TYPES = new Set(['pageview', 'cta_click', 'reached_form', 'add_to_cart', 'purchase']);
+// 'abandon_capture' is the V3 quiz reaching the payment step with an email in
+// hand. It is the only moment we can reach someone who has not paid, so it
+// starts the recovery sequence. The email itself is written to
+// abandoned_checkouts, never to the analytics table.
+const TYPES = new Set(['pageview', 'cta_click', 'reached_form', 'add_to_cart', 'purchase', 'abandon_capture']);
 const str = (v, max = 300) => (typeof v === 'string' ? v.slice(0, max) : null);
 const int = (v) => (Number.isFinite(+v) ? Math.trunc(+v) : null);
 
@@ -65,7 +70,15 @@ export default async function handler(req, res) {
         }).catch(() => {})
       : null;
 
-    await Promise.all([insertEvents([row]), toMeta].filter(Boolean));
+    // Abandoned-checkout capture. Runs alongside the analytics write so the
+    // beacon stays one round trip, and is swallowed on failure like every
+    // other tracking side effect: a recovery email must never break a page.
+    const toRecovery = body.type === 'abandon_capture'
+      ? captureAbandoned({ email: body.email, ...(body.brief || {}) }, body.attr)
+          .catch((err) => console.error('abandon capture failed:', err.message))
+      : null;
+
+    await Promise.all([insertEvents([row]), toMeta, toRecovery].filter(Boolean));
     return res.status(204).end();
   } catch (err) {
     // Never surface tracking failures to the visitor; just log for us.

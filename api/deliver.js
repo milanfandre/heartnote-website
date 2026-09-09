@@ -4,6 +4,7 @@ import { getOrder, updateOrder, supabaseReady } from '../lib/db.js';
 import { sendEmail, mailReady } from '../lib/mail.js';
 import { adminAuthed } from '../lib/auth.js';
 import { deliveryEmailHTML, lyricsForApprovalHTML } from '../lib/emails.js';
+import { listQueue, deliverPreview } from '../lib/abandoned.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
@@ -11,6 +12,25 @@ export default async function handler(req, res) {
   if (!supabaseReady()) return res.status(500).json({ error: 'Database not configured' });
   try {
     const { orderId, songTitle, songUrl, files, versions, scheduledAt, action, lyrics } = req.body || {};
+
+    // ── Abandoned-checkout previews ─────────────────────────────────────────
+    // These work on an abandoned_checkouts row, not an order, so they run
+    // before the orderId guard below.
+    if (action === 'abandoned-list') {
+      return res.status(200).json({ queue: await listQueue() });
+    }
+    if (action === 'abandoned-preview') {
+      const { abandonedId, previewUrl, note } = req.body || {};
+      if (!abandonedId) return res.status(400).json({ error: 'abandonedId is required' });
+      if (!previewUrl) return res.status(400).json({ error: 'Upload the preview first.' });
+      try {
+        const row = await deliverPreview({ id: abandonedId, previewUrl, note });
+        return res.status(200).json({ ok: true, emailedTo: row.email });
+      } catch (err) {
+        return res.status(400).json({ error: err.message });
+      }
+    }
+
     if (!orderId) return res.status(400).json({ error: 'orderId is required' });
 
     // Lyric review add-on: the words go out for approval before anything is

@@ -227,6 +227,21 @@ When this file and an older spec disagree, **this file wins**.
   still accepts `from:'v2'` for the same reason. The quiz reads the old
   localStorage key as a fallback so an in-progress order is not lost.
 
+- **Sep 9 — Abandoned-checkout recovery, modelled on a competitor's sequence.**
+  Client walked their rival's flow and wanted it replicated. Built for V3 only,
+  because it is the only flow that takes an email before payment. Scheduling
+  uses Resend's `scheduled_at` rather than a cron: api/ is at the 12-function
+  Hobby cap, so there was no room for a worker, and the sequence fits inside
+  Resend's 72h window. Purchase cancels the queue from the webhook; unsubscribe
+  does the same. **Deliberate divergence: the rival auto-generates a
+  "personalized preview". Paul writes songs by hand, so claiming one had been
+  made would be false.** Client chose to have Paul record a real preview each
+  time, so emails 4 and 5 fire only from the deliver tool after an actual
+  upload, and emails 2 and 3 invite the customer to request one, which also
+  means Paul only records for people who asked. Every email carries an
+  unsubscribe link (CAN-SPAM), and privacy.html now discloses the pre-payment
+  email capture and its retention. Not yet live until db/abandoned.sql is run.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

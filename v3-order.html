@@ -647,7 +647,46 @@
     $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     save();
   });
-  $('emailNext').addEventListener('click', function () { if (/.+@.+\..+/.test(state.email)) setPhase('checkout'); });
+  // Reaching the payment step with an email is the one moment we can reach
+  // someone who has not paid, so it starts the recovery sequence. Fired once
+  // per session, and cancelled server-side the instant they buy.
+  var captured = false;
+  function captureForRecovery() {
+    if (captured || !/.+@.+\..+/.test(state.email)) return;
+    captured = true;
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        keepalive: true,          // survives the tab closing mid-checkout
+        body: JSON.stringify({
+          type: 'abandon_capture',
+          page: location.pathname,
+          email: state.email,
+          brief: {
+            recipient: state.who === 'myself' ? '' : state.name,
+            relationship: state.rel,
+            gender: state.gender,
+            occasion: state.occasion === 'Other' ? state.occasionOther : state.occasion,
+            themes: state.themes.join(', '),
+            style: state.style,
+            tempo: state.tempo,
+            voice: state.voice,
+            favorite: state.favorite,
+            story: state.story,
+            tier: state.tier,
+          },
+          attr: (typeof hnAttribution === 'function') ? hnAttribution() : undefined,
+        }),
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  $('emailNext').addEventListener('click', function () {
+    if (!/.+@.+\..+/.test(state.email)) return;
+    captureForRecovery();
+    setPhase('checkout');
+  });
   $('changeEmail').addEventListener('click', function () { setPhase('email'); });
 
   // checkout phase

@@ -6,6 +6,7 @@
 import Stripe from 'stripe';
 import { orderNotificationHTML, orderConfirmationHTML } from '../lib/emails.js';
 import { sendEmail, mailReady } from '../lib/mail.js';
+import { markRecovered } from '../lib/abandoned.js';
 import { sendMetaPurchase } from '../lib/meta.js';
 import { updateOrder } from '../lib/db.js';
 
@@ -283,6 +284,18 @@ export default async function handler(req, res) {
     await sendToSheet(order);
     await sendOrderNotification(order);
     await sendOrderConfirmation(order);
+
+    // They bought, so cancel any abandoned-checkout follow-ups still queued at
+    // Resend. Nothing here may throw: a customer who has paid must never see a
+    // failed webhook because a reminder could not be called off.
+    try {
+      const stopped = await markRecovered(order.customer_email);
+      if (stopped && stopped.rows) {
+        console.log(`recovery: closed ${stopped.rows} abandoned row(s), cancelled ${stopped.cancelled} email(s)`);
+      }
+    } catch (err) {
+      console.error('recovery: could not cancel follow-ups:', err.message);
+    }
 
     // Server-side Purchase to Meta (Conversions API), deduped with the browser
     // Pixel via the shared event id packed into the `meta` metadata value.
