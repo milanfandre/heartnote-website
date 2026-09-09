@@ -183,6 +183,23 @@ When this file and an older spec disagree, **this file wins**.
   It carries the Sep 8 progressive-enhancement fixes deliberately, because
   shipping a known blank-page bug as a "control" would poison the test.
 
+- **Sep 9 — The reactions carousel is never gated on JS or animation.** A
+  customer phone showed the reactions band at full height with the cards
+  invisible: the heading's `.reveal` had been given `.in`, the carousel's had
+  not, stranding it at opacity 0. Two earlier fixes missed it because every
+  headless-Chrome probe passed. Fix: the carousel and its heading carry no
+  `.reveal` class at all, plus a 2s failsafe that adds `.in` to anything the
+  observer has not revealed. **Standing rule: revenue-critical content
+  (carousel, hero, pricing, CTAs) must render with CSS alone.** Animation is
+  decoration and may only ever add to a visible baseline.
+
+- **Sep 9 — Real WebKit is now part of verification.** Chrome emulation with an
+  iOS user-agent is not iOS Safari and missed this twice. Playwright's WebKit
+  build reproduces it faithfully (see RUNBOOK § Cross-engine checks). A theory
+  that iOS ignores `aspect-ratio` on `<button>` was tested there and
+  **disproved** (cards measured 288x512), which is why the real cause was found
+  rather than guessed at a third time.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

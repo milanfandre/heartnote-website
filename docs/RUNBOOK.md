@@ -66,6 +66,24 @@ p.on('request', r => r.url().includes('/api/metrics')
   redirect to checkout.stripe.com, then **expire the session**:
   `curl -s -X POST https://api.stripe.com/v1/checkout/sessions/<cs_...>/expire -u "$SK:"`
 
+## Cross-engine checks (Chrome emulation is NOT iOS Safari)
+
+Mobile-Chrome emulation has missed real iOS bugs here twice. To test the engine
+iOS actually uses, install Playwright's WebKit **outside the repo** so the
+project keeps its single puppeteer dev dependency:
+
+```bash
+D=/tmp/wk && mkdir -p $D && cd $D && npm init -y && npm i playwright && npx playwright install webkit
+# then, in a script there:
+#   import { webkit, devices } from 'playwright';
+#   const ctx = await (await webkit.launch()).newContext({ ...devices['iPhone 13'] });
+```
+
+Simulate the failure modes real phones produce, not just the happy path:
+`addInitScript(() => { delete window.IntersectionObserver })` (blocked script)
+and a stubbed observer that never fires (`class { observe(){} ... }`) — the
+latter reproduced the invisible-carousel report exactly.
+
 ## Ground-truth cookbook (query the source, don't guess)
 
 **Supabase rows** (orders, events — service key bypasses RLS):
