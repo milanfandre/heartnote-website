@@ -977,12 +977,45 @@
   // returning from a canceled Stripe session lands back on checkout
   if (new URLSearchParams(location.search).get('canceled') === '1' && /.+@.+\..+/.test(state.email)) setPhase('checkout');
 
-  // first-party AddToCart parity with the classic order form
-  (function () {
-    if (typeof hnTrack !== 'function') return;
-    var fb = (window.HN_META && HN_META.data()) || {};
-    hnTrack('reached_form', { tier: state.tier, label: 'Reached the v2 quiz', fbp: fb.fbp, fbc: fb.fbc });
-    if (typeof fbq === 'function') fbq('track', 'AddToCart', { content_name: 'v2-quiz' });
+  // ---- Add to Cart: reaching this quiz ----
+  // This must behave IDENTICALLY to order.html's version, because the two
+  // pages are split-tested against each other and a rung measured two
+  // different ways cannot be compared. Two things earn their keep here:
+  //
+  //   1. Once per session. A reload, or the return trip from a canceled
+  //      Stripe session (which lands back here on /v3-order?canceled=1),
+  //      must not count a second Add to Cart.
+  //   2. One event id shared by the Pixel and the Conversions API. Without
+  //      it Meta has nothing to match on and counts the browser copy and the
+  //      server copy as two separate Add to Carts.
+  (function trackReachedForm() {
+    var KEY = 'hn_atc_sent';
+    try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (e) { /* private mode: fire anyway */ }
+
+    var eid = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+
+    var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
+
+    if (typeof fbq === 'function') {
+      fbq('track', 'AddToCart', {
+        value: pkg.price,
+        currency: 'USD',
+        content_name: pkg.name,
+      }, { eventID: eid });
+    }
+    if (typeof hnTrack === 'function') {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      hnTrack('reached_form', {
+        tier: state.tier,
+        value_cents: pkg.price * 100,
+        label: 'Reached the v3 quiz',
+        fbp: fb.fbp,
+        fbc: fb.fbc,
+        meta: { eid: eid },
+      });
+    }
   })();
 })();
 </script>
