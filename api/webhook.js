@@ -156,6 +156,73 @@ async function saveOrder(order) {
   }
 }
 
+// Only one webhook delivery may send the order emails.
+//
+// Stripe re-delivers an event when our response is slow, and two deliveries can
+// overlap. The orders row is safe (unique on stripe_session_id) but the emails
+// were not, so a customer once received two confirmations. This claims the
+// right to notify with a single atomic UPDATE ... WHERE notified_at IS NULL:
+// exactly one caller can win, no matter how many arrive together.
+//
+// Degrades on purpose: if the column is missing (db/notified.sql not yet run)
+// or the database is unreachable, it returns true and behaves as before. A
+// possible duplicate is much better than silently emailing nobody.
+async function claimNotifications(sessionId) {
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  const url = (process.env.SUPABASE_URL || '').replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+  if (!url || !key || !sessionId) return true;
+  try {
+    const r = await fetch(
+      `${url}/rest/v1/orders?stripe_session_id=eq.${encodeURIComponent(sessionId)}&notified_at=is.null`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({ notified_at: new Date().toISOString() }),
+      }
+    );
+    if (!r.ok) {
+      const text = await r.text();
+      if (/notified_at/.test(text)) {
+        console.warn('orders.notified_at is missing — run db/notified.sql. Re-delivered webhooks can still double-send.');
+      } else {
+        console.error('claimNotifications failed:', r.status, text);
+      }
+      return true;
+    }
+    const rows = await r.json();
+    if (!rows.length) {
+      console.log(`webhook: ${sessionId} was already notified, skipping the emails`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('claimNotifications error:', err.message);
+    return true;
+  }
+}
+
+// Hand the claim back if the notifications could not be sent, so Stripe's
+// retry gets another go rather than the customer hearing nothing.
+async function releaseNotifications(sessionId) {
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  const url = (process.env.SUPABASE_URL || '').replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+  if (!url || !key || !sessionId) return;
+  try {
+    await fetch(`${url}/rest/v1/orders?stripe_session_id=eq.${encodeURIComponent(sessionId)}`, {
+      method: 'PATCH',
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ notified_at: null }),
+    });
+  } catch (err) {
+    console.error('releaseNotifications error:', err.message);
+  }
+}
+
 // Flatten an order into one readable spreadsheet row (header -> value).
 function orderSheetRow(order) {
   const wedding = order.tier === 'wedding';
@@ -278,41 +345,58 @@ export default async function handler(req, res) {
     try { order.attribution = order.attr ? JSON.parse(order.attr) : null; }
     catch { order.attribution = null; }
 
-    // Save the full customer input to the database, then email whoever fills
-    // the order. Both are safe no-ops until their keys are configured.
+    // The row must exist before anything can claim the right to notify.
     await saveOrder(order);
-    await sendToSheet(order);
-    await sendOrderNotification(order);
-    await sendOrderConfirmation(order);
+
+    // These used to run one after another, six round trips deep, which took
+    // long enough that Stripe re-delivered the event and everything happened
+    // twice. They are independent, so they run together and the response comes
+    // back quickly enough not to be retried.
+    const mayNotify = await claimNotifications(session.id);
+
+    const work = [];
+    if (mayNotify) {
+      work.push(
+        Promise.all([
+          sendToSheet(order),
+          sendOrderNotification(order),
+          sendOrderConfirmation(order),
+        ]).catch(async (err) => {
+          console.error('order notifications failed:', err);
+          await releaseNotifications(session.id);   // let the retry try again
+        })
+      );
+    }
 
     // They bought, so cancel any abandoned-checkout follow-ups still queued at
     // Resend. Nothing here may throw: a customer who has paid must never see a
     // failed webhook because a reminder could not be called off.
-    try {
-      const stopped = await markRecovered(order.customer_email);
-      if (stopped && stopped.rows) {
-        console.log(`recovery: closed ${stopped.rows} abandoned row(s) for this buyer`);
-        // Anything left uncancelled is mail heading to someone who has paid.
-        if (stopped.uncancelled) {
-          console.error(`recovery: ${stopped.uncancelled} follow-up(s) could NOT be cancelled and will still reach ${order.customer_email}`);
-        }
-      }
-    } catch (err) {
-      console.error('recovery: could not cancel follow-ups:', err.message);
-    }
+    work.push(
+      markRecovered(order.customer_email)
+        .then((stopped) => {
+          if (stopped && stopped.rows) {
+            console.log(`recovery: closed ${stopped.rows} abandoned row(s) for this buyer`);
+            // Anything left uncancelled is mail heading to someone who has paid.
+            if (stopped.uncancelled) {
+              console.error(`recovery: ${stopped.uncancelled} follow-up(s) could NOT be cancelled and will still reach ${order.customer_email}`);
+            }
+          }
+        })
+        .catch((err) => console.error('recovery: could not cancel follow-ups:', err.message))
+    );
 
     // Server-side Purchase to Meta (Conversions API), deduped with the browser
     // Pixel via the shared event id packed into the `meta` metadata value.
     try {
       const m = order.meta ? JSON.parse(order.meta) : {};
-      await sendMetaPurchase({
+      work.push(sendMetaPurchase({
         eventId: m.eid,
         email: order.customer_email,
         fbp: m.fbp, fbc: m.fbc, ip: m.ip, userAgent: m.ua,
         value: order.amount_total,
         currency: order.currency,
         eventSourceUrl: `${process.env.SITE_URL || 'https://heartnote.music'}/success.html`,
-      });
+      }).catch((err) => console.error('Meta purchase event failed:', err)));
     } catch (err) {
       console.error('Meta purchase event failed:', err);
     }
@@ -338,6 +422,12 @@ export default async function handler(req, res) {
       // Don't hard-fail the webhook; Stripe would retry. Log for investigation.
       console.error('Handoff to AI workflow failed:', err);
     }
+
+    // The work above was started in parallel. Wait for it before replying, or
+    // the platform can freeze the function mid-send and the customer hears
+    // nothing. Every task swallows its own errors, so this settles, never
+    // rejects, and Stripe still gets its 200.
+    await Promise.all(work);
   }
 
   return res.status(200).json({ received: true });
