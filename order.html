@@ -133,9 +133,9 @@
               <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" />
             </div>
             <div>
-              <label for="style">Style of music</label>
+              <label for="style" class="req">Style of music</label>
               <select id="style" name="style" class="field">
-                <option value="">No preference</option>
+                <option value="">Choose one…</option>
                 <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
                 <option>Singer-songwriter</option><option>Piano ballad</option><option>Soul / R&amp;B</option>
                 <option>Rock</option><option>Indie / Alternative</option><option>Hip-hop / Rap</option>
@@ -428,6 +428,7 @@
       if (!data.occasion) return showErr('Please choose an occasion.', 'occasion');
       if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.', 'occasionOther');
       if (!data.recipient) return showErr('Please tell us who the song is for.', 'recipient');
+      if (!data.style) return showErr('Please choose a style of music.', 'style');
       if (!data.story || data.story.trim().length < 120) return showErr('Please share a bit more of their story. A few sentences gives us far more to work with than a line or two.', 'story');
       const _k = currentTier();
       if ((isIncluded(_k,'voice') || voiceOn()) && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose "No thanks".', 'voicePicker');
