@@ -142,7 +142,7 @@ export default async function handler(req, res) {
         userAgent: clip(req.headers['user-agent'], 300),
         value: orderTotalCents(tierKey, { voice: voiceOn }),
         currency: 'usd',
-        eventSourceUrl: `${origin}/order.html`,
+        eventSourceUrl: `${origin}${fromQuiz ? '/v3-order' : '/order.html'}`,
         customData: { content_name: tierKey },
       });
     }

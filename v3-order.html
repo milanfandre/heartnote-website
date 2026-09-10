@@ -718,6 +718,61 @@
     var o = state.occasion === 'Other' ? state.occasionOther : state.occasion;
     return o ? o.toLowerCase() : '';
   }
+  // ---- Initiate Checkout: the price page appearing ----
+  // Reaching the end of the quiz and seeing the price is what counts as
+  // reaching checkout on this page. Two things have to be true for that number
+  // to mean anything:
+  //
+  //   1. It fires once per session. setPhase('checkout') also runs on a
+  //      reload, on the return trip from a canceled Stripe session, and every
+  //      time someone edits their email and continues. None of those is a new
+  //      checkout.
+  //   2. The event id is kept for the session, because the server sends its
+  //      own InitiateCheckout once Stripe hands back a session. That copy has
+  //      to carry this same id, or Meta records the browser event and the
+  //      server event as two separate checkouts instead of one.
+  var IC_ID_KEY = 'hn_v3_ic_id';
+  var IC_SENT_KEY = 'hn_v3_ic_sent';
+
+  function sessionCheckoutEventId() {
+    var id = null;
+    try { id = sessionStorage.getItem(IC_ID_KEY); } catch (e) { /* private mode */ }
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      try { sessionStorage.setItem(IC_ID_KEY, id); } catch (e) { /* private mode */ }
+    }
+    return id;
+  }
+
+  function trackReachedCheckout() {
+    try { if (sessionStorage.getItem(IC_SENT_KEY)) return; sessionStorage.setItem(IC_SENT_KEY, '1'); }
+    catch (e) { /* private mode: fire anyway */ }
+
+    var eid = sessionCheckoutEventId();
+    var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
+
+    if (typeof fbq === 'function') {
+      fbq('track', 'InitiateCheckout', {
+        value: pkg.price,
+        currency: 'USD',
+        content_name: pkg.name,
+      }, { eventID: eid });
+    }
+    if (typeof hnTrack === 'function') {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      hnTrack('add_to_cart', {
+        tier: state.tier,
+        value_cents: pkg.price * 100,
+        label: 'Reached the v3 price page',
+        fbp: fb.fbp,
+        fbc: fb.fbc,
+        meta: { eid: eid },
+      });
+    }
+  }
+
   function setPhase(ph) {
     if (typeof stopSinger === 'function') stopSinger();
     state.phase = ph; save();
@@ -731,7 +786,7 @@
       $('qEmail').value = state.email;
       $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     }
-    if (ph === 'checkout') paintCheckout();
+    if (ph === 'checkout') { paintCheckout(); trackReachedCheckout(); }
   }
 
   // email phase
@@ -838,14 +893,10 @@
     try {
       var fb = (window.HN_META && HN_META.data()) || {};
       var attr = (typeof hnAttribution === 'function') ? hnAttribution() : undefined;
-      var checkoutEventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'ic_' + Date.now();
-      var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
-      if (typeof hnTrack === 'function') {
-        hnTrack('add_to_cart', { tier: state.tier, value_cents: pkg.price * 100, label: 'v2 quiz: complete my purchase' });
-      }
-      if (typeof fbq === 'function') {
-        fbq('track', 'InitiateCheckout', { value: pkg.price, currency: 'USD', content_name: state.tier }, { eventID: checkoutEventId });
-      }
+      // InitiateCheckout already fired when the price page appeared, so nothing
+      // is sent here. The server sends its own copy once Stripe has a session;
+      // handing it this same id is what keeps the two as one event.
+      var checkoutEventId = sessionCheckoutEventId();
       var other = [
         'Ordered through the v3 quiz.',
         'Song is for: ' + (state.who === 'myself' ? 'the buyer themselves' : 'someone else'),
