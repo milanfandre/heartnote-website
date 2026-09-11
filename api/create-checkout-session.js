@@ -48,6 +48,24 @@ export default async function handler(req, res) {
     if (!price) throw new Error(`Missing Stripe price for tier "${tierKey}". Set PRICE_${tierKey.toUpperCase()} in the environment.`);
 
 
+    // The occasion is mandatory on every form, but client-side validation is a
+    // courtesy, not a guarantee: a stale tab, a blocked script, or a hand-made
+    // POST all reach here without passing through it. An order with no occasion
+    // is not fulfillable, so it is refused at the point money would change
+    // hands rather than landing in Paul's queue as a blank.
+    //
+    // "Other" is a real choice, so it is accepted, but only with words after
+    // it. On 2026-09-11 phone autofill put a bare number in that box and the
+    // order arrived with 8187433508 as its occasion.
+    const occasionChoice = clip(b.occasion, 120);
+    const occasionFreeText = clip(b.occasionOther, 120);
+    if (!occasionChoice) {
+      return res.status(400).json({ error: 'An occasion is required.' });
+    }
+    if (occasionChoice === 'Other' && !/[a-z]{2}/i.test(occasionFreeText)) {
+      return res.status(400).json({ error: 'An occasion is required, in words.' });
+    }
+
     const voiceOn = b.voiceAddon === 'yes' || includesAddon(tierKey, 'voice');
 
     // Build the brief metadata. Stripe caps each value at 500 chars and 50 keys
@@ -57,8 +75,8 @@ export default async function handler(req, res) {
       sender_name: clip(b.sender, 120),
       voice_addon: voiceOn ? 'yes' : 'no',      // applied once per order, not per song
       voice: voiceOn ? clip(b.voice, 80) : '',
-      occasion: clip(b.occasion, 120),
-      occasion_other: clip(b.occasionOther, 120),
+      occasion: occasionChoice,
+      occasion_other: occasionFreeText,
       recipient_name: clip(b.recipient, 120),
       recipient_relationship: clip(b.relationship, 120),
       music_style: clip(b.style, 80),

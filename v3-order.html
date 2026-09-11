@@ -567,7 +567,9 @@
     switch (n) {
       case 1: return !!state.who && state.yourName.trim().length > 0
                      && (state.who === 'myself' || state.name.trim().length > 0);
-      case 2: return !!state.occasion && (state.occasion !== 'Other' || state.occasionOther.trim().length > 0);
+      // An occasion in words, so the Next button blocks what the server would
+      // refuse later with a generic error the customer could not act on.
+      case 2: return !!state.occasion && (state.occasion !== 'Other' || /[a-z]{2}/i.test(state.occasionOther));
       case 3: return !!state.style && !!state.tempo;
       case 4: return !!state.voice;
       case 5: return state.story.trim().length >= STORY_TARGET;
