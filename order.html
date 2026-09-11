@@ -123,14 +123,14 @@
               <option>Just because</option><option>Other</option>
             </select>
             <div id="occasionOtherWrap" class="hidden mt-3">
-              <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" />
+              <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" autocomplete="off" />
             </div>
           </div>
 
           <div class="grid sm:grid-cols-2 gap-5">
             <div>
               <label for="recipient" class="req">Who is the song for?</label>
-              <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" />
+              <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" autocomplete="off" />
             </div>
             <div>
               <label for="style" class="req">Style of music</label>
@@ -163,7 +163,7 @@
         <!-- Shared: your name -->
         <div>
           <label for="sender">Your name (how they'll know it's from you)</label>
-          <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" />
+          <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" autocomplete="off" />
         </div>
 
         <!-- Voice add-on -->
@@ -427,6 +427,7 @@
       const data = Object.fromEntries(new FormData(form).entries());
       if (!data.occasion) return showErr('Please choose an occasion.', 'occasion');
       if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.', 'occasionOther');
+      if (data.occasion === 'Other' && !/[a-z]{2}/i.test(data.occasionOther || '')) return showErr('Please tell us the occasion in words, for example "Quinceanera" or "First day of school".', 'occasionOther');
       if (!data.recipient) return showErr('Please tell us who the song is for.', 'recipient');
       if (!data.style) return showErr('Please choose a style of music.', 'style');
       if (!data.story || data.story.trim().length < 120) return showErr('Please share a bit more of their story. A few sentences gives us far more to work with than a line or two.', 'story');
