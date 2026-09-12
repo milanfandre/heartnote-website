@@ -25,7 +25,7 @@ const DL_ICON = (n) => `<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill
 const LOCK_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 
 // Storage is cross-origin, so the HTML download attribute is ignored. Asking
-// Supabase for ?download makes it send an attachment header, which iOS honours.
+// Supabase for ?download makes it send an attachment header, which iOS honors.
 const dlHref = (url, name) => `${esc(url)}?download=${encodeURIComponent(name)}`;
 
 // A song is delivered as one file that may be an MP3 or a WAV, so the download
@@ -137,8 +137,8 @@ function chooseScreen({ recipient, sender, versions, tier, orderId, justPaid }) 
   <div class="mb-5 rounded-2xl bg-blush/25 border border-claret/10 px-5 py-4">
     <p class="font-700 text-claret text-sm mb-1.5">Choose your version</p>
     <ul class="space-y-1 text-sm text-ink/85 list-disc pl-4">
-      <li>We wrote ${versions.length} versions of your song. Have a listen to each one.</li>
-      <li>Choose your favourite and it's yours in full, to download and keep forever.</li>
+      <li>We wrote ${versions.length} versions of your song. Listen to each one.</li>
+      <li>Choose your favorite and it's yours in full, to download and keep forever.</li>
       <li>Love more than one? You can unlock them all for ${esc(dollars(UPSELL_CENTS[tier]))}.</li>
     </ul>
   </div>
@@ -429,7 +429,7 @@ export default async function handler(req, res) {
   }
 
   // Single/Wedding: straight to the songs.
-  // Titles like "Song 1" / "Your song" are placeholders the fulfilment step
+  // Titles like "Song 1" / "Your song" are placeholders the fulfillment step
   // fills in when no name was given. Never show them as if they were the
   // song's name. An unnamed song simply has no heading; downloads fall back to
   // a name built from the recipient, which is specific to this order.

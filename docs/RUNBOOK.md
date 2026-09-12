@@ -206,7 +206,7 @@ curl -s "$U/rest/v1/abandoned_checkouts?select=email,status,created_at,preview_r
 curl -s "https://api.resend.com/emails/<id>" -H "Authorization: Bearer $RESEND_KEY"
 ```
 
-Gotcha: cancelling a Resend email within a second or two of creating it returns
+Gotcha: canceling a Resend email within a second or two of creating it returns
 422 "not scheduled", so `cancelEmail` retries. It gives up immediately on
 401/403, which means the Resend key lacks permission to cancel: a key with
 "sending access" can schedule but not call off, which silently lets follow-ups

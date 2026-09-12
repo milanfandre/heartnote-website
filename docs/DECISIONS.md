@@ -227,7 +227,7 @@ When this file and an older spec disagree, **this file wins**.
   still accepts `from:'v2'` for the same reason. The quiz reads the old
   localStorage key as a fallback so an in-progress order is not lost.
 
-- **Sep 9 — Abandoned-checkout recovery, modelled on a competitor's sequence.**
+- **Sep 9 — Abandoned-checkout recovery, modeled on a competitor's sequence.**
   Client walked their rival's flow and wanted it replicated. Built for V3 only,
   because it is the only flow that takes an email before payment. Scheduling
   uses Resend's `scheduled_at` rather than a cron: api/ is at the 12-function

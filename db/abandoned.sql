@@ -42,8 +42,8 @@ create table if not exists public.abandoned_checkouts (
   --   open              → nudge emails scheduled
   --   preview_requested → they asked to hear one; Paul has a job to do
   --   preview_ready     → Paul uploaded a preview; delivery emails sent
-  --   recovered         → they bought (all pending email cancelled)
-  --   unsubscribed      → they opted out (all pending email cancelled)
+  --   recovered         → they bought (all pending email canceled)
+  --   unsubscribed      → they opted out (all pending email canceled)
   status                text not null default 'open',
 
   preview_requested_at  timestamptz,
@@ -53,7 +53,7 @@ create table if not exists public.abandoned_checkouts (
   recovered_at          timestamptz,
   unsubscribed_at       timestamptz,
 
-  -- Resend ids of the scheduled follow-ups, so they can be cancelled
+  -- Resend ids of the scheduled follow-ups, so they can be canceled
   scheduled_email_ids   text[] default '{}',
   emails_sent           integer not null default 0,
 

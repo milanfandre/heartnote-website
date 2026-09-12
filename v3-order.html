@@ -799,7 +799,7 @@
   });
   // Reaching the payment step with an email is the one moment we can reach
   // someone who has not paid, so it starts the recovery sequence. Fired once
-  // per session, and cancelled server-side the instant they buy.
+  // per session, and canceled server-side the instant they buy.
   var captured = false;
   function captureForRecovery() {
     if (captured || !/.+@.+\..+/.test(state.email)) return;

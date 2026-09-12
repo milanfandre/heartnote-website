@@ -1,4 +1,4 @@
-/* Heart Note ad-funnel pages — shared behaviour.
+/* Heart Note ad-funnel pages — shared behavior.
  *
  * Each page sets window.LP before loading this file:
  *   window.LP = {
@@ -10,7 +10,7 @@
  *   };
  *
  * Everything is optional-safe: a page missing #sampleGrid, #heroPlay, #deliveryDate
- * or #stickyBar simply skips that behaviour.
+ * or #stickyBar simply skips that behavior.
  */
 (function () {
   'use strict';
@@ -18,7 +18,7 @@
   var LP = window.LP || {};
   var params = new URLSearchParams(location.search);
 
-  // ---------- The sample song catalogue ----------
+  // ---------- The sample song catalog ----------
   // To add a song: drop the MP3 in /audio and add an entry here, then list its
   // key in a page's LP.samples.
   var SAMPLES = {

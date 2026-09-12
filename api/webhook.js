@@ -378,7 +378,7 @@ export default async function handler(req, res) {
             console.log(`recovery: closed ${stopped.rows} abandoned row(s) for this buyer`);
             // Anything left uncancelled is mail heading to someone who has paid.
             if (stopped.uncancelled) {
-              console.error(`recovery: ${stopped.uncancelled} follow-up(s) could NOT be cancelled and will still reach ${order.customer_email}`);
+              console.error(`recovery: ${stopped.uncancelled} follow-up(s) could NOT be canceled and will still reach ${order.customer_email}`);
             }
           }
         })

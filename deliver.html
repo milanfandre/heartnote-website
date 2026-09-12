@@ -142,7 +142,7 @@
       if ((o.brief || {}).lyric_addon === 'yes') el.appendChild(lyricPanel(o));
 
       // Deluxe/Experience deliver as 2-3 VERSIONS of one song (the customer
-      // picks a favourite on the gift page). Everything else is plain songs.
+      // picks a favorite on the gift page). Everything else is plain songs.
       if (VERSIONS_PER_TIER[o.tier]) { el.appendChild(versionForm(o, el)); return el; }
 
       // Deliver form. Up to 6 songs; fill only what you're sending.
