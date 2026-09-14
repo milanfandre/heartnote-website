@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create your Heart Note</title>
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <script src="/pixel.js"></script>
+  <script src="/promo-bar.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Nunito+Sans:wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: {
+        claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+        gold: { DEFAULT: '#C6973F', soft: '#E4C67F' },
+        ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+        blush: '#E9CBC0', ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+      },
+      fontFamily: { display: ['Fraunces','serif'], body: ['"Nunito Sans"','sans-serif'] },
+    } } };
+  </script>
+  <style>
+    html { font-size: 18px; }
+    body { background: #F7F1E6; color: #2B2019; font-family: 'Nunito Sans', sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3,.font-display { font-family: 'Fraunces', serif; }
+    label { display:block; font-weight:600; color:#4E0E1A; margin-bottom:.35rem; font-size:1rem; }
+    .req::after { content:' *'; color:#C6973F; }
+    .field, textarea, select {
+      width:100%; background:#FBF7EE; border:1.5px solid rgba(110,20,35,.18); border-radius:12px;
+      padding:.8rem 1rem; font-size:1.05rem; color:#2B2019; font-family:inherit; transition:border-color .2s, box-shadow .2s;
+    }
+    .field:focus, textarea:focus, select:focus { outline:none; border-color:#C6973F; box-shadow:0 0 0 3px rgba(198,151,63,.22); }
+    textarea { resize:vertical; min-height:150px; line-height:1.5; }
+    .tier { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:14px; padding:1rem 1.1rem; background:#FBF7EE; transition:border-color .2s, box-shadow .2s, background .2s; height:100%; }
+    .tier:hover { border-color:rgba(198,151,63,.6); }
+    input[type=radio]:checked + .tier { border-color:#6E1423; background:#fff; box-shadow:0 6px 20px -10px rgba(110,20,35,.4); }
+    .opt { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.7rem 1rem; background:#FBF7EE; font-weight:600; transition:border-color .2s, background .2s; }
+    input[type=radio]:checked + .opt { border-color:#6E1423; background:#fff; }
+    .vc { display:flex; align-items:center; gap:.7rem; cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.55rem .7rem; background:#FBF7EE; transition:border-color .2s, background .2s; }
+    .vc:hover { border-color:rgba(198,151,63,.6); }
+    input[type=radio]:checked + .vc { border-color:#6E1423; background:#fff; box-shadow:0 6px 18px -10px rgba(110,20,35,.4); }
+    .vc-play { display:grid; place-items:center; width:38px; height:38px; border-radius:999px; background:#C6973F; color:#360911; flex:0 0 auto; cursor:pointer; border:none; transition:transform .2s; }
+    .vc-play:hover { transform:scale(1.06); }
+    .vc-check { margin-left:auto; color:#6E1423; font-weight:700; opacity:0; transition:opacity .2s; }
+    input[type=radio]:checked + .vc .vc-check { opacity:1; }
+    .btn-primary { background:#6E1423; color:#F7F1E6; font-weight:700; border-radius:999px; padding:1rem 2rem; font-size:1.1rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .2s; }
+    .btn-primary:hover:not(:disabled){ background:#5a0f1c; transform:translateY(-2px); }
+    .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid #C6973F; outline-offset:2px; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <!-- ============ PROMO BANNER ============ -->
+  <div class="sticky top-0 z-50">
+    <div class="bg-claret-deep text-ivory relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-70" style="background-image: radial-gradient(60% 180% at 15% 50%, rgba(198,151,63,.28) 0%, rgba(198,151,63,0) 70%), radial-gradient(50% 160% at 88% 50%, rgba(233,203,192,.16) 0%, rgba(233,203,192,0) 72%);"></div>
+      <p class="relative max-w-6xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0 text-center leading-snug">
+        <span class="text-[.88rem] sm:text-[.95rem] font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</span>
+        <span class="inline-flex items-center gap-1.5 text-[.8rem] sm:text-[.86rem] text-ivory/80">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Ends in <span data-promo-countdown class="font-700 text-ivory tabular-nums tracking-wide">--:--:--</span>
+        </span>
+      </p>
+    </div>
+    <header class="border-b border-claret/10 bg-ivory/90 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:42px;width:auto" />
+        <span class="font-display text-2xl font-500 text-claret">Heart Note</span>
+      </a>
+      <div class="flex items-center gap-2 text-ink-soft font-600 text-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure checkout
+      </div>
+    </div>
+  </header>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-6 py-10 md:py-14">
+    <div class="max-w-2xl">
+      <p class="text-claret font-700 tracking-[.14em] uppercase text-[.8rem] mb-3">Create your Heart Note</p>
+      <h1 class="font-display font-500 text-claret text-[2.2rem] md:text-[2.8rem] leading-[1.1]">Tell us about the moment</h1>
+      <p class="mt-3 text-ink/80 text-[1.1rem]">Share the details and we'll craft a personal song from them. The more you tell us, the more personal your song will be.</p>
+    </div>
+
+    <div id="canceledNote" class="hidden mt-6 max-w-2xl rounded-xl border border-gold/50 bg-gold/10 px-5 py-4 text-ink">
+      Your payment was canceled and no charge was made. Your details are still here whenever you're ready.
+    </div>
+
+    <form id="orderForm" class="mt-10 grid lg:grid-cols-[1fr_360px] gap-10 items-start">
+      <!-- Left: the brief -->
+      <div class="space-y-7">
+        <!-- Tier -->
+        <fieldset>
+          <legend class="font-display text-claret text-xl mb-3">Choose your package</legend>
+          <div class="grid sm:grid-cols-3 gap-3" id="tiers">
+            <label><input type="radio" name="tier" value="single" class="sr-only" />
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Single</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$59</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$89</span></span><p class="text-sm text-ink-soft mt-1">One personalized song (MP3)</p></div>
+            </label>
+            <label><input type="radio" name="tier" value="deluxe" class="sr-only" />
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Deluxe</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$69</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$109</span></span><p class="text-sm text-ink-soft mt-1">2 versions &middot; Premium Audio Quality</p></div>
+            </label>
+            <label><input type="radio" name="tier" value="experience" class="sr-only" />
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$89</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$139</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; remastered</p></div>
+            </label>
+          </div>
+          <div id="tierRecap" class="lg:hidden mt-3 rounded-xl bg-blush/20 border border-claret/10 px-4 py-3"></div>
+        </fieldset>
+
+        <!-- Single-song brief -->
+        <div id="singleFields" class="space-y-7">
+          <div>
+            <label for="occasion" class="req">What's the occasion?</label>
+            <select id="occasion" name="occasion" class="field">
+              <option value="">Choose one…</option>
+              <option>Birthday</option><option>Proposal</option><option>Wedding</option><option>Anniversary</option>
+              <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
+              <option>Graduation</option><option>Retirement</option><option>Celebration of Life</option>
+              <option>Just because</option><option>Other</option>
+            </select>
+            <div id="occasionOtherWrap" class="hidden mt-3">
+              <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label for="recipient" class="req">Who is the song for?</label>
+              <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" autocomplete="off" />
+            </div>
+            <div>
+              <label for="style" class="req">Style of music</label>
+              <select id="style" name="style" class="field">
+                <option value="">Choose one…</option>
+                <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
+                <option>Singer-songwriter</option><option>Piano ballad</option><option>Soul / R&amp;B</option>
+                <option>Rock</option><option>Indie / Alternative</option><option>Hip-hop / Rap</option>
+              </select>
+            </div>
+          </div>
+
+
+          <div>
+            <label for="story" class="req">Tell us their story</label>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be, and we read every word. A few sentences works far better than a line or two.</p>
+            <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
+            <p class="flex justify-between gap-3 text-xs text-ink-soft mt-1"><span id="storyHint">The more you write, the better the song.</span><span><span id="storyCount">0</span>/5000</span></p>
+          </div>
+
+          <div>
+            <label for="details">Anything we must include? <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
+            <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, places, phrases, or an inside joke you'd love in the lyrics.</p>
+            <textarea id="details" name="details" maxlength="5000" class="field" style="min-height:110px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora. Work in 'meet me in the garden' if you can."></textarea>
+            <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
+          </div>
+
+        </div>
+
+        <!-- Shared: your name -->
+        <div>
+          <label for="sender">Your name (how they'll know it's from you)</label>
+          <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" autocomplete="off" />
+        </div>
+
+        <!-- Voice add-on -->
+        <div id="voiceAddonSection">
+          <label>Choose your voice <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
+          <p class="text-ink-soft text-sm -mt-1 mb-2">Prefer a particular voice for the vocals? Add one for $10.</p>
+          <div class="grid grid-cols-2 gap-3">
+            <label><input type="radio" name="voiceAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
+            <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
+          </div>
+          <div id="voicePicker" class="hidden mt-3">
+            <p class="text-ink-soft text-sm mb-2.5">Press play to hear each voice, then pick your favorite.</p>
+            <div class="grid sm:grid-cols-2 gap-2.5" id="voiceGrid"></div>
+          </div>
+        </div>
+
+      <!-- Right: summary -->
+      <aside class="lg:sticky lg:top-28">
+        <div class="bg-white rounded-2xl border border-claret/12 shadow-[0_18px_40px_-20px_rgba(110,20,35,.3)] p-6">
+          <h2 class="font-display text-claret text-xl">Order summary</h2>
+          <div class="mt-4 flex items-baseline justify-between gap-3">
+            <span class="font-700 text-ink" id="sumTier">Deluxe Package</span>
+            <span class="font-display text-xl text-claret" id="sumTierPrice">$69</span>
+          </div>
+          <ul id="sumIncludes" class="mt-4 space-y-2 text-[.98rem] text-ink/85"></ul>
+
+          <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
+            <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
+            <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span id="sumVoiceLabel">Choose your voice</span><span id="sumVoiceAmt">+$10</span></div>
+            <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$69</span></div>
+            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="text-[1.05rem] font-600 text-ink-soft/85 line-through decoration-claret/60 decoration-2">$109</span> <span class="text-claret font-700">You save <span id="sumSave">$40</span></span></p>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-primary w-full mt-6 flex items-center justify-center gap-2">
+            <span id="submitLabel">Continue to secure payment</span>
+          </button>
+          <div id="formError" class="hidden mt-3 rounded-xl border-2 border-claret bg-claret/8 px-4 py-3 flex items-start gap-3" role="alert" aria-live="assertive">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E1423" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5"/><path d="M12 16h.01"/></svg>
+            <p id="formErrorText" class="text-claret font-700 text-[.98rem] leading-snug"></p>
+          </div>
+
+          <div class="mt-4 flex items-center justify-center gap-2 text-ink-soft text-xs">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Payments securely processed by Stripe
+          </div>
+          <p class="mt-4 text-center text-ink-soft text-sm border-t border-claret/10 pt-4">Backed by our happiness promise.</p>
+          <p class="mt-2 text-center text-ink-soft text-xs">By continuing, you agree to our <a href="terms.html" target="_blank" rel="noopener" class="text-claret font-600 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">Terms &amp; Refund Policy</a>
+            <a href="privacy.html" target="_blank" rel="noopener" class="text-claret font-600 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">Privacy</a>.</p>
+        </div>
+      </aside>
+    </form>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'heartnote_order_v1';
+    const VOICE_ADDON = 10;
+    const ADDONS = { voice: 10 };
+    const TIERS = {
+      single:     { name: 'Single',             price: 59, compare: 89,  versions: 1, included: [],                includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
+      deluxe:     { name: 'Deluxe',             price: 69, compare: 109,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
+      experience: { name: 'Experience Package', price: 89, compare: 139, versions: 3, included: [], includes: ['Three versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
+    };
+    const params = new URLSearchParams(location.search);
+    const form = document.getElementById('orderForm');
+    const $ = (id) => document.getElementById(id);
+    const money = (n) => '$' + n;
+
+    function currentTier() {
+      const r = form.querySelector('input[name=tier]:checked');
+      return (r && TIERS[r.value]) ? r.value : 'deluxe';
+    }
+    function voiceOn() {
+      const r = form.querySelector('input[name=voiceAddon]:checked');
+      return r && r.value === 'yes';
+    }
+
+    // An add-on baked into the tier price is never charged again.
+    const isIncluded = (key, addon) => TIERS[key].included.includes(addon);
+    function totalFor(key) {
+      let n = TIERS[key].price;
+      if (!isIncluded(key,'voice') && voiceOn()) n += ADDONS.voice;
+      return n;
+    }
+
+    function refreshSummary() {
+      const key = currentTier();
+      const t = TIERS[key];
+      const voice = (!isIncluded(key,'voice') && voiceOn()) ? ADDONS.voice : 0;
+      const total = t.price + voice;
+
+      $('sumTier').textContent = t.name;
+      $('sumTierPrice').textContent = money(t.price);
+      $('sumTierLabel').textContent = t.name;
+      $('sumBase').textContent = money(t.price);
+      const inc = t.includes.map(i => `<li class="flex gap-2"><span class="text-gold shrink-0">\u2713</span>${i}</li>`).join('');
+      $('sumIncludes').innerHTML = inc;
+      $('tierRecap').innerHTML = `<p class="font-700 text-claret text-sm mb-1.5">${t.name} includes:</p><ul class="space-y-1 text-sm text-ink/85">${inc}</ul>`;
+
+      $('sumVoiceRow').classList.toggle('hidden', voice === 0);
+      $('sumVoiceAmt').textContent = '+' + money(voice);
+      $('sumTotal').textContent = money(total);
+      // Strike-through carries whatever saving the chosen package has.
+      $('sumCompare').textContent = money(total + (t.compare - t.price));
+      $('sumSave').textContent = money(t.compare - t.price);
+
+    }
+
+    function refreshConditional() {
+      // The voice is an add-on on every package now, so the picker simply
+      // follows the yes/no choice.
+      $('voicePicker').classList.toggle('hidden', !voiceOn());
+      $('occasionOtherWrap').classList.toggle('hidden', $('occasion').value !== 'Other');
+    }
+
+    // Char counters
+    const counters = [['story','storyCount'],['details','detailsCount']];
+    // Nudge while they type rather than only blocking them at submit.
+    (function () {
+      var ta = $('story'), hint = $('storyHint');
+      if (!ta || !hint) return;
+      ta.addEventListener('input', function () {
+        var n = ta.value.trim().length;
+        hint.textContent = n === 0 ? 'The more you write, the better the song.'
+          : n < 120 ? 'Keep going, a few more sentences will really help.'
+          : n < 400 ? 'Good. Any extra detail still helps.'
+          : 'Wonderful, this is plenty to work with.';
+        hint.className = 'text-xs ' + (n && n < 120 ? 'text-claret font-600' : 'text-ink-soft');
+      });
+    })();
+    function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
+
+    // ---- Add to Cart: reaching this form ----
+    // The CTA on the home and landing pages sends people here, so arriving is
+    // the closest thing this checkout has to adding something to a basket.
+    // Fires once per session so a reload or a trip back from Stripe does not
+    // count twice. The same event id goes to the Pixel and to the Conversions
+    // API, which is how Meta collapses the two into one event.
+    (function trackReachedForm() {
+      var KEY = 'hn_atc_sent';
+      try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (e) { /* private mode: fire anyway */ }
+
+      var eid = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+
+      var key = currentTier();
+      var t = TIERS[key];
+      var cents = t ? Math.round(t.price * 100) : null;
+
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'AddToCart', {
+          value: t ? t.price : undefined,
+          currency: 'USD',
+          content_name: t ? t.name : key,
+        }, { eventID: eid });
+      }
+      if (typeof hnTrack === 'function') {
+        var fb = (window.HN_META && HN_META.data()) || {};
+        hnTrack('reached_form', {
+          tier: key,
+          value_cents: cents,
+          label: 'Reached the order form',
+          fbp: fb.fbp,
+          fbc: fb.fbc,
+          meta: { eid: eid },
+        });
+      }
+    })();
+
+    // Voice picker with audio previews
+    const VOICES = [
+      { name:'Brett',   desc:'Male · country',     src:'audio/voices/voice-brett.mp3' },
+      { name:'Cameron', desc:'Male · pop',         src:'audio/voices/voice-cameron.mp3' },
+      { name:'Gabriel', desc:'Female · pop',       src:'audio/voices/voice-gabriel.mp3' },
+      { name:'Harper',  desc:'Female · country',   src:'audio/voices/voice-harper.mp3' },
+      { name:'Justin',  desc:'Male · soul',        src:'audio/voices/voice-justin.mp3' },
+      { name:'Lily',    desc:'Female · joyful pop', src:'audio/voices/voice-lily.mp3', unavailable:true },
+      { name:'Shaun',   desc:'Male · hip hop',     src:'audio/voices/voice-shaun.mp3' },
+    ];
+    let voiceAudio = null, voiceBtn = null;
+    const setVIcon = (btn, playing) => btn.querySelector('path').setAttribute('d', playing ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'M8 5v14l11-7z');
+    // One delegated handler drives every voice preview button
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.vc-play'); if (!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      if (voiceAudio && voiceBtn === btn && !voiceAudio.paused) { voiceAudio.pause(); setVIcon(btn, false); return; }
+      if (voiceAudio) { voiceAudio.pause(); if (voiceBtn) setVIcon(voiceBtn, false); }
+      voiceAudio = new Audio(btn.dataset.src); voiceBtn = btn; setVIcon(btn, true);
+      voiceAudio.play().catch(() => {});
+      voiceAudio.addEventListener('ended', () => setVIcon(btn, false));
+    });
+    const voicePlayBtn = (v) => `<button type="button" class="vc-play" data-src="${v.src}" aria-label="Hear ${v.name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>`;
+    const voiceOptionsHTML = () => VOICES.map(v => `<option value="${v.name}">${v.name} (${v.desc})</option>`).join('');
+    // Order-level selectable picker (single-song tiers)
+    function buildVoices() {
+      $('voiceGrid').innerHTML = VOICES.map(v => v.unavailable ? `
+        <div class="vc opacity-45 cursor-not-allowed" aria-disabled="true" title="${v.name} is unavailable">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-claret/15 text-claret/50 shrink-0" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div class="min-w-0">
+            <p class="font-700 text-claret/70 leading-tight">${v.name}</p>
+            <p class="text-sm text-ink-soft">Unavailable</p>
+          </div>
+        </div>` : `
+        <label>
+          <input type="radio" name="voice" value="${v.name}" class="sr-only" />
+          <div class="vc">
+            ${voicePlayBtn(v)}
+            <div class="min-w-0"><p class="font-700 text-claret leading-tight">${v.name}</p><p class="text-sm text-ink-soft">${v.desc}</p></div>
+            <span class="vc-check">✓</span>
+          </div>
+        </label>`).join('');
+    }
+    // ---- Restore saved data (fixes losing details when returning from payment) ----
+    function restore() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+      for (const [k, v] of Object.entries(saved)) {
+        const els = form.elements[k];
+        if (!els) continue;
+        if (els instanceof RadioNodeList || (els.length && els[0] && els[0].type === 'radio')) {
+          const radio = form.querySelector(`input[name="${k}"][value="${CSS.escape(v)}"]`);
+          if (radio) radio.checked = true;
+        } else {
+          els.value = v;
+        }
+      }
+    }
+    function save() {
+      const data = Object.fromEntries(new FormData(form).entries());
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    // ---- Init ----
+    buildVoices();
+    restore();
+    // URL params override saved values
+    if (['single','deluxe','experience'].includes(params.get('tier'))) {
+      const r = form.querySelector(`input[name=tier][value="${params.get('tier')}"]`); if (r) r.checked = true;
+    } else if (!form.querySelector('input[name=tier]:checked')) {
+      form.querySelector('input[name=tier][value="deluxe"]').checked = true;
+    }
+    // NOTE: the ?occasion= an ad link carries is a guess about why someone
+    // clicked, not something the customer told us. It used to preselect this
+    // dropdown, so a wedding ad recorded "Wedding" on a birthday song whenever
+    // the customer didn't notice, and the keepsake page then said so. The
+    // occasion is theirs to choose; the parameter is kept only for reporting.
+    if (params.get('canceled')) $('canceledNote').classList.remove('hidden');
+
+    refreshSummary(); refreshConditional(); refreshCounts();
+
+    form.addEventListener('change', () => { refreshSummary(); refreshConditional(); save(); });
+    form.addEventListener('input', () => { refreshCounts(); save(); });
+
+    // ---- Submit ----
+    const btn = $('submitBtn'), label = $('submitLabel'), errEl = $('formError');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.classList.add('hidden');
+      const data = Object.fromEntries(new FormData(form).entries());
+      if (!data.occasion) return showErr('Please choose an occasion.', 'occasion');
+      if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.', 'occasionOther');
+      if (data.occasion === 'Other' && !/[a-z]{2}/i.test(data.occasionOther || '')) return showErr('Please tell us the occasion in words, for example "Quinceanera" or "First day of school".', 'occasionOther');
+      if (!data.recipient) return showErr('Please tell us who the song is for.', 'recipient');
+      if (!data.style) return showErr('Please choose a style of music.', 'style');
+      if (!data.story || data.story.trim().length < 120) return showErr('Please share a bit more of their story. A few sentences gives us far more to work with than a line or two.', 'story');
+      const _k = currentTier();
+      if ((isIncluded(_k,'voice') || voiceOn()) && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose "No thanks".', 'voicePicker');
+      // Included add-ons are not on the form, so state them for the server.
+      if (isIncluded(_k,'voice')) data.voiceAddon = 'yes';
+
+      btn.disabled = true; label.textContent = 'Taking you to secure payment…';
+
+
+      // Meta: attach browser identifiers. InitiateCheckout is not fired yet,
+      // because pressing the button is not the same as reaching Stripe. It goes
+      // out below, once the session actually exists.
+      try {
+        const fb = (window.HN_META && window.HN_META.data()) || {};
+        data.fbp = fb.fbp; data.fbc = fb.fbc;
+        // Which ad/campaign brought them here, remembered from the landing hit.
+        if (typeof hnAttribution === 'function') data.attr = hnAttribution();
+        // Shared with the server so its Conversions API copy is deduped.
+        data.checkoutEventId = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID() : 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+        const t = TIERS[currentTier()];
+        // Pressing the purchase button. Reaching the form is tracked separately
+        // as reached_form / AddToCart; this is the rung below Purchase.
+        if (typeof hnTrack === 'function') {
+          hnTrack('add_to_cart', { tier: currentTier(), value_cents: t ? Math.round(t.price * 100) : null, label: 'Continue to secure payment' });
+        }
+      } catch (e) { /* tracking is best-effort */ }
+
+      try {
+        const r = await fetch('/api/create-checkout-session', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
+        });
+        const out = await r.json();
+        if (!r.ok || !out.url) throw new Error(out.error || 'Could not start checkout.');
+
+        // Stripe has a session, so the customer really is reaching payment.
+        // Same event id as the server's copy, so Meta counts one event.
+        try {
+          if (typeof fbq !== 'undefined') {
+            const t = TIERS[currentTier()];
+            fbq('track', 'InitiateCheckout',
+              { value: t ? totalFor(currentTier()) : undefined, currency: 'USD', content_name: currentTier() },
+              { eventID: out.checkoutEventId || data.checkoutEventId });
+          }
+        } catch (e) { /* tracking is best-effort */ }
+
+        window.location.href = out.url;
+      } catch (err) {
+        btn.disabled = false; label.textContent = 'Continue to secure payment';
+        showErr(err.message + ' Please try again.');
+      }
+    });
+    // Scrolling to the bottom of the page left the message off screen on a
+    // phone, so the form looked broken rather than incomplete. Go to the field
+    // that needs fixing, focus it, and ring it in red until it is touched.
+    var ringed = null;
+    function showErr(m, fieldId) {
+      $('formErrorText').textContent = m;
+      errEl.classList.remove('hidden');
+      btn.disabled = false;
+      label.textContent = 'Continue to secure payment';
+
+      if (ringed) { ringed.classList.remove('ring-2', 'ring-claret'); ringed = null; }
+      var field = fieldId && $(fieldId);
+      var target = field || errEl;
+      try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      catch (e) { target.scrollIntoView(); }
+      if (field) {
+        field.classList.add('ring-2', 'ring-claret');
+        ringed = field;
+        setTimeout(function () { try { field.focus({ preventScroll: true }); } catch (e) { field.focus(); } }, 320);
+        field.addEventListener('input', function clear() {
+          field.classList.remove('ring-2', 'ring-claret');
+          field.removeEventListener('input', clear);
+        });
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>

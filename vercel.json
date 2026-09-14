@@ -45,10 +45,6 @@
       "destination": "/v3.html"
     },
     {
-      "source": "/v3-order",
-      "destination": "/v3-order.html"
-    },
-    {
       "source": "/unsubscribe/:token",
       "destination": "/api/gift?unsub=:token"
     }
@@ -60,13 +56,23 @@
       "permanent": false
     },
     {
-      "source": "/v2-order",
-      "destination": "/v3-order",
+      "source": "/v2.html",
+      "destination": "/v3",
       "permanent": false
     },
     {
-      "source": "/v2.html",
-      "destination": "/v3",
+      "source": "/v3-order",
+      "destination": "/order.html",
+      "permanent": false
+    },
+    {
+      "source": "/v2-order",
+      "destination": "/order.html",
+      "permanent": false
+    },
+    {
+      "source": "/order",
+      "destination": "/order.html",
       "permanent": false
     }
   ],

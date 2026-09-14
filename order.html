@@ -4,510 +4,1315 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create your Heart Note</title>
+  <meta name="description" content="Answer seven quick questions and we'll turn your story into a song, delivered within 24 hours." />
   <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+
   <script src="/pixel.js"></script>
   <script src="/promo-bar.js" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Nunito+Sans:wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Nunito+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
   <script>
-    tailwind.config = { theme: { extend: {
-      colors: {
-        claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
-        gold: { DEFAULT: '#C6973F', soft: '#E4C67F' },
-        ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
-        blush: '#E9CBC0', ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            claret: { DEFAULT: '#6E1423', deep: '#4E0E1A', dark: '#360911' },
+            gold: { DEFAULT: '#C6973F', soft: '#E4C67F', pale: '#EFDCA9' },
+            ivory: { DEFAULT: '#F7F1E6', deep: '#EFE6D4' },
+            blush: '#E9CBC0',
+            ink: { DEFAULT: '#2B2019', soft: '#6B5D50' },
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            keepsake: '0 1px 2px rgba(54,9,17,.06), 0 12px 28px -12px rgba(110,20,35,.28), 0 40px 64px -32px rgba(110,20,35,.22)',
+            lift: '0 2px 4px rgba(54,9,17,.05), 0 18px 40px -16px rgba(110,20,35,.30)',
+          },
+        },
       },
-      fontFamily: { display: ['Fraunces','serif'], body: ['"Nunito Sans"','sans-serif'] },
-    } } };
+    };
   </script>
+
   <style>
-    html { font-size: 18px; }
-    body { background: #F7F1E6; color: #2B2019; font-family: 'Nunito Sans', sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    h1,h2,h3,.font-display { font-family: 'Fraunces', serif; }
-    label { display:block; font-weight:600; color:#4E0E1A; margin-bottom:.35rem; font-size:1rem; }
-    .req::after { content:' *'; color:#C6973F; }
-    .field, textarea, select {
-      width:100%; background:#FBF7EE; border:1.5px solid rgba(110,20,35,.18); border-radius:12px;
-      padding:.8rem 1rem; font-size:1.05rem; color:#2B2019; font-family:inherit; transition:border-color .2s, box-shadow .2s;
+    :root { --ivory:#F7F1E6; --claret:#6E1423; --gold:#C6973F; }
+    html { scroll-behavior: smooth; font-size: 17px; }
+    body { background-color: var(--ivory); color: #2B2019; font-family: 'Nunito Sans', system-ui, sans-serif; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, .font-display { font-family: 'Fraunces', Georgia, serif; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: .05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-    .field:focus, textarea:focus, select:focus { outline:none; border-color:#C6973F; box-shadow:0 0 0 3px rgba(198,151,63,.22); }
-    textarea { resize:vertical; min-height:150px; line-height:1.5; }
-    .tier { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:14px; padding:1rem 1.1rem; background:#FBF7EE; transition:border-color .2s, box-shadow .2s, background .2s; height:100%; }
-    .tier:hover { border-color:rgba(198,151,63,.6); }
-    input[type=radio]:checked + .tier { border-color:#6E1423; background:#fff; box-shadow:0 6px 20px -10px rgba(110,20,35,.4); }
-    .opt { cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.7rem 1rem; background:#FBF7EE; font-weight:600; transition:border-color .2s, background .2s; }
-    input[type=radio]:checked + .opt { border-color:#6E1423; background:#fff; }
-    .vc { display:flex; align-items:center; gap:.7rem; cursor:pointer; border:1.5px solid rgba(110,20,35,.18); border-radius:12px; padding:.55rem .7rem; background:#FBF7EE; transition:border-color .2s, background .2s; }
-    .vc:hover { border-color:rgba(198,151,63,.6); }
-    input[type=radio]:checked + .vc { border-color:#6E1423; background:#fff; box-shadow:0 6px 18px -10px rgba(110,20,35,.4); }
-    .vc-play { display:grid; place-items:center; width:38px; height:38px; border-radius:999px; background:#C6973F; color:#360911; flex:0 0 auto; cursor:pointer; border:none; transition:transform .2s; }
-    .vc-play:hover { transform:scale(1.06); }
-    .vc-check { margin-left:auto; color:#6E1423; font-weight:700; opacity:0; transition:opacity .2s; }
-    input[type=radio]:checked + .vc .vc-check { opacity:1; }
-    .btn-primary { background:#6E1423; color:#F7F1E6; font-weight:700; border-radius:999px; padding:1rem 2rem; font-size:1.1rem; transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .2s; }
-    .btn-primary:hover:not(:disabled){ background:#5a0f1c; transform:translateY(-2px); }
-    .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
-    a:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid #C6973F; outline-offset:2px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      font-weight: 700; letter-spacing: .01em; border-radius: 999px;
+      padding: 1rem 1.9rem; font-size: 1.05rem; line-height: 1;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease, background-color .3s ease, opacity .3s ease;
+      cursor: pointer; text-decoration: none; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--claret); color: #F7F1E6; box-shadow: 0 10px 24px -10px rgba(110,20,35,.6); }
+    .btn-primary:hover { background: #5a0f1c; transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: transparent; color: #6E1423; border-color: rgba(110,20,35,.28); }
+    .btn-ghost:hover { background: rgba(110,20,35,.06); transform: translateY(-2px); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+    .field {
+      width: 100%; background: #fff; border: 1.5px solid rgba(110,20,35,.2); border-radius: .8rem;
+      padding: .85rem 1rem; font-size: 1.02rem; color: #2B2019;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+    .field:focus { outline: none; border-color: #6E1423; box-shadow: 0 0 0 3px rgba(198,151,63,.25); }
+    .field::placeholder { color: #A99B8C; }
+
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      border-radius: .8rem; border: 1.5px solid rgba(110,20,35,.2); background: #fff;
+      padding: .7rem 1rem; font-weight: 600; font-size: .95rem; color: #4b3a30; cursor: pointer;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, opacity .2s ease;
+      position: relative; text-align: center;
+    }
+    .chip:hover { border-color: rgba(110,20,35,.5); }
+    .chip:active { transform: scale(.97); }
+    .chip.on { background: var(--claret); color: #F7F1E6; border-color: var(--claret); }
+    .chip.dim { opacity: .4; pointer-events: none; }
+    .badge { position: absolute; top: -9px; right: -6px; font-size: .56rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .5rem; border-radius: 999px; }
+    .badge-hot { background: var(--claret); color: #F7F1E6; }
+    .badge-trend { background: linear-gradient(180deg,#D8AE55,#C6973F); color: #360911; }
+
+    .optcard {
+      width: 100%; text-align: left; background: #fff; border: 1.5px solid rgba(110,20,35,.2);
+      border-radius: 1.1rem; padding: 1.1rem 1.2rem; cursor: pointer;
+      transition: border-color .25s ease, background-color .25s ease, transform .2s ease;
+    }
+    .optcard:hover { border-color: rgba(110,20,35,.55); }
+    .optcard:active { transform: scale(.98); }
+    .optcard.on { border-color: var(--claret); background: #FBF3EE; box-shadow: 0 0 0 1.5px var(--claret) inset; }
+
+    .step { display: none; }
+    .step.live { display: block; animation: stepIn .45s cubic-bezier(.22,1,.36,1); }
+    @keyframes stepIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .step.live { animation: none; } }
+
+    #meterFill { transition: width .3s ease; }
+    /* Owns its height rather than inferring it from aspect-ratio: this is a
+       <button> whose children are all absolutely positioned. */
+    /* Reaction carousel, same as the landing page. Card height is set here
+       rather than left to aspect-ratio: these are <button>s whose children are
+       all absolutely positioned, so an engine that skips aspect-ratio on form
+       controls would collapse them to nothing. 15.5rem x 16/9 = 27.5556rem. */
+    .snaptrack { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .snaptrack::-webkit-scrollbar { display: none; }
+    .snaptrack > * { scroll-snap-align: center; }
+    #vtrack .vcard { height: 27.5556rem; }
+    .vposter { transition: transform .6s cubic-bezier(.22,1,.36,1); }
+    .vcard:hover .vposter { transform: scale(1.045); }
+    .phase { display: none; }
+    .phase.live { display: block; }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <!-- ============ PROMO BANNER ============ -->
+
+  <!-- PROMO BAR + HEADER (one sticky block) -->
   <div class="sticky top-0 z-50">
-    <div class="bg-claret-deep text-ivory relative overflow-hidden">
-      <div class="absolute inset-0 pointer-events-none opacity-70" style="background-image: radial-gradient(60% 180% at 15% 50%, rgba(198,151,63,.28) 0%, rgba(198,151,63,0) 70%), radial-gradient(50% 160% at 88% 50%, rgba(233,203,192,.16) 0%, rgba(233,203,192,0) 72%);"></div>
-      <p class="relative max-w-6xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0 text-center leading-snug">
-        <span class="text-[.88rem] sm:text-[.95rem] font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</span>
-        <span class="inline-flex items-center gap-1.5 text-[.8rem] sm:text-[.86rem] text-ivory/80">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          Ends in <span data-promo-countdown class="font-700 text-ivory tabular-nums tracking-wide">--:--:--</span>
-        </span>
-      </p>
-    </div>
-    <header class="border-b border-claret/10 bg-ivory/90 backdrop-blur-md">
-    <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-3">
-        <img src="brand_assets/heartnote-mark.png" alt="" style="height:42px;width:auto" />
-        <span class="font-display text-2xl font-500 text-claret">Heart Note</span>
+  <div class="bg-claret-dark text-ivory text-center px-4 py-2">
+    <p class="text-[.85rem] leading-snug font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time &middot; ends Sunday at midnight &middot; <span data-promo-countdown class="font-700 tabular-nums"></span></p>
+  </div>
+
+  <header class="bg-ivory/95 backdrop-blur border-b border-claret/10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5" aria-label="Back to Heart Note">
+        <img src="brand_assets/heartnote-mark.png" alt="" style="height:30px;width:auto" onerror="this.style.display='none'" />
+        <span class="font-display text-claret text-[1.2rem] font-500 tracking-tight">Heart&nbsp;Note</span>
       </a>
-      <div class="flex items-center gap-2 text-ink-soft font-600 text-sm">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C6973F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p class="text-ink-soft text-[.82rem] font-600 flex items-center gap-1.5">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         Secure checkout
-      </div>
+      </p>
     </div>
   </header>
   </div>
 
-  <main class="max-w-5xl mx-auto px-6 py-10 md:py-14">
-    <div class="max-w-2xl">
-      <p class="text-claret font-700 tracking-[.14em] uppercase text-[.8rem] mb-3">Create your Heart Note</p>
-      <h1 class="font-display font-500 text-claret text-[2.2rem] md:text-[2.8rem] leading-[1.1]">Tell us about the moment</h1>
-      <p class="mt-3 text-ink/80 text-[1.1rem]">Share the details and we'll craft a personal song from them. The more you tell us, the more personal your song will be.</p>
-    </div>
+  <!-- ================= PHASE 1: QUIZ ================= -->
+  <main id="phaseQuiz" class="phase live">
+    <div class="max-w-lg lg:max-w-xl mx-auto px-5 py-8 md:py-12">
 
-    <div id="canceledNote" class="hidden mt-6 max-w-2xl rounded-xl border border-gold/50 bg-gold/10 px-5 py-4 text-ink">
-      Your payment was canceled and no charge was made. Your details are still here whenever you're ready.
-    </div>
+      <div class="flex items-center justify-between text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">
+        <span id="stepLabel">Step 1 of 7</span>
+        <span class="text-claret">About 5 minutes</span>
+      </div>
+      <div class="mt-2.5 h-1.5 rounded-full bg-claret/12 overflow-hidden" aria-hidden="true">
+        <div id="stepBar" class="h-full rounded-full bg-gradient-to-r from-claret to-gold transition-[width] duration-500" style="width:14%"></div>
+      </div>
 
-    <form id="orderForm" class="mt-10 grid lg:grid-cols-[1fr_360px] gap-10 items-start">
-      <!-- Left: the brief -->
-      <div class="space-y-7">
-        <!-- Tier -->
-        <fieldset>
-          <legend class="font-display text-claret text-xl mb-3">Choose your package</legend>
-          <div class="grid sm:grid-cols-3 gap-3" id="tiers">
-            <label><input type="radio" name="tier" value="single" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Single</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$59</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$89</span></span><p class="text-sm text-ink-soft mt-1">One personalized song (MP3)</p></div>
-            </label>
-            <label><input type="radio" name="tier" value="deluxe" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Deluxe</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$69</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$109</span></span><p class="text-sm text-ink-soft mt-1">2 versions &middot; Premium Audio Quality</p></div>
-            </label>
-            <label><input type="radio" name="tier" value="experience" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$89</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$139</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; remastered</p></div>
-            </label>
-          </div>
-          <div id="tierRecap" class="lg:hidden mt-3 rounded-xl bg-blush/20 border border-claret/10 px-4 py-3"></div>
-        </fieldset>
+      <!-- STEP 1: who + about them -->
+      <section class="step live" data-step="1">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Who is this song for?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Tell us who will treasure this song.</p>
 
-        <!-- Single-song brief -->
-        <div id="singleFields" class="space-y-7">
-          <div>
-            <label for="occasion" class="req">What's the occasion?</label>
-            <select id="occasion" name="occasion" class="field">
-              <option value="">Choose one…</option>
-              <option>Birthday</option><option>Proposal</option><option>Wedding</option><option>Anniversary</option>
-              <option>Christmas</option><option>Faith &amp; Blessings</option><option>New Baby</option>
-              <option>Graduation</option><option>Retirement</option><option>Celebration of Life</option>
-              <option>Just because</option><option>Other</option>
-            </select>
-            <div id="occasionOtherWrap" class="hidden mt-3">
-              <input type="text" id="occasionOther" name="occasionOther" class="field" placeholder="Please tell us the occasion" autocomplete="off" />
-            </div>
-          </div>
-
-          <div class="grid sm:grid-cols-2 gap-5">
-            <div>
-              <label for="recipient" class="req">Who is the song for?</label>
-              <input type="text" id="recipient" name="recipient" class="field" placeholder="e.g. Grandma Rose" autocomplete="off" />
-            </div>
-            <div>
-              <label for="style" class="req">Style of music</label>
-              <select id="style" name="style" class="field">
-                <option value="">Choose one…</option>
-                <option>Pop</option><option>Country</option><option>Folk / Acoustic</option>
-                <option>Singer-songwriter</option><option>Piano ballad</option><option>Soul / R&amp;B</option>
-                <option>Rock</option><option>Indie / Alternative</option><option>Hip-hop / Rap</option>
-              </select>
-            </div>
-          </div>
-
-
-          <div>
-            <label for="story" class="req">Tell us their story</label>
-            <p class="text-ink-soft text-sm -mt-1 mb-2">Names, memories, milestones, little habits, inside jokes, how you met, what makes them <em>them</em>. Don't hold back. The more you share, the more personal your song will be, and we read every word. A few sentences works far better than a line or two.</p>
-            <textarea id="story" name="story" maxlength="5000" class="field" placeholder="Grandma Rose raised five kids on the farm outside Ames. She still tends her Sunday garden, hums hymns while she bakes, calls everyone 'sugar,' and never misses a grandkid's game…"></textarea>
-            <p class="flex justify-between gap-3 text-xs text-ink-soft mt-1"><span id="storyHint">The more you write, the better the song.</span><span><span id="storyCount">0</span>/5000</span></p>
-          </div>
-
-          <div>
-            <label for="details">Anything we must include? <span class="font-400 text-ink-soft text-sm">(optional)</span></label>
-            <p class="text-ink-soft text-sm -mt-1 mb-2">Specific names, dates, places, phrases, or an inside joke you'd love in the lyrics.</p>
-            <textarea id="details" name="details" maxlength="5000" class="field" style="min-height:110px" placeholder="Please include the names Rose, Tom, and the grandkids: Emily, Jack, and Nora. Work in 'meet me in the garden' if you can."></textarea>
-            <p class="text-right text-xs text-ink-soft mt-1"><span id="detailsCount">0</span>/5000</p>
-          </div>
-
-        </div>
-
-        <!-- Shared: your name -->
-        <div>
-          <label for="sender">Your name (how they'll know it's from you)</label>
-          <input type="text" id="sender" name="sender" class="field" placeholder="e.g. Emily" autocomplete="off" />
-        </div>
-
-        <!-- Voice add-on -->
-        <div id="voiceAddonSection">
-          <label>Choose your voice <span class="font-400 text-ink-soft text-sm">(optional, +$10)</span></label>
-          <p class="text-ink-soft text-sm -mt-1 mb-2">Prefer a particular voice for the vocals? Add one for $10.</p>
-          <div class="grid grid-cols-2 gap-3">
-            <label><input type="radio" name="voiceAddon" value="no" class="sr-only" checked /><div class="opt text-center">No thanks</div></label>
-            <label><input type="radio" name="voiceAddon" value="yes" class="sr-only" /><div class="opt text-center">Yes, choose a voice (+$10)</div></label>
-          </div>
-          <div id="voicePicker" class="hidden mt-3">
-            <p class="text-ink-soft text-sm mb-2.5">Press play to hear each voice, then pick your favorite.</p>
-            <div class="grid sm:grid-cols-2 gap-2.5" id="voiceGrid"></div>
-          </div>
-        </div>
-
-      <!-- Right: summary -->
-      <aside class="lg:sticky lg:top-28">
-        <div class="bg-white rounded-2xl border border-claret/12 shadow-[0_18px_40px_-20px_rgba(110,20,35,.3)] p-6">
-          <h2 class="font-display text-claret text-xl">Order summary</h2>
-          <div class="mt-4 flex items-baseline justify-between gap-3">
-            <span class="font-700 text-ink" id="sumTier">Deluxe Package</span>
-            <span class="font-display text-xl text-claret" id="sumTierPrice">$69</span>
-          </div>
-          <ul id="sumIncludes" class="mt-4 space-y-2 text-[.98rem] text-ink/85"></ul>
-
-          <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
-            <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
-            <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span id="sumVoiceLabel">Choose your voice</span><span id="sumVoiceAmt">+$10</span></div>
-            <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$69</span></div>
-            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="text-[1.05rem] font-600 text-ink-soft/85 line-through decoration-claret/60 decoration-2">$109</span> <span class="text-claret font-700">You save <span id="sumSave">$40</span></span></p>
-          </div>
-
-          <button type="submit" id="submitBtn" class="btn-primary w-full mt-6 flex items-center justify-center gap-2">
-            <span id="submitLabel">Continue to secure payment</span>
+        <div class="mt-6 grid gap-3">
+          <button type="button" class="optcard" data-who="someone">
+            <span class="flex items-center gap-3.5">
+              <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg></span>
+              <span><span class="block font-display text-claret text-[1.15rem]">Someone else</span><span class="block text-ink-soft text-[.9rem]">A gift for a loved one</span></span>
+            </span>
           </button>
-          <div id="formError" class="hidden mt-3 rounded-xl border-2 border-claret bg-claret/8 px-4 py-3 flex items-start gap-3" role="alert" aria-live="assertive">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E1423" stroke-width="2.2" stroke-linecap="round" class="shrink-0 mt-0.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5"/><path d="M12 16h.01"/></svg>
-            <p id="formErrorText" class="text-claret font-700 text-[.98rem] leading-snug"></p>
-          </div>
-
-          <div class="mt-4 flex items-center justify-center gap-2 text-ink-soft text-xs">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Payments securely processed by Stripe
-          </div>
-          <p class="mt-4 text-center text-ink-soft text-sm border-t border-claret/10 pt-4">Backed by our happiness promise.</p>
-          <p class="mt-2 text-center text-ink-soft text-xs">By continuing, you agree to our <a href="terms.html" target="_blank" rel="noopener" class="text-claret font-600 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">Terms &amp; Refund Policy</a>
-            <a href="privacy.html" target="_blank" rel="noopener" class="text-claret font-600 underline decoration-gold/50 underline-offset-2 hover:decoration-gold">Privacy</a>.</p>
+          <button type="button" class="optcard" data-who="myself">
+            <span class="flex items-center gap-3.5">
+              <span class="grid place-items-center w-11 h-11 rounded-full bg-blush/50 text-claret shrink-0" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg></span>
+              <span><span class="block font-display text-claret text-[1.15rem]">Myself</span><span class="block text-ink-soft text-[.9rem]">A personal song</span></span>
+            </span>
+          </button>
         </div>
-      </aside>
-    </form>
+
+        <div id="aboutThem" class="hidden mt-6 space-y-4">
+          <div>
+            <label for="qName" class="block font-700 text-ink text-[.95rem] mb-1.5">Their name</label>
+            <input id="qName" class="field" type="text" placeholder="Enter their name" autocomplete="off" />
+          </div>
+          <div>
+            <label for="qRel" class="block font-700 text-ink text-[.95rem] mb-1.5">Your relationship <span class="font-400 text-ink-soft">(optional)</span></label>
+            <input id="qRel" class="field" type="text" placeholder="e.g., my mother, a friend, my spouse" autocomplete="off" />
+          </div>
+        </div>
+
+        <div id="aboutYou" class="hidden mt-4">
+          <label for="qYourName" class="block font-700 text-ink text-[.95rem] mb-1.5">Your name</label>
+          <input id="qYourName" class="field" type="text" placeholder="Enter your first name" autocomplete="given-name" />
+          <p class="mt-1.5 text-ink-soft text-[.85rem]">So they know who it is from, and so we can address your song page to you.</p>
+        </div>
+      </section>
+
+      <!-- STEP 2: occasion -->
+      <section class="step" data-step="2">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">What's the occasion?</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">We'll shape the song around the moment.</p>
+        <div id="occasionGrid" class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-2.5"></div>
+        <input id="qOccasionOther" class="field mt-3 hidden" type="text" placeholder="Tell us the occasion" autocomplete="off" />
+      </section>
+
+      <!-- STEP 3: style + tempo -->
+      <section class="step" data-step="3">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose your style</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">The sound the song is built on.</p>
+        <div id="styleGrid" class="mt-6 grid grid-cols-3 gap-2.5"></div>
+        <p class="mt-7 font-700 text-ink text-[.95rem]">Tempo</p>
+        <div id="tempoGrid" class="mt-2 grid grid-cols-3 gap-2.5"></div>
+      </section>
+
+      <!-- STEP 4: voice -->
+      <section class="step" data-step="4">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose the voice</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Who should sing their song?</p>
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <button type="button" class="optcard text-center" data-voice="Female">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-blush/50 text-claret mx-auto" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>
+            <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Female voice</span>
+          </button>
+          <button type="button" class="optcard text-center" data-voice="Male">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-blush/50 text-claret mx-auto" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>
+            <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Male voice</span>
+          </button>
+        </div>
+
+        <div id="voicePickWrap" class="hidden mt-5">
+          <button type="button" id="voiceToggle" class="text-claret font-700 text-[.95rem] underline decoration-gold/50 underline-offset-2 cursor-pointer">Or pick a specific singer</button>
+          <div id="voiceList" class="hidden mt-3 space-y-2"></div>
+          <p id="voicePickNote" class="hidden mt-2 text-ink-soft text-[.85rem]">Optional. Leave it and we will match the best singer to your style.</p>
+        </div>
+      </section>
+
+      <!-- STEP 5: story -->
+      <section class="step" data-step="5">
+        <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Share your story</h1>
+        <p class="mt-2 text-ink/70 text-[1.02rem]">Tell us about the person, moment, or message you want to capture.</p>
+
+        <div class="mt-5">
+          <button type="button" id="helpToggle" aria-expanded="false" aria-controls="helpPanel"
+            class="inline-flex items-center gap-2 rounded-full border border-claret/25 bg-blush/35 px-4 py-2.5 text-claret font-700 text-[.93rem] cursor-pointer transition-colors hover:bg-blush/60 focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.2 2.4c-.7.25-1.3.9-1.3 1.7v.3"/><path d="M12 17.2h.01"/></svg>
+            <span>Need help writing this?</span>
+            <svg id="helpChevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transition:transform .2s ease"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div id="helpPanel" hidden class="mt-3 rounded-2xl border border-claret/15 bg-ivory-deep/70 p-4 sm:p-5">
+            <p class="text-ink/80 text-[.95rem] leading-relaxed">You do not have to write it perfectly, or answer all of these. Pick the ones that ring true and answer them in your own words. The small, specific details are what make the song sound like them.</p>
+            <p id="helpFor" class="mt-4 text-claret font-700 text-[.78rem] tracking-[.12em] uppercase"></p>
+            <ul id="helpList" class="mt-2 space-y-1.5"></ul>
+            <p class="mt-3.5 text-ink-soft text-[.83rem] leading-snug">Tap any question to drop it into your story, then write your answer underneath. The questions themselves do not count toward the meter.</p>
+          </div>
+        </div>
+
+        <textarea id="qStory" class="field mt-5 min-h-[11rem] resize-y" placeholder="Describe the memory, the person, or what you want this song to say. The more detail you share, the more personal your song will be."></textarea>
+        <div class="mt-3">
+          <div class="flex items-center justify-between text-[.82rem] font-600">
+            <span id="meterHint" class="text-ink-soft">Start typing to fill the meter</span>
+            <span id="meterPct" class="text-claret font-700">0%</span>
+          </div>
+          <div class="mt-1.5 h-2 rounded-full bg-claret/12 overflow-hidden">
+            <div id="meterFill" class="h-full rounded-full bg-gradient-to-r from-gold to-claret" style="width:0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz nav -->
+      <div class="mt-9 flex items-center gap-3">
+        <button type="button" id="backBtn" class="btn btn-ghost !px-6" hidden>Back</button>
+        <button type="button" id="nextBtn" class="btn btn-primary flex-1" disabled>Next</button>
+      </div>
+      <p id="stepNote" class="mt-3 text-center text-ink-soft text-[.85rem]">No account needed. Your answers are saved as you go.</p>
+    </div>
   </main>
 
-  <script>
-    const STORAGE_KEY = 'heartnote_order_v1';
-    const VOICE_ADDON = 10;
-    const ADDONS = { voice: 10 };
-    const TIERS = {
-      single:     { name: 'Single',             price: 59, compare: 89,  versions: 1, included: [],                includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
-      deluxe:     { name: 'Deluxe',             price: 69, compare: 109,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
-      experience: { name: 'Experience Package', price: 89, compare: 139, versions: 3, included: [], includes: ['Three versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
-    };
-    const params = new URLSearchParams(location.search);
-    const form = document.getElementById('orderForm');
-    const $ = (id) => document.getElementById(id);
-    const money = (n) => '$' + n;
+  <!-- ================= PHASE 2: EMAIL ================= -->
+  <main id="phaseEmail" class="phase">
+    <div class="max-w-lg mx-auto px-5 py-10 md:py-14">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 bg-white border border-claret/15 text-claret text-[.8rem] font-700 px-3.5 py-1.5 rounded-full shadow-lift">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Your answers are saved
+        </span>
+        <p class="mt-4 text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">Step 2 of 3</p>
+        <h1 class="mt-3 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Where should we send <span id="emailOccasion">the song</span>?</h1>
+        <p class="mt-2.5 text-ink/70 text-[1.02rem]">Your private song page arrives by email within 24 hours.</p>
+      </div>
 
-    function currentTier() {
-      const r = form.querySelector('input[name=tier]:checked');
-      return (r && TIERS[r.value]) ? r.value : 'deluxe';
+      <div class="mt-7">
+        <label for="qEmail" class="sr-only">Your email</label>
+        <input id="qEmail" class="field text-center" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
+        <button type="button" id="emailNext" class="btn btn-primary w-full mt-4" disabled>Continue</button>
+        <p class="mt-4 text-center"><button type="button" id="emailBack" class="inline-flex items-center gap-1.5 text-claret font-700 text-[.9rem] cursor-pointer underline decoration-gold/60 underline-offset-4 transition-colors hover:text-claret-deep focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to my answers</button></p>
+        <p class="mt-4 text-center text-ink-soft text-[.85rem] flex items-center justify-center gap-3">
+          <span class="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure and private</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>Our happiness promise</span>
+        </p>
+      </div>
+
+      <figure class="m-0 mt-9 bg-white rounded-[18px] border border-claret/12 shadow-keepsake p-5">
+        <blockquote class="font-display italic text-claret text-[1.15rem] leading-relaxed">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</blockquote>
+        <figcaption class="mt-3 flex items-center gap-2.5">
+          <span class="grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory font-display text-[.95rem]" aria-hidden="true">B</span>
+          <div><p class="font-700 text-ink text-[.9rem]">Bob</p><p class="text-ink-soft text-[.8rem]">An anniversary song for Patricia</p></div>
+        </figcaption>
+      </figure>
+    </div>
+  </main>
+
+  <!-- ================= PHASE 3: CHECKOUT ================= -->
+  <main id="phaseCheckout" class="phase">
+    <div class="max-w-5xl mx-auto px-5 py-8 md:py-12">
+      <div class="text-center max-w-2xl mx-auto">
+        <p class="text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">Step 3 of 3</p>
+        <h1 class="mt-3 font-display font-500 text-claret text-[2rem] md:text-[2.5rem] leading-[1.1] tracking-tight">Almost there, one last step</h1>
+        <p class="mt-2.5 text-ink/75 text-[1.05rem]">Imagine <span class="coPoss font-700 text-claret">their</span> face when the song plays for the first time.</p>
+      </div>
+
+      <div class="mt-9 grid md:grid-cols-[1fr_22rem] gap-7 items-start">
+
+        <!-- Order card: first on mobile, sticky right on desktop -->
+        <aside class="md:order-2 md:sticky md:top-28">
+          <div class="bg-white rounded-[22px] ring-2 ring-claret/70 shadow-keepsake p-6">
+            <h2 class="font-display text-claret text-[1.3rem] leading-tight"><span class="coPoss" data-cap>Their</span> song is reserved</h2>
+            <p class="mt-1 text-ink-soft text-[.88rem]">We'll send it to <span id="coEmail" class="font-700 text-ink">you</span> &middot; <button type="button" id="changeEmail" class="text-claret font-700 underline decoration-gold/60 underline-offset-2 cursor-pointer">change</button></p>
+
+            <p class="mt-5 font-700 text-ink text-[.92rem]">Pick your package</p>
+            <div id="pkgList" class="mt-2.5 space-y-2"></div>
+
+            <button type="button" id="payBtn" class="btn btn-primary w-full mt-5">Complete my purchase</button>
+            <p class="mt-3.5 text-center"><button type="button" id="checkoutBack" class="inline-flex items-center gap-1.5 text-claret font-700 text-[.9rem] cursor-pointer underline decoration-gold/60 underline-offset-4 transition-colors hover:text-claret-deep focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to my answers</button></p>
+            <p id="payErr" class="hidden mt-3 text-center text-[.85rem] font-700 text-claret bg-blush/40 rounded-lg py-2 px-3"></p>
+            <p class="mt-3.5 text-center text-ink-soft text-[.82rem] flex items-center justify-center gap-3">
+              <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Stripe secure checkout</span>
+              <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.65-9.5 9-9.5 9z"/></svg>Happiness promise</span>
+            </p>
+            <p class="mt-2.5 text-center text-ink-soft text-[.78rem]">If it isn't right, tell us and we'll keep working until you love it.</p>
+          </div>
+          <p class="mt-3 text-center text-ink-soft text-[.82rem]">Delivered within 24 hours of your order.</p>
+        </aside>
+
+        <!-- Content column -->
+        <div class="md:order-1 min-w-0 space-y-7">
+
+          <!-- Letter -->
+          <div class="bg-white rounded-[20px] border border-gold/40 shadow-lift p-6 md:p-7">
+            <p class="font-display text-claret text-[1.1rem]">Dear <span class="coBuyer">friend</span>,</p>
+            <div class="mt-3 space-y-3 text-ink/85 text-[.98rem]">
+              <p>We can tell you've put real thought into this gift for <span class="coFirst font-700">them</span>. Songs like this are usually commissioned from professional songwriters for hundreds of dollars. We built Heart Note so a gift this personal doesn't have to cost that.</p>
+              <p>Thank you for trusting us with <span class="coPoss font-700">their</span> story. We can't wait to bring it to life.</p>
+            </div>
+            <p class="mt-4 font-display italic text-claret text-[1.05rem]">Paul and the Heart Note team</p>
+          </div>
+
+          <!-- Reviews -->
+          <div>
+            <h2 class="font-display text-claret text-[1.35rem] flex items-center gap-2"><span class="text-gold" aria-hidden="true">&#9733;</span> Real customer replies</h2>
+            <div class="mt-4 space-y-3">
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-4.5 p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;The song was PERFECT!!! She will love it.&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Bob &middot; an anniversary song for Patricia</figcaption>
+              </figure>
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;I thought all 3 songs were great!&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Daniel &middot; three versions for Cheryl</figcaption>
+              </figure>
+              <figure class="m-0 bg-white rounded-[16px] border border-claret/12 shadow-lift p-5">
+                <blockquote class="text-ink/85 text-[.95rem] italic">&ldquo;This was WONDERFUL!&rdquo;</blockquote>
+                <figcaption class="mt-2 text-[.82rem] text-ink-soft">Dianne &middot; a song for Bill</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <!-- Samples -->
+          <div class="bg-claret-deep rounded-[20px] p-6 text-ivory">
+            <h2 class="font-display text-[1.35rem] flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              Hear real <span id="coOccasionSongs">Heart Notes</span>
+            </h2>
+            <p class="mt-1.5 text-ivory/70 text-[.9rem]">Imagine <span class="coFirst">them</span> hearing a song like this, made only for <span id="coPronoun">them</span>.</p>
+            <div id="coSamples" class="mt-4 space-y-2.5"></div>
+            <p class="mt-3.5 text-gold-soft text-[.85rem] text-center font-600">Your song will be just as personal.</p>
+          </div>
+
+          <!-- Real reactions: the same carousel as the landing page, so the
+               proof sits on the page where they finish rather than sending
+               them somewhere they can wander off. -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem]">See what this moment looks like</h2>
+            <p class="mt-1.5 text-ink/75 text-[.95rem]">Real families hearing their song for the first time, filmed by them. This could be <span class="coFirst font-700">them</span>.</p>
+            <div id="vtrack" class="snaptrack flex gap-4 overflow-x-auto -mx-6 px-6 mt-4 pb-2" tabindex="0" aria-label="Customer reaction videos, scroll sideways">
+<button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-claire.mp4" data-title="For their anniversary" aria-label="Watch: For their anniversary. Mom's reaction, in full. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-claire.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For their anniversary</span><span class="block text-ivory/80 text-sm mt-0.5">Mom's reaction, in full</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-pauls-aunt.mp4" data-title="For his aunt" aria-label="Watch: For his aunt. A thank-you, set to music. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-pauls-aunt.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For his aunt</span><span class="block text-ivory/80 text-sm mt-0.5">A thank-you, set to music</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-jill.mp4" data-title="For Jill" aria-label="Watch: For Jill. Their whole life, in one song. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-jill.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For Jill</span><span class="block text-ivory/80 text-sm mt-0.5">Their whole life, in one song</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-husband.mp4" data-title="For her husband" aria-label="Watch: For her husband. Hearing their story. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-husband.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For her husband</span><span class="block text-ivory/80 text-sm mt-0.5">Hearing their story</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-car.mp4" data-title="First listen, in the car" aria-label="Watch: First listen, in the car. A song for her husband. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-car.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">First listen, in the car</span><span class="block text-ivory/80 text-sm mt-0.5">A song for her husband</span></span>
+          </button>
+          <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-dad-birthday.mp4" data-title="For Dad's birthday" aria-label="Watch: For Dad's birthday. His reaction to the lyrics. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-dad-birthday.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">For Dad's birthday</span><span class="block text-ivory/80 text-sm mt-0.5">His reaction to the lyrics</span></span>
+          </button>
+        <button type="button" class="vcard group relative shrink-0 w-[15.5rem] aspect-[9/16] rounded-[22px] overflow-hidden ring-1 ring-gold/30 shadow-keepsake text-left cursor-pointer"
+                  data-video="https://frecxbrnczqlyicbjssr.supabase.co/storage/v1/object/public/Media/ugc-tiffany.mp4" data-title="Played it for her husband" aria-label="Watch: Played it for her husband. She was not ready for his reaction. Opens a larger player with sound.">
+            <img src="videos/poster-ugc-tiffany.jpg" alt="" width="540" height="960" decoding="async" class="vposter absolute inset-0 w-full h-full object-cover" />
+            <span class="absolute inset-0 bg-gradient-to-t from-claret-dark/85 via-claret-dark/10 to-transparent" aria-hidden="true"></span>
+            <span class="heroPulse absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center w-14 h-14 rounded-full bg-claret text-ivory ring-1 ring-ivory/40" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-ivory/90 text-claret text-[.66rem] font-700 tracking-[.08em] uppercase px-2.5 py-1 rounded-full" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>With sound</span>
+            <span class="absolute inset-x-0 bottom-0 p-4" aria-hidden="true"><span class="block font-display text-ivory text-xl leading-tight">Played it for her husband</span><span class="block text-ivory/80 text-sm mt-0.5">Not ready for his reaction</span></span>
+          </button>
+            </div>
+            <p class="mt-3 text-center text-ink-soft text-[.85rem]">Tap any video to watch it with sound</p>
+          </div>
+
+          <!-- Regular gift vs Heart Note -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem] text-center">The difference is unmistakable</h2>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-[14px] border border-claret/12 p-4">
+                <p class="text-[.72rem] font-700 tracking-[.1em] uppercase text-ink-soft">A regular gift</p>
+                <ul class="mt-2.5 space-y-2 text-[.88rem] text-ink/70">
+                  <li>Forgotten in days</li>
+                  <li>Says &ldquo;I grabbed something&rdquo;</li>
+                  <li>A polite thank you, then nothing</li>
+                </ul>
+              </div>
+              <div class="rounded-[14px] bg-claret text-ivory p-4">
+                <p class="text-[.72rem] font-700 tracking-[.1em] uppercase text-gold-soft">A Heart Note</p>
+                <ul class="mt-2.5 space-y-2 text-[.88rem]">
+                  <li>Treasured forever</li>
+                  <li>Says &ldquo;I truly see you&rdquo;</li>
+                  <li>Happy tears, played on repeat</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Promise -->
+          <div class="bg-white rounded-[20px] border border-gold/40 shadow-lift p-6 flex gap-4">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-claret text-gold-pale shrink-0" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <div>
+              <h2 class="font-display text-claret text-[1.2rem]">Our promise to you</h2>
+              <p class="mt-1.5 text-ink/80 text-[.92rem]">If a line isn't right or the feel is off, tell us. We keep working until you love it.</p>
+            </div>
+          </div>
+
+          <!-- Everything included -->
+          <div class="bg-white rounded-[20px] border border-claret/12 shadow-lift p-6">
+            <h2 class="font-display text-claret text-[1.35rem]">Everything included</h2>
+            <ul class="mt-3.5 space-y-2.5 text-ink/85 text-[.95rem]">
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A fully produced original song, written from your story</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Personal lyrics: <span class="coPoss">their</span> name, your memories, your themes</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>A private song page to stream, download, and share forever</li>
+              <li class="flex gap-2.5"><svg class="shrink-0 mt-1 text-gold" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Delivered within 24 hours</li>
+            </ul>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">4.5<span class="text-gold text-[1rem]">&#9733;</span></p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Customer rating</p></div>
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">1,200+</p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Families</p></div>
+            <div class="bg-white rounded-[16px] border border-claret/12 p-4"><p class="font-display text-claret text-[1.3rem]">24h</p><p class="text-ink-soft text-[.75rem] font-600 mt-0.5">Delivery</p></div>
+          </div>
+
+          <p class="text-center text-ink-soft text-[.8rem]">By completing your order you agree to our <a href="terms.html" class="underline decoration-gold/50 underline-offset-2 text-claret font-600">Terms</a> and <a href="privacy.html" class="underline decoration-gold/50 underline-offset-2 text-claret font-600">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div id="vLightbox" class="hidden fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Customer reaction video">
+    <div id="vScrim" class="absolute inset-0 bg-claret-dark/95"></div>
+    <div class="relative h-full grid place-items-center p-4">
+      <video id="vPlayer" class="max-h-[82vh] max-w-[92vw] aspect-[9/16] rounded-2xl ring-1 ring-gold/40 bg-black shadow-keepsake" controls playsinline preload="none"></video>
+      <button type="button" id="vClose" aria-label="Close video" class="absolute top-4 right-4 grid place-items-center w-11 h-11 rounded-full bg-ivory/95 text-claret shadow-lift cursor-pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- state ----------
+  var KEY = 'hn_v3_quiz';
+  var LEGACY_KEY = 'hn_v2_quiz';   // this page was /v2-order before the rename
+  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', tempo: '', voice: '', singer: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
+  try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || '{}')); } catch (e) {}
+  var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var STORY_TARGET = 280; // roughly three to four sentences
+
+  // ---------- data ----------
+  var OCCASIONS = [
+    { n: 'Anniversary', badge: 'hot' }, { n: 'Wedding', badge: 'trend' }, { n: 'Birthday', badge: 'trend' },
+    { n: 'Just because' }, { n: 'Encouragement' }, { n: 'Memorial' }, { n: 'Worship' },
+    { n: "Mother's Day" }, { n: "Father's Day" }, { n: 'Retirement' }, { n: 'Baptism' },
+    { n: 'Baby lullaby' }, { n: 'Engagement' }, { n: 'Other' }
+  ];
+  // Guided prompts for the story step. A blank box is the hardest thing to
+  // answer and it is where people stall, so each occasion gets questions of
+  // its own. Tapping one drops it into the box to answer underneath.
+  var STORY_PROMPTS = {
+    'Anniversary': [
+      'Where did you two meet, and what did you first think of them?',
+      'How long have you been together?',
+      'What was the wedding day like, or the moment you knew?',
+      'Do you have children or grandchildren? What are their names?',
+      'What small daily habit of theirs would you miss most?',
+      'What have you come through together that made you stronger?',
+      'What would you say to them if the room went quiet?'
+    ],
+    'Wedding': [
+      'How did you meet, and who made the first move?',
+      'How did the proposal happen?',
+      'What does an ordinary Sunday look like for you two?',
+      'What do they do that still surprises you?',
+      'Who will be in the room when this plays?',
+      'What are you most looking forward to?'
+    ],
+    'Birthday': [
+      'How old are they turning, and does it feel like a milestone?',
+      'What were they like when you first met them?',
+      'What is the funniest thing they have ever done?',
+      'What do they always say, word for word?',
+      'What changed for them this past year?',
+      'What do you admire about them that you rarely say out loud?'
+    ],
+    'Just because': [
+      'What made you think of doing this today?',
+      'What is a small thing they did for you that you never forgot?',
+      'What is your favorite memory of the two of you?',
+      'What do they not realize about how much they matter?',
+      'What inside joke would only they understand?'
+    ],
+    'Encouragement': [
+      'What are they going through right now?',
+      'What have you watched them get through before?',
+      'What do you want them to remember on the hard days?',
+      'Who is in their corner?',
+      'What would you tell them if they could really hear it?'
+    ],
+    'Memorial': [
+      'What was their name, and what did people call them?',
+      'What is the first memory that comes to mind?',
+      'What did they always say?',
+      'What did they love: a place, a song, a routine?',
+      'Who did they leave behind, and what did they pass on?',
+      'What would you want them to know now?'
+    ],
+    'Worship': [
+      'What is this song giving thanks for?',
+      'Is there a verse, psalm, or hymn that belongs in it?',
+      'What has your faith carried you through?',
+      'Who is this for: a congregation, someone you love, or yourself?',
+      'Is there a prayer you are marking as answered?'
+    ],
+    "Mother's Day": [
+      'What did she do for you that you understand better now?',
+      'What did the house smell like growing up?',
+      'What does she always say?',
+      'What did she give up that she never mentions?',
+      'What do you do now because she taught you?',
+      'What would you thank her for if you had one minute?'
+    ],
+    "Father's Day": [
+      'What did he teach you, on purpose or by accident?',
+      'What did the two of you do together?',
+      'What does he always say?',
+      'When were you proudest of him?',
+      'What do you catch yourself doing exactly like him?',
+      'What have you never quite told him?'
+    ],
+    'Retirement': [
+      'What did they do, and for how long?',
+      'What were they known for at work?',
+      'Who did they help along the way?',
+      'What is the story people always retell about them?',
+      'What are they going to do with all that time?'
+    ],
+    'Baptism': [
+      'Who is being baptized, and how old are they?',
+      'Who is standing with them on the day?',
+      'What do you pray this life holds for them?',
+      'Is there a verse chosen for the day?',
+      'What does this day mean to your family?'
+    ],
+    'Baby lullaby': [
+      "What is the baby's name, and what does it mean to you?",
+      'Who has been waiting for them?',
+      'What was the day they arrived like?',
+      'What do you whisper to them at three in the morning?',
+      'What do you hope they grow up knowing?'
+    ],
+    'Engagement': [
+      'How did you meet?',
+      'How did the proposal happen, and did they see it coming?',
+      'What did you know the moment they said yes?',
+      'What are you two like together on an ordinary day?',
+      'What are you most excited to build?'
+    ]
+  };
+  // Used for "Other", and any occasion without a set of its own.
+  var STORY_PROMPTS_DEFAULT = [
+    'Who is this song for, and what do you call them?',
+    'What is the occasion, or the moment you want to mark?',
+    'What is the memory you keep coming back to?',
+    'What do they always say?',
+    'What is something only the people close to them would know?',
+    'What do you want them to feel when they hear it?'
+  ];
+
+  var STYLES = ['Country','Pop','Acoustic','Rock','Singer-Songwriter','R&B','Faith','Cinematic','Lullaby'];
+  // Optional: a specific singer. Lily is not taking work at the moment.
+  var SINGERS = [
+    { name: 'Harper',  voice: 'Female', desc: 'country',    src: 'audio/voices/voice-harper.mp3' },
+    { name: 'Gabriel', voice: 'Female', desc: 'pop',        src: 'audio/voices/voice-gabriel.mp3' },
+    { name: 'Lily',    voice: 'Female', desc: 'joyful pop', src: 'audio/voices/voice-lily.mp3', unavailable: true },
+    { name: 'Brett',   voice: 'Male',   desc: 'country',    src: 'audio/voices/voice-brett.mp3' },
+    { name: 'Cameron', voice: 'Male',   desc: 'pop',        src: 'audio/voices/voice-cameron.mp3' },
+    { name: 'Justin',  voice: 'Male',   desc: 'soul',       src: 'audio/voices/voice-justin.mp3' },
+    { name: 'Shaun',   voice: 'Male',   desc: 'hip hop',    src: 'audio/voices/voice-shaun.mp3' }
+  ];
+  var TEMPOS = ['Slow','Medium','Upbeat'];
+  var PKGS = [
+    { key: 'single', name: 'Single', price: 59, was: 89, desc: 'One finished song',
+      gets: ['One complete song, written from your story', 'Yours to download and keep forever', 'Delivered within 24 hours'] },
+    { key: 'deluxe', name: 'Deluxe', price: 69, was: 109, desc: 'Two versions to choose from',
+      gets: ['Two versions written from your story', 'Hear both, then keep the one you love', 'Premium sound quality files', 'Delivered within 24 hours'] },
+    { key: 'experience', name: 'Experience', price: 89, was: 139, desc: 'Three versions to choose from', best: true,
+      gets: ['Three versions written from your story', 'Hear all three, then keep the one you love', 'Premium sound quality files', 'Remastered for a radio-quality finish', 'Delivered within 24 hours'] }
+  ];
+  var SAMPLES = [
+    { title: 'The Old Man Called David', note: 'Country',    src: 'audio/sample-fathers-day.mp3' },
+    { title: 'Forever Starts Tonight',   note: 'Country pop', src: 'audio/sample-first-dance.mp3' },
+    { title: 'Tonight We Start',         note: 'Upbeat pop',  src: 'audio/sample-reception.mp3' },
+    { title: 'Here Comes Grace',         note: 'Acoustic',    src: 'audio/sample-groom-aisle.mp3' }
+  ];
+
+  // ---------- build grids ----------
+  OCCASIONS.forEach(function (o) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = o.n; b.dataset.occasion = o.n;
+    if (o.badge === 'hot') b.insertAdjacentHTML('beforeend', '<span class="badge badge-hot">Hot</span>');
+    if (o.badge === 'trend') b.insertAdjacentHTML('beforeend', '<span class="badge badge-trend">Trending</span>');
+    $('occasionGrid').appendChild(b);
+  });
+  STYLES.forEach(function (s) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = s; b.dataset.style = s;
+    $('styleGrid').appendChild(b);
+  });
+  TEMPOS.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = t; b.dataset.tempo = t;
+    $('tempoGrid').appendChild(b);
+  });
+
+  // ---------- step engine ----------
+  var TOTAL = 5;
+  function validStep(n) {
+    switch (n) {
+      case 1: return !!state.who && state.yourName.trim().length > 0
+                     && (state.who === 'myself' || state.name.trim().length > 0);
+      // An occasion in words, so the Next button blocks what the server would
+      // refuse later with a generic error the customer could not act on.
+      case 2: return !!state.occasion && (state.occasion !== 'Other' || /[a-z]{2}/i.test(state.occasionOther));
+      case 3: return !!state.style && !!state.tempo;
+      case 4: return !!state.voice;
+      case 5: return answerLength(state.story) >= STORY_TARGET;
+      default: return false;
     }
-    function voiceOn() {
-      const r = form.querySelector('input[name=voiceAddon]:checked');
-      return r && r.value === 'yes';
-    }
+  }
+  function firstName() { return (state.who === 'myself' ? 'you' : (state.name.trim().split(/\s+/)[0] || 'them')); }
+  function renderStep() {
+    // Never let a voice keep playing into the next question.
+    if (typeof stopSinger === 'function') { stopSinger(); if (typeof paintSingers === 'function') paintSingers(); }
+    document.querySelectorAll('.step').forEach(function (s) { s.classList.toggle('live', +s.dataset.step === state.step); });
+    $('stepLabel').textContent = 'Step ' + state.step + ' of ' + TOTAL;
+    $('stepBar').style.width = Math.round(state.step / TOTAL * 100) + '%';
+    $('backBtn').hidden = state.step === 1;
+    $('nextBtn').textContent = state.step === TOTAL ? 'Create my song' : 'Next';
+    $('nextBtn').disabled = !validStep(state.step);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    save();
+  }
+  function refreshNext() { $('nextBtn').disabled = !validStep(state.step); }
 
-    // An add-on baked into the tier price is never charged again.
-    const isIncluded = (key, addon) => TIERS[key].included.includes(addon);
-    function totalFor(key) {
-      let n = TIERS[key].price;
-      if (!isIncluded(key,'voice') && voiceOn()) n += ADDONS.voice;
-      return n;
-    }
+  // step 1
+  document.querySelectorAll('[data-who]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.who = c.dataset.who;
+      document.querySelectorAll('[data-who]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+      $('aboutYou').classList.remove('hidden');
+      refreshNext(); save();
+    });
+  });
+  $('qName').addEventListener('input', function () { state.name = this.value; refreshNext(); save(); });
+  $('qRel').addEventListener('input', function () { state.rel = this.value; save(); });
+  $('qYourName').addEventListener('input', function () { state.yourName = this.value; refreshNext(); save(); });
 
-    function refreshSummary() {
-      const key = currentTier();
-      const t = TIERS[key];
-      const voice = (!isIncluded(key,'voice') && voiceOn()) ? ADDONS.voice : 0;
-      const total = t.price + voice;
+  // step 2
+  $('occasionGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-occasion]'); if (!b) return;
+    state.occasion = b.dataset.occasion;
+    document.querySelectorAll('[data-occasion]').forEach(function (x) { x.classList.toggle('on', x === b); });
+    $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
+    refreshNext(); save();
+  });
+  $('qOccasionOther').addEventListener('input', function () { state.occasionOther = this.value; refreshNext(); save(); });
 
-      $('sumTier').textContent = t.name;
-      $('sumTierPrice').textContent = money(t.price);
-      $('sumTierLabel').textContent = t.name;
-      $('sumBase').textContent = money(t.price);
-      const inc = t.includes.map(i => `<li class="flex gap-2"><span class="text-gold shrink-0">\u2713</span>${i}</li>`).join('');
-      $('sumIncludes').innerHTML = inc;
-      $('tierRecap').innerHTML = `<p class="font-700 text-claret text-sm mb-1.5">${t.name} includes:</p><ul class="space-y-1 text-sm text-ink/85">${inc}</ul>`;
+  // step 4
+  $('styleGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-style]'); if (!b) return;
+    state.style = b.dataset.style;
+    document.querySelectorAll('[data-style]').forEach(function (x) { x.classList.toggle('on', x.dataset.style === state.style); });
+    refreshNext(); save();
+  });
+  $('tempoGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tempo]'); if (!b) return;
+    state.tempo = b.dataset.tempo;
+    document.querySelectorAll('[data-tempo]').forEach(function (x) { x.classList.toggle('on', x.dataset.tempo === state.tempo); });
+    refreshNext(); save();
+  });
 
-      $('sumVoiceRow').classList.toggle('hidden', voice === 0);
-      $('sumVoiceAmt').textContent = '+' + money(voice);
-      $('sumTotal').textContent = money(total);
-      // Strike-through carries whatever saving the chosen package has.
-      $('sumCompare').textContent = money(total + (t.compare - t.price));
-      $('sumSave').textContent = money(t.compare - t.price);
+  // step 4
+  document.querySelectorAll('[data-voice]').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.voice = c.dataset.voice;
+      document.querySelectorAll('[data-voice]').forEach(function (x) { x.classList.toggle('on', x === c); });
+      if (state.singer) {
+        // A singer from the other voice no longer applies.
+        var keep = SINGERS.filter(function (v) { return v.name === state.singer && v.voice === state.voice; });
+        if (!keep.length) state.singer = '';
+      }
+      paintSingers();
+      $('voicePickWrap').classList.remove('hidden');
+      refreshNext(); save();
+    });
+  });
 
-    }
+  // Optional: pick the actual singer. Hidden behind a link so the quick
+  // male/female choice stays the fast path.
+  var singerAudio = null;
+  var singerPlaying = '';           // which singer is sounding right now
+  function stopSinger() {
+    if (singerAudio) { singerAudio.pause(); singerAudio = null; }
+    singerPlaying = '';
+  }
+  var ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
+  var ICON_PAUSE = '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>';
+  function paintSingers() {
+    var wrap = $('voiceList'); wrap.innerHTML = '';
+    SINGERS.filter(function (v) { return v.voice === state.voice; }).forEach(function (v) {
+      var row = document.createElement('div');
+      var on = state.singer === v.name;
+      var playing = singerPlaying === v.name;
+      row.className = 'flex items-center gap-3 rounded-[12px] border-[1.5px] p-3 ' +
+        (v.unavailable ? 'border-claret/10 opacity-50' : (on ? 'border-claret bg-claret/5' : 'border-claret/20'));
+      row.innerHTML =
+        '<button type="button" class="sg-play grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0 cursor-pointer" aria-label="' + (playing ? 'Stop' : 'Hear') + ' ' + v.name + '"' + (v.unavailable ? ' disabled' : '') + '>' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' + (playing ? ICON_PAUSE : ICON_PLAY) + '</svg></button>' +
+        '<span class="flex-1"><span class="block font-700 text-ink text-[.95rem]">' + v.name + '</span>' +
+        '<span class="block text-ink-soft text-[.82rem]">' + v.desc + (v.unavailable ? ' &middot; unavailable' : '') + '</span></span>' +
+        (v.unavailable ? '' : '<button type="button" class="sg-pick text-claret font-700 text-[.88rem] cursor-pointer">' + (on ? 'Chosen' : 'Choose') + '</button>');
+      if (!v.unavailable) {
+        row.querySelector('.sg-play').addEventListener('click', function () {
+          // Second press on the one that is sounding stops it.
+          if (singerPlaying === v.name) { stopSinger(); paintSingers(); return; }
+          stopSinger();
+          singerAudio = new Audio(v.src);
+          singerPlaying = v.name;
+          singerAudio.addEventListener('ended', function () { stopSinger(); paintSingers(); });
+          singerAudio.play().catch(function () { stopSinger(); paintSingers(); });
+          paintSingers();
+        });
+        row.querySelector('.sg-pick').addEventListener('click', function () {
+          state.singer = (state.singer === v.name) ? '' : v.name;
+          paintSingers(); save();
+        });
+      }
+      wrap.appendChild(row);
+    });
+  }
+  $('voiceToggle').addEventListener('click', function () {
+    var list = $('voiceList');
+    var nowHidden = list.classList.toggle('hidden');
+    $('voicePickNote').classList.toggle('hidden', nowHidden);
+    this.textContent = nowHidden ? 'Or pick a specific singer' : 'Hide the singers';
+    if (nowHidden) { stopSinger(); paintSingers(); }
+  });
 
-    function refreshConditional() {
-      // The voice is an add-on on every package now, so the picker simply
-      // follows the yes/no choice.
-      $('voicePicker').classList.toggle('hidden', !voiceOn());
-      $('occasionOtherWrap').classList.toggle('hidden', $('occasion').value !== 'Other');
-    }
+  // step 5
+  //
+  // The meter measures what the customer actually wrote. Any prompt they tapped
+  // in is subtracted first, so nobody can fill the bar with our own questions
+  // and reach checkout with a brief Paul cannot write from.
+  function answerLength(v) {
+    var t = String(v || '');
+    for (var i = 0; i < insertedPrompts.length; i += 1) t = t.split(insertedPrompts[i]).join('');
+    return t.trim().length;
+  }
 
-    // Char counters
-    const counters = [['story','storyCount'],['details','detailsCount']];
-    // Nudge while they type rather than only blocking them at submit.
-    (function () {
-      var ta = $('story'), hint = $('storyHint');
-      if (!ta || !hint) return;
-      ta.addEventListener('input', function () {
-        var n = ta.value.trim().length;
-        hint.textContent = n === 0 ? 'The more you write, the better the song.'
-          : n < 120 ? 'Keep going, a few more sentences will really help.'
-          : n < 400 ? 'Good. Any extra detail still helps.'
-          : 'Wonderful, this is plenty to work with.';
-        hint.className = 'text-xs ' + (n && n < 120 ? 'text-claret font-600' : 'text-ink-soft');
-      });
-    })();
-    function refreshCounts(){ counters.forEach(([id,cid]) => { $(cid).textContent = $(id).value.length; }); }
+  function paintMeter() {
+    var pct = Math.min(100, Math.round(answerLength(state.story) / STORY_TARGET * 100));
+    $('meterFill').style.width = pct + '%';
+    $('meterPct').textContent = pct + '%';
+    $('meterHint').textContent = pct >= 100 ? 'Beautiful. That is plenty to work with.'
+      : pct > 0 ? 'Keep going, the details make the song' : 'Start typing to fill the meter';
+  }
 
-    // ---- Add to Cart: reaching this form ----
-    // The CTA on the home and landing pages sends people here, so arriving is
-    // the closest thing this checkout has to adding something to a basket.
-    // Fires once per session so a reload or a trip back from Stripe does not
-    // count twice. The same event id goes to the Pixel and to the Conversions
-    // API, which is how Meta collapses the two into one event.
-    (function trackReachedForm() {
-      var KEY = 'hn_atc_sent';
-      try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (e) { /* private mode: fire anyway */ }
+  $('qStory').addEventListener('input', function () {
+    state.story = this.value;
+    paintMeter();
+    refreshNext(); save();
+  });
 
-      var eid = (window.crypto && crypto.randomUUID)
+  // ---------- "Need help writing this?" ----------
+  var insertedPrompts = [];
+
+  function promptsForOccasion() {
+    return STORY_PROMPTS[state.occasion] || STORY_PROMPTS_DEFAULT;
+  }
+
+  function paintHelp() {
+    var occ = state.occasion === 'Other'
+      ? (state.occasionOther || '').trim()
+      : (state.occasion || '');
+    $('helpFor').textContent = occ ? 'A few questions for ' + occ.toLowerCase() : 'A few questions to start you off';
+
+    var list = $('helpList');
+    list.innerHTML = '';
+    promptsForOccasion().forEach(function (q) {
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'w-full text-left rounded-xl bg-white/75 border border-claret/12 px-3.5 py-2.5 ' +
+        'text-ink text-[.94rem] leading-snug cursor-pointer transition-colors ' +
+        'hover:bg-white hover:border-claret/30 active:bg-blush/40 ' +
+        'focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2';
+      b.textContent = q;
+      b.addEventListener('click', function () { insertPrompt(q); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }
+
+  function insertPrompt(q) {
+    var ta = $('qStory');
+    if (insertedPrompts.indexOf(q) === -1) insertedPrompts.push(q);
+    var cur = ta.value.replace(/\s+$/, '');
+    ta.value = (cur ? cur + '\n\n' : '') + q + '\n';
+    state.story = ta.value;
+    paintMeter(); refreshNext(); save();
+    // Put them straight where the answer goes.
+    ta.focus();
+    try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) { /* older engines */ }
+    ta.scrollTop = ta.scrollHeight;
+  }
+
+  $('helpToggle').addEventListener('click', function () {
+    var panel = $('helpPanel');
+    var wasOpen = !panel.hidden;
+    panel.hidden = wasOpen;
+    this.setAttribute('aria-expanded', String(!wasOpen));
+    $('helpChevron').style.transform = wasOpen ? '' : 'rotate(180deg)';
+    if (!wasOpen) paintHelp();
+  });
+
+  // nav
+  $('backBtn').addEventListener('click', function () { if (state.step > 1) { state.step--; renderStep(); } });
+  $('nextBtn').addEventListener('click', function () {
+    if (!validStep(state.step)) return;
+    if (state.step < TOTAL) { state.step++; renderStep(); }
+    else { setPhase('email'); }
+  });
+
+  // ---------- phases ----------
+  function occasionLabel() {
+    var o = state.occasion === 'Other' ? state.occasionOther : state.occasion;
+    return o ? o.toLowerCase() : '';
+  }
+  // ---- Initiate Checkout: the price page appearing ----
+  // Reaching the end of the quiz and seeing the price is what counts as
+  // reaching checkout on this page. Two things have to be true for that number
+  // to mean anything:
+  //
+  //   1. It fires once per session. setPhase('checkout') also runs on a
+  //      reload, on the return trip from a canceled Stripe session, and every
+  //      time someone edits their email and continues. None of those is a new
+  //      checkout.
+  //   2. The event id is kept for the session, because the server sends its
+  //      own InitiateCheckout once Stripe hands back a session. That copy has
+  //      to carry this same id, or Meta records the browser event and the
+  //      server event as two separate checkouts instead of one.
+  var IC_ID_KEY = 'hn_v3_ic_id';
+  var IC_SENT_KEY = 'hn_v3_ic_sent';
+
+  function sessionCheckoutEventId() {
+    var id = null;
+    try { id = sessionStorage.getItem(IC_ID_KEY); } catch (e) { /* private mode */ }
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID)
         ? crypto.randomUUID()
-        : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+        : 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      try { sessionStorage.setItem(IC_ID_KEY, id); } catch (e) { /* private mode */ }
+    }
+    return id;
+  }
 
-      var key = currentTier();
-      var t = TIERS[key];
-      var cents = t ? Math.round(t.price * 100) : null;
+  function trackReachedCheckout() {
+    try { if (sessionStorage.getItem(IC_SENT_KEY)) return; sessionStorage.setItem(IC_SENT_KEY, '1'); }
+    catch (e) { /* private mode: fire anyway */ }
 
-      if (typeof fbq !== 'undefined') {
-        fbq('track', 'AddToCart', {
-          value: t ? t.price : undefined,
-          currency: 'USD',
-          content_name: t ? t.name : key,
-        }, { eventID: eid });
-      }
-      if (typeof hnTrack === 'function') {
-        var fb = (window.HN_META && HN_META.data()) || {};
-        hnTrack('reached_form', {
-          tier: key,
-          value_cents: cents,
-          label: 'Reached the order form',
-          fbp: fb.fbp,
-          fbc: fb.fbc,
-          meta: { eid: eid },
-        });
-      }
-    })();
+    var eid = sessionCheckoutEventId();
+    var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
 
-    // Voice picker with audio previews
-    const VOICES = [
-      { name:'Brett',   desc:'Male · country',     src:'audio/voices/voice-brett.mp3' },
-      { name:'Cameron', desc:'Male · pop',         src:'audio/voices/voice-cameron.mp3' },
-      { name:'Gabriel', desc:'Female · pop',       src:'audio/voices/voice-gabriel.mp3' },
-      { name:'Harper',  desc:'Female · country',   src:'audio/voices/voice-harper.mp3' },
-      { name:'Justin',  desc:'Male · soul',        src:'audio/voices/voice-justin.mp3' },
-      { name:'Lily',    desc:'Female · joyful pop', src:'audio/voices/voice-lily.mp3', unavailable:true },
-      { name:'Shaun',   desc:'Male · hip hop',     src:'audio/voices/voice-shaun.mp3' },
-    ];
-    let voiceAudio = null, voiceBtn = null;
-    const setVIcon = (btn, playing) => btn.querySelector('path').setAttribute('d', playing ? 'M6 5h4v14H6zM14 5h4v14h-4z' : 'M8 5v14l11-7z');
-    // One delegated handler drives every voice preview button
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.vc-play'); if (!btn) return;
-      e.preventDefault(); e.stopPropagation();
-      if (voiceAudio && voiceBtn === btn && !voiceAudio.paused) { voiceAudio.pause(); setVIcon(btn, false); return; }
-      if (voiceAudio) { voiceAudio.pause(); if (voiceBtn) setVIcon(voiceBtn, false); }
-      voiceAudio = new Audio(btn.dataset.src); voiceBtn = btn; setVIcon(btn, true);
-      voiceAudio.play().catch(() => {});
-      voiceAudio.addEventListener('ended', () => setVIcon(btn, false));
+    if (typeof fbq === 'function') {
+      fbq('track', 'InitiateCheckout', {
+        value: pkg.price,
+        currency: 'USD',
+        content_name: pkg.name,
+      }, { eventID: eid });
+    }
+    if (typeof hnTrack === 'function') {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      hnTrack('add_to_cart', {
+        tier: state.tier,
+        value_cents: pkg.price * 100,
+        label: 'Reached the v3 price page',
+        fbp: fb.fbp,
+        fbc: fb.fbc,
+        meta: { eid: eid },
+      });
+    }
+  }
+
+  function setPhase(ph) {
+    if (typeof stopSinger === 'function') stopSinger();
+    state.phase = ph; save();
+    ['Quiz', 'Email', 'Checkout'].forEach(function (p) {
+      $('phase' + p).classList.toggle('live', ph === p.toLowerCase());
     });
-    const voicePlayBtn = (v) => `<button type="button" class="vc-play" data-src="${v.src}" aria-label="Hear ${v.name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>`;
-    const voiceOptionsHTML = () => VOICES.map(v => `<option value="${v.name}">${v.name} (${v.desc})</option>`).join('');
-    // Order-level selectable picker (single-song tiers)
-    function buildVoices() {
-      $('voiceGrid').innerHTML = VOICES.map(v => v.unavailable ? `
-        <div class="vc opacity-45 cursor-not-allowed" aria-disabled="true" title="${v.name} is unavailable">
-          <span class="grid place-items-center w-11 h-11 rounded-full bg-claret/15 text-claret/50 shrink-0" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          </span>
-          <div class="min-w-0">
-            <p class="font-700 text-claret/70 leading-tight">${v.name}</p>
-            <p class="text-sm text-ink-soft">Unavailable</p>
-          </div>
-        </div>` : `
-        <label>
-          <input type="radio" name="voice" value="${v.name}" class="sr-only" />
-          <div class="vc">
-            ${voicePlayBtn(v)}
-            <div class="min-w-0"><p class="font-700 text-claret leading-tight">${v.name}</p><p class="text-sm text-ink-soft">${v.desc}</p></div>
-            <span class="vc-check">✓</span>
-          </div>
-        </label>`).join('');
+    window.scrollTo(0, 0);
+    if (ph === 'email') {
+      var o = occasionLabel();
+      $('emailOccasion').textContent = o ? 'the ' + o + ' song' : 'the song';
+      $('qEmail').value = state.email;
+      $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     }
-    // ---- Restore saved data (fixes losing details when returning from payment) ----
-    function restore() {
-      let saved = {};
-      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
-      for (const [k, v] of Object.entries(saved)) {
-        const els = form.elements[k];
-        if (!els) continue;
-        if (els instanceof RadioNodeList || (els.length && els[0] && els[0].type === 'radio')) {
-          const radio = form.querySelector(`input[name="${k}"][value="${CSS.escape(v)}"]`);
-          if (radio) radio.checked = true;
-        } else {
-          els.value = v;
-        }
+    if (ph === 'checkout') { paintCheckout(); trackReachedCheckout(); }
+  }
+
+  // email phase
+  $('qEmail').addEventListener('input', function () {
+    state.email = this.value.trim();
+    $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
+    save();
+  });
+  // Reaching the payment step with an email is the one moment we can reach
+  // someone who has not paid, so it starts the recovery sequence. Fired once
+  // per session, and canceled server-side the instant they buy.
+  var captured = false;
+  function captureForRecovery() {
+    if (captured || !/.+@.+\..+/.test(state.email)) return;
+    captured = true;
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        keepalive: true,          // survives the tab closing mid-checkout
+        body: JSON.stringify({
+          type: 'abandon_capture',
+          page: location.pathname,
+          email: state.email,
+          brief: {
+            recipient: state.who === 'myself' ? '' : state.name,
+            relationship: state.rel,
+            yourName: state.yourName,
+            occasion: state.occasion === 'Other' ? state.occasionOther : state.occasion,
+            singer: state.singer,
+            style: state.style,
+            tempo: state.tempo,
+            voice: state.voice,
+            story: state.story,
+            tier: state.tier,
+          },
+          attr: (typeof hnAttribution === 'function') ? hnAttribution() : undefined,
+        }),
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  $('emailNext').addEventListener('click', function () {
+    if (!/.+@.+\..+/.test(state.email)) return;
+    captureForRecovery();
+    setPhase('checkout');
+  });
+  $('changeEmail').addEventListener('click', function () { setPhase('email'); });
+
+  // Getting back to the quiz. Reaching the price used to be a one-way door:
+  // the only control was "change" on the email, and the answers themselves
+  // could not be revisited at all.
+  function backToQuiz() {
+    state.step = TOTAL;      // the story, which is what people come back to edit
+    setPhase('quiz');
+    renderStep();
+  }
+  $('emailBack').addEventListener('click', backToQuiz);
+  $('checkoutBack').addEventListener('click', backToQuiz);
+
+  // checkout phase
+  function paintCheckout() {
+    var isSelf = state.who === 'myself';
+    var n = firstName();
+    var first = isSelf ? 'you' : n;
+    var poss = isSelf ? 'your' : n + "'s";
+    document.querySelectorAll('.coFirst').forEach(function (el) { el.textContent = first; });
+    document.querySelectorAll('.coPoss').forEach(function (el) {
+      var v = poss;
+      if (el.hasAttribute('data-cap')) v = v.charAt(0).toUpperCase() + v.slice(1);
+      el.textContent = v;
+    });
+    $('coEmail').textContent = state.email;
+    var o = occasionLabel();
+    $('coOccasionSongs').textContent = o === 'anniversary' ? 'anniversary Heart Notes' : 'Heart Notes';
+    $('coPronoun').textContent = isSelf ? 'you' : 'them';
+    var buyer = (state.yourName || '').trim().split(/\s+/)[0];
+    document.querySelectorAll('.coBuyer').forEach(function (el) { el.textContent = buyer || 'friend'; });
+    paintPkgs();
+  }
+  function paintPkgs() {
+    var wrap = $('pkgList'); wrap.innerHTML = '';
+    PKGS.forEach(function (p) {
+      var on = state.tier === p.key;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'w-full text-left rounded-[14px] p-3.5 cursor-pointer transition-colors border-[1.5px] relative ' +
+        (on ? 'bg-claret text-ivory border-claret' : 'bg-white border-claret/20 hover:border-claret/50');
+      b.innerHTML =
+        (p.best ? '<span class="absolute -top-2 right-3 bg-gold text-claret-dark text-[.58rem] font-700 uppercase tracking-[.08em] px-2 py-0.5 rounded-full">Best value</span>' : '') +
+        '<span class="flex items-center justify-between gap-3">' +
+          '<span><span class="block font-display text-[1.05rem] leading-tight">' + p.name + '</span>' +
+          '<span class="block text-[.78rem] mt-0.5 ' + (on ? 'text-ivory/75' : 'text-ink-soft') + '">' + p.desc + '</span></span>' +
+          '<span class="text-right shrink-0"><span class="font-700 text-[1.05rem]">$' + p.price + '</span> ' +
+          '<span class="block line-through text-[.8rem] ' + (on ? 'text-ivory/55' : 'text-ink-soft/70') + '">$' + p.was + '</span></span>' +
+        '</span>' +
+        '<span class="block mt-2.5 pt-2.5 border-t ' + (on ? 'border-ivory/20' : 'border-claret/10') + '">' +
+          p.gets.map(function (g) {
+            return '<span class="flex gap-2 text-[.82rem] leading-snug mt-1 ' + (on ? 'text-ivory/85' : 'text-ink/75') + '">' +
+              '<svg class="shrink-0 mt-[3px] ' + (on ? 'text-gold-soft' : 'text-gold') + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>' + g + '</span>';
+          }).join('') +
+        '</span>';
+      b.addEventListener('click', function () { state.tier = p.key; save(); paintPkgs(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  // pay
+  var paying = false;
+  $('payBtn').addEventListener('click', async function () {
+    if (paying) return;
+    paying = true;
+    var btn = $('payBtn'); btn.textContent = 'Opening secure checkout...';
+    $('payErr').classList.add('hidden');
+    try {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      var attr = (typeof hnAttribution === 'function') ? hnAttribution() : undefined;
+      // InitiateCheckout already fired when the price page appeared, so nothing
+      // is sent here. The server sends its own copy once Stripe has a session;
+      // handing it this same id is what keeps the two as one event.
+      var checkoutEventId = sessionCheckoutEventId();
+      var other = [
+        'Ordered through the v3 quiz.',
+        'Song is for: ' + (state.who === 'myself' ? 'the buyer themselves' : 'someone else'),
+        state.yourName ? 'From: ' + state.yourName : '',
+        state.tempo ? 'Tempo: ' + state.tempo : '',
+        state.voice ? 'Voice: ' + state.voice : '',
+        state.singer ? 'Requested singer: ' + state.singer : ''
+      ].filter(Boolean).join('\n');
+      var res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          tier: state.tier,
+          occasion: state.occasion,
+          occasionOther: state.occasionOther,
+          recipient: state.who === 'myself' ? 'The buyer (a song for themselves)' : state.name,
+          relationship: state.rel,
+          style: state.style + (state.tempo ? ' (' + state.tempo.toLowerCase() + ' tempo)' : ''),
+          story: state.story,
+          sender: state.yourName,
+          other: other,
+          voiceAddon: 'no',
+          email: state.email,
+          from: 'v3',
+          checkoutEventId: checkoutEventId,
+          fbp: fb.fbp, fbc: fb.fbc,
+          attr: attr
+        })
+      });
+      var out = await res.json();
+      if (out && out.url) { window.location = out.url; return; }
+      throw new Error((out && out.error) || 'Could not open checkout');
+    } catch (err) {
+      $('payErr').textContent = 'Something went wrong opening checkout. Please try again, or email paul@heartnote.music.';
+      $('payErr').classList.remove('hidden');
+      $('payBtn').textContent = 'Complete my purchase';
+      paying = false;
+    }
+  });
+
+  // checkout samples
+  var current = null;
+  SAMPLES.forEach(function (s) {
+    var row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'w-full flex items-center gap-3 bg-ivory/5 hover:bg-ivory/10 rounded-[12px] ring-1 ring-ivory/15 p-3 text-left transition-colors cursor-pointer';
+    row.setAttribute('aria-label', 'Play sample: ' + s.title);
+    row.innerHTML = '<span class="grid place-items-center w-9 h-9 rounded-full bg-gold text-claret-dark shrink-0">' +
+      '<svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' +
+      '<svg class="i-pause hidden" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></span>' +
+      '<span class="flex-1"><span class="block font-display text-ivory text-[.98rem] leading-snug">' + s.title + '</span>' +
+      '<span class="block text-ivory/55 text-[.78rem]">' + s.note + '</span></span>';
+    var audio = new Audio(); audio.preload = 'none';
+    row.addEventListener('click', function () {
+      if (current && current !== audio) {
+        current.pause();
+        current._row.querySelector('.i-play').classList.remove('hidden');
+        current._row.querySelector('.i-pause').classList.add('hidden');
       }
-    }
-    function save() {
-      const data = Object.fromEntries(new FormData(form).entries());
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
-    }
-
-    // ---- Init ----
-    buildVoices();
-    restore();
-    // URL params override saved values
-    if (['single','deluxe','experience'].includes(params.get('tier'))) {
-      const r = form.querySelector(`input[name=tier][value="${params.get('tier')}"]`); if (r) r.checked = true;
-    } else if (!form.querySelector('input[name=tier]:checked')) {
-      form.querySelector('input[name=tier][value="deluxe"]').checked = true;
-    }
-    // NOTE: the ?occasion= an ad link carries is a guess about why someone
-    // clicked, not something the customer told us. It used to preselect this
-    // dropdown, so a wedding ad recorded "Wedding" on a birthday song whenever
-    // the customer didn't notice, and the keepsake page then said so. The
-    // occasion is theirs to choose; the parameter is kept only for reporting.
-    if (params.get('canceled')) $('canceledNote').classList.remove('hidden');
-
-    refreshSummary(); refreshConditional(); refreshCounts();
-
-    form.addEventListener('change', () => { refreshSummary(); refreshConditional(); save(); });
-    form.addEventListener('input', () => { refreshCounts(); save(); });
-
-    // ---- Submit ----
-    const btn = $('submitBtn'), label = $('submitLabel'), errEl = $('formError');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errEl.classList.add('hidden');
-      const data = Object.fromEntries(new FormData(form).entries());
-      if (!data.occasion) return showErr('Please choose an occasion.', 'occasion');
-      if (data.occasion === 'Other' && !(data.occasionOther || '').trim()) return showErr('Please tell us the occasion.', 'occasionOther');
-      if (data.occasion === 'Other' && !/[a-z]{2}/i.test(data.occasionOther || '')) return showErr('Please tell us the occasion in words, for example "Quinceanera" or "First day of school".', 'occasionOther');
-      if (!data.recipient) return showErr('Please tell us who the song is for.', 'recipient');
-      if (!data.style) return showErr('Please choose a style of music.', 'style');
-      if (!data.story || data.story.trim().length < 120) return showErr('Please share a bit more of their story. A few sentences gives us far more to work with than a line or two.', 'story');
-      const _k = currentTier();
-      if ((isIncluded(_k,'voice') || voiceOn()) && !(data.voice || '').trim()) return showErr('Please pick a voice, or choose "No thanks".', 'voicePicker');
-      // Included add-ons are not on the form, so state them for the server.
-      if (isIncluded(_k,'voice')) data.voiceAddon = 'yes';
-
-      btn.disabled = true; label.textContent = 'Taking you to secure payment…';
-
-
-      // Meta: attach browser identifiers. InitiateCheckout is not fired yet,
-      // because pressing the button is not the same as reaching Stripe. It goes
-      // out below, once the session actually exists.
-      try {
-        const fb = (window.HN_META && window.HN_META.data()) || {};
-        data.fbp = fb.fbp; data.fbc = fb.fbc;
-        // Which ad/campaign brought them here, remembered from the landing hit.
-        if (typeof hnAttribution === 'function') data.attr = hnAttribution();
-        // Shared with the server so its Conversions API copy is deduped.
-        data.checkoutEventId = (window.crypto && crypto.randomUUID)
-          ? crypto.randomUUID() : 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
-        const t = TIERS[currentTier()];
-        // Pressing the purchase button. Reaching the form is tracked separately
-        // as reached_form / AddToCart; this is the rung below Purchase.
-        if (typeof hnTrack === 'function') {
-          hnTrack('add_to_cart', { tier: currentTier(), value_cents: t ? Math.round(t.price * 100) : null, label: 'Continue to secure payment' });
-        }
-      } catch (e) { /* tracking is best-effort */ }
-
-      try {
-        const r = await fetch('/api/create-checkout-session', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
-        });
-        const out = await r.json();
-        if (!r.ok || !out.url) throw new Error(out.error || 'Could not start checkout.');
-
-        // Stripe has a session, so the customer really is reaching payment.
-        // Same event id as the server's copy, so Meta counts one event.
-        try {
-          if (typeof fbq !== 'undefined') {
-            const t = TIERS[currentTier()];
-            fbq('track', 'InitiateCheckout',
-              { value: t ? totalFor(currentTier()) : undefined, currency: 'USD', content_name: currentTier() },
-              { eventID: out.checkoutEventId || data.checkoutEventId });
-          }
-        } catch (e) { /* tracking is best-effort */ }
-
-        window.location.href = out.url;
-      } catch (err) {
-        btn.disabled = false; label.textContent = 'Continue to secure payment';
-        showErr(err.message + ' Please try again.');
+      if (audio.paused) {
+        if (!audio.src) audio.src = s.src;
+        audio.play().catch(function () {});
+        current = audio; audio._row = row;
+        row.querySelector('.i-play').classList.add('hidden');
+        row.querySelector('.i-pause').classList.remove('hidden');
+      } else {
+        audio.pause();
+        row.querySelector('.i-play').classList.remove('hidden');
+        row.querySelector('.i-pause').classList.add('hidden');
       }
     });
-    // Scrolling to the bottom of the page left the message off screen on a
-    // phone, so the form looked broken rather than incomplete. Go to the field
-    // that needs fixing, focus it, and ring it in red until it is touched.
-    var ringed = null;
-    function showErr(m, fieldId) {
-      $('formErrorText').textContent = m;
-      errEl.classList.remove('hidden');
-      btn.disabled = false;
-      label.textContent = 'Continue to secure payment';
+    audio.addEventListener('ended', function () {
+      row.querySelector('.i-play').classList.remove('hidden');
+      row.querySelector('.i-pause').classList.add('hidden');
+    });
+    $('coSamples').appendChild(row);
+  });
 
-      if (ringed) { ringed.classList.remove('ring-2', 'ring-claret'); ringed = null; }
-      var field = fieldId && $(fieldId);
-      var target = field || errEl;
-      try { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-      catch (e) { target.scrollIntoView(); }
-      if (field) {
-        field.classList.add('ring-2', 'ring-claret');
-        ringed = field;
-        setTimeout(function () { try { field.focus({ preventScroll: true }); } catch (e) { field.focus(); } }, 320);
-        field.addEventListener('input', function clear() {
-          field.classList.remove('ring-2', 'ring-claret');
-          field.removeEventListener('input', clear);
-        });
-      }
-      return false;
+  // lightbox
+  (function () {
+    var box = $('vLightbox'), player = $('vPlayer'), closeBtn = $('vClose');
+    document.querySelectorAll('.vcard[data-video]').forEach(function (c) {
+      c.addEventListener('click', function () {
+        if (player.getAttribute('src') !== c.dataset.video) player.src = c.dataset.video;
+        box.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+        player.muted = false;
+        player.play().catch(function () {});
+      });
+    });
+    function closeBox() { player.pause(); box.classList.add('hidden'); document.body.style.overflow = ''; }
+    closeBtn.addEventListener('click', closeBox);
+    $('vScrim').addEventListener('click', closeBox);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.classList.contains('hidden')) closeBox(); });
+  })();
+
+  // ---------- restore UI from saved state ----------
+  function restore() {
+    if (state.who) {
+      var c = document.querySelector('[data-who="' + state.who + '"]');
+      if (c) c.classList.add('on');
+      $('aboutThem').classList.toggle('hidden', state.who !== 'someone');
+      $('aboutYou').classList.remove('hidden');
     }
-  </script>
+    $('qName').value = state.name; $('qRel').value = state.rel; $('qYourName').value = state.yourName;
+    if (state.occasion) {
+      var o = document.querySelector('[data-occasion="' + state.occasion + '"]'); if (o) o.classList.add('on');
+      $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
+    }
+    $('qOccasionOther').value = state.occasionOther;
+    if (state.style) { var s = document.querySelector('[data-style="' + state.style + '"]'); if (s) s.classList.add('on'); }
+    if (state.tempo) { var t = document.querySelector('[data-tempo="' + state.tempo + '"]'); if (t) t.classList.add('on'); }
+    if (state.voice) {
+      var v = document.querySelector('[data-voice="' + state.voice + '"]');
+      if (v) v.classList.add('on');
+      paintSingers();
+      $('voicePickWrap').classList.remove('hidden');
+    }
+    $('qStory').value = state.story;
+    $('qStory').dispatchEvent(new Event('input'));
+    if (!validStep(1) && state.step > 1) state.step = 1;
+    renderStep();
+    if (state.phase === 'email' || (state.phase === 'checkout' && !/.+@.+\..+/.test(state.email))) setPhase('email');
+    else if (state.phase === 'checkout') setPhase('checkout');
+  }
+  restore();
+
+  // A link may preselect the package and the occasion. The homepage's pricing
+  // cards and every landing page already carry ?tier= and ?occasion=; until now
+  // the quiz ignored both, so someone who pressed "Choose Deluxe" still had to
+  // find Deluxe again at the price step. A plain CTA carries neither parameter
+  // and the customer decides for themselves, which is the behavior we keep.
+  //
+  // Runs after restore() so the link wins over whatever is in localStorage: the
+  // package someone just pressed is a fresher signal than one saved days ago.
+  (function applyLinkParams() {
+    var q = new URLSearchParams(location.search);
+
+    var tier = String(q.get('tier') || '').toLowerCase();
+    if (['single', 'deluxe', 'experience'].indexOf(tier) !== -1 && tier !== state.tier) {
+      state.tier = tier;
+      if (state.phase === 'checkout') paintCheckout();
+      save();
+    }
+
+    var occ = String(q.get('occasion') || '').trim();
+    if (occ) {
+      var match = OCCASIONS.filter(function (o) { return o.n.toLowerCase() === occ.toLowerCase(); })[0];
+      if (match && match.n !== state.occasion) {
+        state.occasion = match.n;
+        state.occasionOther = '';
+        document.querySelectorAll('[data-occasion]').forEach(function (el) {
+          el.classList.toggle('on', el.dataset.occasion === match.n);
+        });
+        $('qOccasionOther').classList.add('hidden');
+        $('qOccasionOther').value = '';
+        refreshNext();
+        save();
+      }
+    }
+  })();
+
+  // returning from a canceled Stripe session lands back on checkout
+  if (new URLSearchParams(location.search).get('canceled') === '1' && /.+@.+\..+/.test(state.email)) setPhase('checkout');
+
+  // ---- Add to Cart: reaching this quiz ----
+  // This must behave IDENTICALLY to order.html's version, because the two
+  // pages are split-tested against each other and a rung measured two
+  // different ways cannot be compared. Two things earn their keep here:
+  //
+  //   1. Once per session. A reload, or the return trip from a canceled
+  //      Stripe session (which lands back here on /v3-order?canceled=1),
+  //      must not count a second Add to Cart.
+  //   2. One event id shared by the Pixel and the Conversions API. Without
+  //      it Meta has nothing to match on and counts the browser copy and the
+  //      server copy as two separate Add to Carts.
+  (function trackReachedForm() {
+    var KEY = 'hn_atc_sent';
+    try { if (sessionStorage.getItem(KEY)) return; sessionStorage.setItem(KEY, '1'); } catch (e) { /* private mode: fire anyway */ }
+
+    var eid = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+
+    var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
+
+    if (typeof fbq === 'function') {
+      fbq('track', 'AddToCart', {
+        value: pkg.price,
+        currency: 'USD',
+        content_name: pkg.name,
+      }, { eventID: eid });
+    }
+    if (typeof hnTrack === 'function') {
+      var fb = (window.HN_META && HN_META.data()) || {};
+      hnTrack('reached_form', {
+        tier: state.tier,
+        value_cents: pkg.price * 100,
+        label: 'Reached the v3 quiz',
+        fbp: fb.fbp,
+        fbc: fb.fbc,
+        meta: { eid: eid },
+      });
+    }
+  })();
+})();
+</script>
 </body>
 </html>
