@@ -69,5 +69,10 @@
       "destination": "/v3",
       "permanent": false
     }
-  ]
+  ],
+  "functions": {
+    "api/track.js": {
+      "maxDuration": 30
+    }
+  }
 }
