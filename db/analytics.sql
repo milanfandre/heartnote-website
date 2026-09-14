@@ -27,6 +27,9 @@ create table if not exists public.events (
   source        text,          -- utm_source, or 'facebook' (fbclid), or referrer host, or 'direct'
   label         text,          -- for cta_click: the button text / destination
 
+  -- coarse device class, from viewport width and touch capability
+  device        text,          -- mobile | tablet | desktop
+
   -- who (anonymous, first-party): a random id kept in the browser's localStorage
   session_id    text,
 
