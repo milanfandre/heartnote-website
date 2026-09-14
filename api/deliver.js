@@ -14,6 +14,56 @@ export default async function handler(req, res) {
 
     if (!orderId) return res.status(400).json({ error: 'orderId is required' });
 
+    // Correcting the brief. Customers mistype the name the song is built
+    // around, and it gets sung, so Paul needs to fix it himself rather than
+    // waiting on someone to edit the database by hand.
+    //
+    // Only the fields below can be changed. The rest of the brief is payment
+    // detail, ids and add-on flags, which are records of what was bought and
+    // are not Paul's to rewrite from a text box.
+    if (action === 'edit-brief') {
+      const EDITABLE = ['recipient_name', 'recipient_relationship', 'sender_name',
+                        'occasion', 'occasion_other', 'music_style', 'mood',
+                        'story', 'must_include', 'other_info'];
+      const incoming = (req.body && req.body.brief) || {};
+
+      const order = await getOrder(orderId);
+      if (!order) return res.status(404).json({ error: 'Order not found' });
+
+      const brief = { ...(order.brief || {}) };
+      const changed = [];
+      for (const key of EDITABLE) {
+        if (!Object.prototype.hasOwnProperty.call(incoming, key)) continue;
+        const next = String(incoming[key] == null ? '' : incoming[key]).slice(0, 5000).trim();
+        const prev = String(brief[key] == null ? '' : brief[key]);
+        if (next === prev) continue;
+        brief[key] = next;
+        changed.push(key);
+      }
+      if (!changed.length) return res.status(200).json({ ok: true, changed: [], brief });
+
+      // recipient_name and occasion each live twice: as a column on orders and
+      // inside the brief. The tool reads the column, the delivery email and the
+      // gift page read the brief. Writing one without the other is exactly how
+      // Paul's screen and the customer's email end up disagreeing.
+      const patch = { brief };
+      if (changed.includes('recipient_name')) patch.recipient_name = brief.recipient_name || null;
+      if (changed.includes('occasion') || changed.includes('occasion_other')) {
+        patch.occasion = brief.occasion === 'Other'
+          ? (brief.occasion_other || 'Other')
+          : (brief.occasion || null);
+      }
+
+      const saved = await updateOrder(orderId, patch);
+      return res.status(200).json({
+        ok: true,
+        changed,
+        brief: (saved && saved.brief) || brief,
+        // A delivered order has already had its email sent with the old wording.
+        alreadyDelivered: order.status === 'delivered',
+      });
+    }
+
     // Lyric review add-on: the words go out for approval before anything is
     // recorded, so this runs long before any file is delivered.
     if (action === 'send-lyrics') {

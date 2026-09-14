@@ -110,6 +110,81 @@
       return out.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${out.join('')}</div>` : '';
     }
 
+    // Fields Paul may correct. The server enforces this same list, so adding a
+    // row here alone will not let anything new through.
+    const EDITABLE_BRIEF = [
+      ['recipient_name', 'Song for', 'input'],
+      ['recipient_relationship', 'Relationship', 'input'],
+      ['sender_name', 'From', 'input'],
+      ['occasion', 'Occasion', 'input'],
+      ['occasion_other', 'Occasion, if Other', 'input'],
+      ['music_style', 'Style', 'input'],
+      ['mood', 'Mood', 'input'],
+      ['story', 'Story', 'textarea'],
+      ['must_include', 'Must include', 'textarea'],
+      ['other_info', 'Other info', 'textarea'],
+    ];
+
+    function openBriefEditor(o, cardEl, btn) {
+      if (cardEl.querySelector('.js-brief-form')) return;
+      const dl = cardEl.querySelector('.js-brief');
+      const b = o.brief || {};
+
+      const form = document.createElement('div');
+      form.className = 'js-brief-form mt-2 rounded-xl border border-claret/15 bg-ivory-deep/50 p-4 space-y-3';
+      form.innerHTML = EDITABLE_BRIEF.map(([key, label, kind]) => `
+        <label class="block">
+          <span class="block text-ink-soft text-xs font-700 mb-1">${esc(label)}</span>
+          ${kind === 'textarea'
+            ? `<textarea class="field text-sm js-f" rows="3" data-key="${key}"></textarea>`
+            : `<input class="field text-sm js-f" type="text" data-key="${key}" />`}
+        </label>`).join('') +
+        `<div class="flex flex-wrap items-center gap-3 pt-1">
+           <button type="button" class="btn js-brief-save !py-2 !px-5 text-sm">Save changes</button>
+           <button type="button" class="js-brief-cancel text-ink-soft text-sm hover:text-ink cursor-pointer">Cancel</button>
+           <span class="js-brief-status text-sm text-ink-soft"></span>
+         </div>`;
+
+      // Values are assigned as properties, never interpolated into the HTML.
+      // esc() here does not escape quotes, so a name containing one would break
+      // straight out of a value="" attribute.
+      form.querySelectorAll('.js-f').forEach((f) => { f.value = b[f.dataset.key] == null ? '' : String(b[f.dataset.key]); });
+
+      dl.classList.add('hidden');
+      btn.classList.add('hidden');
+      dl.parentNode.insertBefore(form, dl.nextSibling);
+      const first = form.querySelector('.js-f');
+      if (first) first.focus();
+
+      const close = () => { form.remove(); dl.classList.remove('hidden'); btn.classList.remove('hidden'); };
+      form.querySelector('.js-brief-cancel').addEventListener('click', close);
+
+      form.querySelector('.js-brief-save').addEventListener('click', async () => {
+        const saveBtn = form.querySelector('.js-brief-save');
+        const status = form.querySelector('.js-brief-status');
+        const brief = {};
+        form.querySelectorAll('.js-f').forEach((f) => { brief[f.dataset.key] = f.value; });
+
+        saveBtn.disabled = true;
+        status.textContent = 'Saving...';
+        try {
+          const r = await fetch('/api/deliver', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': pw },
+            body: JSON.stringify({ action: 'edit-brief', orderId: o.id, brief }),
+          });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.error || 'Could not save the changes.');
+          if (!j.changed.length) { status.textContent = 'Nothing changed.'; saveBtn.disabled = false; return; }
+          status.textContent = 'Saved. Reloading...';
+          setTimeout(load, 600);
+        } catch (e) {
+          status.textContent = e.message;
+          saveBtn.disabled = false;
+        }
+      });
+    }
+
     function card(o) {
       const delivered = o.status === 'delivered';
       const el = document.createElement('div');
@@ -124,8 +199,15 @@
           </div>
           <span class="badge ${delivered ? 'bg-gold/20 text-gold' : 'bg-claret/10 text-claret'}">${delivered ? 'Delivered' : 'New'}</span>
         </div>
-        <dl class="mt-4 text-sm">${briefRows(o.brief, o.tier)}</dl>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="text-ink-soft text-xs font-700 tracking-[.08em] uppercase">The brief</p>
+          <button type="button" class="js-edit-brief text-claret text-sm font-700 cursor-pointer underline decoration-gold/60 underline-offset-2 hover:text-claret-deep">Edit</button>
+        </div>
+        <dl class="js-brief mt-1 text-sm">${briefRows(o.brief, o.tier)}</dl>
       `;
+
+      const editBtn = el.querySelector('.js-edit-brief');
+      if (editBtn) editBtn.addEventListener('click', () => openBriefEditor(o, el, editBtn));
 
       if (delivered) {
         const link = location.origin + '/gift/' + o.id;
