@@ -143,12 +143,13 @@
     <div class="max-w-lg lg:max-w-xl mx-auto px-5 py-8 md:py-12">
 
       <div class="flex items-center justify-between text-[.8rem] font-700 tracking-[.1em] uppercase text-ink-soft">
-        <span id="stepLabel">Step 1 of 7</span>
+        <span id="stepLabel">Step 1 of 5</span>
         <span class="text-claret">About 5 minutes</span>
       </div>
       <div class="mt-2.5 h-1.5 rounded-full bg-claret/12 overflow-hidden" aria-hidden="true">
-        <div id="stepBar" class="h-full rounded-full bg-gradient-to-r from-claret to-gold transition-[width] duration-500" style="width:14%"></div>
+        <div id="stepBar" class="h-full rounded-full bg-gradient-to-r from-claret to-gold transition-[width] duration-500" style="width:20%"></div>
       </div>
+      <nav id="stepNav" class="mt-3.5 grid grid-cols-5 gap-1" aria-label="Quiz steps"></nav>
 
       <!-- STEP 1: who + about them -->
       <section class="step live" data-step="1">
@@ -324,6 +325,10 @@
 
             <button type="button" id="payBtn" class="btn btn-primary w-full mt-5">Complete my purchase</button>
             <p class="mt-3.5 text-center"><button type="button" id="checkoutBack" class="inline-flex items-center gap-1.5 text-claret font-700 text-[.9rem] cursor-pointer underline decoration-gold/60 underline-offset-4 transition-colors hover:text-claret-deep focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to my answers</button></p>
+            <div class="mt-4 pt-4 border-t border-claret/12">
+              <p class="text-ink-soft text-[.78rem] font-700 tracking-[.1em] uppercase text-center">Or jump straight to a question</p>
+              <nav id="coStepNav" class="mt-2.5 grid grid-cols-5 gap-1" aria-label="Quiz steps"></nav>
+            </div>
             <p id="payErr" class="hidden mt-3 text-center text-[.85rem] font-700 text-claret bg-blush/40 rounded-lg py-2 px-3"></p>
             <p class="mt-3.5 text-center text-ink-soft text-[.82rem] flex items-center justify-center gap-3">
               <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Stripe secure checkout</span>
@@ -724,6 +729,81 @@
       default: return false;
     }
   }
+  // ---------- step navigation ----------
+  // Reaching the price used to strand people: the only way back to question one
+  // was "Back to my answers" and then Back four more times. Every step is now a
+  // target of its own, from inside the quiz and from the checkout screen.
+  var STEP_NAMES = ['Them', 'Occasion', 'Style', 'Voice', 'Story'];
+
+  // A step is reachable if everything before it is answered. Going back is
+  // always allowed; going forward past an unanswered question is not, which is
+  // the same rule the Next button follows.
+  function canJumpTo(n) {
+    for (var i = 1; i < n; i += 1) if (!validStep(i)) return false;
+    return true;
+  }
+
+  // Every question answered. Worth checking at the two doors out of the quiz
+  // rather than trusting that people only ever arrive through them: the step
+  // nav now lets someone jump back from checkout and blank an answer, and a
+  // restored session can land straight on a later phase.
+  function allStepsValid() {
+    for (var i = 1; i <= TOTAL; i += 1) if (!validStep(i)) return i;
+    return 0;
+  }
+
+  function goToStep(n) {
+    if (!canJumpTo(n)) return;
+    state.step = n;
+    if (state.phase !== 'quiz') setPhase('quiz');
+    renderStep();
+  }
+
+  function paintStepNav() {
+    ['stepNav', 'coStepNav'].forEach(function (id) {
+      var host = $(id);
+      if (!host) return;
+      host.innerHTML = '';
+      for (var n = 1; n <= TOTAL; n += 1) {
+        (function (step) {
+          var done = validStep(step);
+          var here = state.phase === 'quiz' && state.step === step;
+          var open = canJumpTo(step);
+
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.disabled = !open;
+          b.className = 'group flex flex-col items-center gap-1 py-1 rounded-lg ' +
+            (open ? 'cursor-pointer' : 'cursor-not-allowed opacity-45') +
+            ' focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2';
+          b.setAttribute('aria-current', here ? 'step' : 'false');
+          b.setAttribute('aria-label',
+            'Step ' + step + ', ' + STEP_NAMES[step - 1] +
+            (here ? ', current step' : done ? ', answered' : ', not answered yet') +
+            (open ? '' : '. Answer the earlier questions first.'));
+
+          var dot = document.createElement('span');
+          dot.className = 'grid place-items-center w-7 h-7 rounded-full text-[.76rem] font-700 transition-colors ' +
+            (here ? 'bg-claret text-ivory ring-2 ring-gold ring-offset-2 ring-offset-ivory'
+                  : done ? 'bg-claret/85 text-ivory group-hover:bg-claret'
+                         : 'bg-claret/10 text-claret/70 group-hover:bg-claret/20');
+          dot.textContent = done && !here ? '\u2713' : String(step);
+          dot.setAttribute('aria-hidden', 'true');
+
+          var cap = document.createElement('span');
+          cap.className = 'text-[.62rem] font-700 tracking-[.04em] uppercase leading-none ' +
+            (here ? 'text-claret' : 'text-ink-soft');
+          cap.textContent = STEP_NAMES[step - 1];
+          cap.setAttribute('aria-hidden', 'true');
+
+          b.appendChild(dot); b.appendChild(cap);
+          b.addEventListener('click', function () { goToStep(step); });
+          host.appendChild(b);
+        })(n);
+      }
+    });
+  }
+
   function firstName() { return (state.who === 'myself' ? 'you' : (state.name.trim().split(/\s+/)[0] || 'them')); }
   function renderStep() {
     // Never let a voice keep playing into the next question.
@@ -735,10 +815,11 @@
     $('backBtn').hidden = state.step === 1;
     $('nextBtn').textContent = state.step === TOTAL ? 'Create my song' : 'Next';
     $('nextBtn').disabled = !validStep(state.step);
+    paintStepNav();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     save();
   }
-  function refreshNext() { $('nextBtn').disabled = !validStep(state.step); }
+  function refreshNext() { $('nextBtn').disabled = !validStep(state.step); paintStepNav(); }
 
   // step 1
   document.querySelectorAll('[data-who]').forEach(function (c) {
@@ -1008,6 +1089,7 @@
       $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     }
     if (ph === 'checkout') { paintCheckout(); trackReachedCheckout(); }
+    paintStepNav();
   }
 
   // email phase
@@ -1052,6 +1134,8 @@
 
   $('emailNext').addEventListener('click', function () {
     if (!/.+@.+\..+/.test(state.email)) return;
+    var missing = allStepsValid();
+    if (missing) { goToStep(missing); return; }
     captureForRecovery();
     setPhase('checkout');
   });
@@ -1119,6 +1203,8 @@
   var paying = false;
   $('payBtn').addEventListener('click', async function () {
     if (paying) return;
+    var missing = allStepsValid();
+    if (missing) { goToStep(missing); return; }
     paying = true;
     var btn = $('payBtn'); btn.textContent = 'Opening secure checkout...';
     $('payErr').classList.add('hidden');
