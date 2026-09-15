@@ -10,23 +10,23 @@
     },
     {
       "source": "/lp",
-      "destination": "/funnel.html"
+      "destination": "/funnel"
     },
     {
       "source": "/lp/birthday-milestone",
-      "destination": "/lp-birthday-milestone.html"
+      "destination": "/lp-birthday-milestone"
     },
     {
       "source": "/lp/birthday",
-      "destination": "/lp-birthday-milestone.html"
+      "destination": "/lp-birthday-milestone"
     },
     {
       "source": "/lp/anniversary",
-      "destination": "/lp-anniversary.html"
+      "destination": "/lp-anniversary"
     },
     {
       "source": "/lp/faith",
-      "destination": "/lp-faith.html"
+      "destination": "/lp-faith"
     },
     {
       "source": "/unsubscribe/:token",
