@@ -42,6 +42,18 @@ export default async function handler(req, res) {
     const addToCart = sum(eventDaily, 'add_to_cart');
     const visits = visitsDaily.reduce((n, r) => n + Number(r.sessions), 0);
 
+    // ── The story step ─────────────────────────────────────────────────────
+    // First-party only: Meta has no visibility inside the quiz, and this is
+    // the step people were dropping out of. The three rungs separate the two
+    // failures that look identical in a single number: reaching the question
+    // and never typing, versus typing and giving up before it was long enough
+    // to continue. `help` is how many opened the writing prompts, which is the
+    // only way to tell whether that panel is earning its place.
+    const storyView = sum(eventDaily, 'story_view');
+    const storyStart = sum(eventDaily, 'story_start');
+    const storyReady = sum(eventDaily, 'story_ready');
+    const storyHelp = sum(eventDaily, 'story_help');
+
     // Purchases + revenue come from orders (can't be blocked by an ad-blocker).
     // A row worth $0 is a test order or a 100%-off promo redemption, not a sale,
     // so it is excluded from the purchase count and from every rate built on it.
@@ -115,6 +127,19 @@ export default async function handler(req, res) {
         intent_rate: reachedForm ? addToCart / reachedForm : 0,
         purchase_rate: addToCart ? purchases / addToCart : 0,
         visit_to_purchase: visits ? purchases / visits : 0,
+      },
+      story: {
+        reached: storyView,
+        started: storyStart,
+        finished: storyReady,
+        used_help: storyHelp,
+        // Of everyone who saw the question, who never typed a character.
+        never_started_rate: storyView ? (storyView - storyStart) / storyView : 0,
+        // Of everyone who started typing, who gave up before it was usable.
+        gave_up_rate: storyStart ? (storyStart - storyReady) / storyStart : 0,
+        // End to end: saw the question, left with a story we can write from.
+        completion_rate: storyView ? storyReady / storyView : 0,
+        help_rate: storyView ? storyHelp / storyView : 0,
       },
       timeseries, angles, sources, tiers, buttons,
       devices: Object.values((deviceDaily || []).reduce((acc, r) => {

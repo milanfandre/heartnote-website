@@ -691,6 +691,24 @@
     $('tempoGrid').appendChild(b);
   });
 
+  // ---------- story-step instrumentation ----------
+  // The story is where people stall: it is the only step that asks them to
+  // write rather than tap, and a test run showed them dropping out here. These
+  // four fire at most once per session, so a reload or a trip back from Stripe
+  // cannot inflate the funnel, and together they separate "never started
+  // writing" from "started and gave up".
+  function trackOnce(key, type, extra) {
+    try {
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, '1');
+    } catch (e) { /* private mode: fire anyway, rather than lose the event */ }
+    if (typeof hnTrack !== 'function') return;
+    var fb = (window.HN_META && HN_META.data()) || {};
+    var payload = { tier: state.tier, fbp: fb.fbp, fbc: fb.fbc };
+    for (var k in (extra || {})) payload[k] = extra[k];
+    hnTrack(type, payload);
+  }
+
   // ---------- step engine ----------
   var TOTAL = 5;
   function validStep(n) {
@@ -710,6 +728,7 @@
   function renderStep() {
     // Never let a voice keep playing into the next question.
     if (typeof stopSinger === 'function') { stopSinger(); if (typeof paintSingers === 'function') paintSingers(); }
+    if (state.step === TOTAL) trackOnce('hn_story_view', 'story_view', { label: 'Reached the story step' });
     document.querySelectorAll('.step').forEach(function (s) { s.classList.toggle('live', +s.dataset.step === state.step); });
     $('stepLabel').textContent = 'Step ' + state.step + ' of ' + TOTAL;
     $('stepBar').style.width = Math.round(state.step / TOTAL * 100) + '%';
@@ -847,6 +866,9 @@
 
   $('qStory').addEventListener('input', function () {
     state.story = this.value;
+    var written = answerLength(this.value);
+    if (written > 0) trackOnce('hn_story_start', 'story_start', { label: 'Started writing the story' });
+    if (written >= STORY_TARGET) trackOnce('hn_story_ready', 'story_ready', { label: 'Story long enough to continue' });
     paintMeter();
     refreshNext(); save();
   });
@@ -884,6 +906,7 @@
   function insertPrompt(q) {
     var ta = $('qStory');
     if (insertedPrompts.indexOf(q) === -1) insertedPrompts.push(q);
+    trackOnce('hn_story_prompt', 'story_help', { label: 'Used a guiding question' });
     var cur = ta.value.replace(/\s+$/, '');
     ta.value = (cur ? cur + '\n\n' : '') + q + '\n';
     state.story = ta.value;
@@ -900,7 +923,7 @@
     panel.hidden = wasOpen;
     this.setAttribute('aria-expanded', String(!wasOpen));
     $('helpChevron').style.transform = wasOpen ? '' : 'rotate(180deg)';
-    if (!wasOpen) paintHelp();
+    if (!wasOpen) { paintHelp(); trackOnce('hn_story_help', 'story_help', { label: 'Opened the writing help' }); }
   });
 
   // nav

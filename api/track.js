@@ -18,7 +18,10 @@ import { adminAuthed } from '../lib/auth.js';
 // hand. It is the only moment we can reach someone who has not paid, so it
 // starts the recovery sequence. The email itself is written to
 // abandoned_checkouts, never to the analytics table.
-const TYPES = new Set(['pageview', 'cta_click', 'reached_form', 'add_to_cart', 'purchase', 'abandon_capture']);
+// 'story_*' instruments the one step that asks people to write rather than
+// tap, which is where a test run showed them dropping out.
+const TYPES = new Set(['pageview', 'cta_click', 'reached_form', 'add_to_cart', 'purchase', 'abandon_capture',
+  'story_view', 'story_start', 'story_ready', 'story_help']);
 const str = (v, max = 300) => (typeof v === 'string' ? v.slice(0, max) : null);
 const int = (v) => (Number.isFinite(+v) ? Math.trunc(+v) : null);
 
