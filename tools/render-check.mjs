@@ -46,7 +46,7 @@ const PAGES = [
     must: [{ sel: '.lifestyle', name: 'hero media', minH: 200 }],
   },
   {
-    path: '/order.html',
+    path: '/order',
     // The checkout phase only renders once the quiz is complete.
     setup: () => {
       localStorage.setItem('hn_v3_quiz', JSON.stringify({

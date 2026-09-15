@@ -140,10 +140,10 @@ export default async function handler(req, res) {
       payment_intent_data: { metadata },
       allow_promotion_codes: true,
       ...(email && /.+@.+\..+/.test(email) ? { customer_email: email } : {}),
-      success_url: `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}&eid=${metaEventId}`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}&eid=${metaEventId}`,
       cancel_url: fromQuiz
-        ? `${origin}/v3-order?canceled=1`
-        : `${origin}/order.html?tier=${tierKey}&canceled=1`,
+        ? `${origin}/order?canceled=1`
+        : `${origin}/order?tier=${tierKey}&canceled=1`,
     });
 
     // InitiateCheckout, sent server-side the moment Stripe actually has a
@@ -160,7 +160,7 @@ export default async function handler(req, res) {
         userAgent: clip(req.headers['user-agent'], 300),
         value: orderTotalCents(tierKey, { voice: voiceOn }),
         currency: 'usd',
-        eventSourceUrl: `${origin}${fromQuiz ? '/v3-order' : '/order.html'}`,
+        eventSourceUrl: `${origin}${fromQuiz ? '/v3-order' : '/order'}`,
         customData: { content_name: tierKey },
       });
     }

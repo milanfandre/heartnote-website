@@ -9,10 +9,6 @@
       "destination": "/api/lyrics?id=:id"
     },
     {
-      "source": "/dashboard",
-      "destination": "/dashboard.html"
-    },
-    {
       "source": "/lp",
       "destination": "/funnel.html"
     },
@@ -33,18 +29,6 @@
       "destination": "/lp-faith.html"
     },
     {
-      "source": "/deliver",
-      "destination": "/deliver.html"
-    },
-    {
-      "source": "/v1",
-      "destination": "/v1.html"
-    },
-    {
-      "source": "/v3",
-      "destination": "/v3.html"
-    },
-    {
       "source": "/unsubscribe/:token",
       "destination": "/api/gift?unsub=:token"
     }
@@ -62,17 +46,12 @@
     },
     {
       "source": "/v3-order",
-      "destination": "/order.html",
+      "destination": "/order",
       "permanent": false
     },
     {
       "source": "/v2-order",
-      "destination": "/order.html",
-      "permanent": false
-    },
-    {
-      "source": "/order",
-      "destination": "/order.html",
+      "destination": "/order",
       "permanent": false
     }
   ],
@@ -80,5 +59,6 @@
     "api/track.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "cleanUrls": true
 }

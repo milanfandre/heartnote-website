@@ -395,7 +395,7 @@ export default async function handler(req, res) {
         fbp: m.fbp, fbc: m.fbc, ip: m.ip, userAgent: m.ua,
         value: order.amount_total,
         currency: order.currency,
-        eventSourceUrl: `${process.env.SITE_URL || 'https://heartnote.music'}/success.html`,
+        eventSourceUrl: `${process.env.SITE_URL || 'https://heartnote.music'}/success`,
       }).catch((err) => console.error('Meta purchase event failed:', err)));
     } catch (err) {
       console.error('Meta purchase event failed:', err);
