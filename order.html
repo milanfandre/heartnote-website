@@ -197,13 +197,11 @@
         <input id="qOccasionOther" class="field mt-3 hidden" type="text" placeholder="Tell us the occasion" autocomplete="off" />
       </section>
 
-      <!-- STEP 3: style + tempo -->
+      <!-- STEP 3: style -->
       <section class="step" data-step="3">
         <h1 class="mt-8 font-display font-500 text-claret text-[1.9rem] md:text-[2.2rem] leading-[1.12] tracking-tight">Choose your style</h1>
         <p class="mt-2 text-ink/70 text-[1.02rem]">The sound the song is built on.</p>
         <div id="styleGrid" class="mt-6 grid grid-cols-3 gap-2.5"></div>
-        <p class="mt-7 font-700 text-ink text-[.95rem]">Tempo</p>
-        <div id="tempoGrid" class="mt-2 grid grid-cols-3 gap-2.5"></div>
       </section>
 
       <!-- STEP 4: voice -->
@@ -219,12 +217,6 @@
             <span class="grid place-items-center w-12 h-12 rounded-full bg-blush/50 text-claret mx-auto" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>
             <span class="block mt-2.5 font-display text-claret text-[1.15rem]">Male voice</span>
           </button>
-        </div>
-
-        <div id="voicePickWrap" class="hidden mt-5">
-          <button type="button" id="voiceToggle" class="text-claret font-700 text-[.95rem] underline decoration-gold/50 underline-offset-2 cursor-pointer">Or pick a specific singer</button>
-          <div id="voiceList" class="hidden mt-3 space-y-2"></div>
-          <p id="voicePickNote" class="hidden mt-2 text-ink-soft text-[.85rem]">Optional. Leave it and we will match the best singer to your style.</p>
         </div>
       </section>
 
@@ -529,7 +521,7 @@
   // ---------- state ----------
   var KEY = 'hn_v3_quiz';
   var LEGACY_KEY = 'hn_v2_quiz';   // this page was /v2-order before the rename
-  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', tempo: '', voice: '', singer: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
+  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', voice: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
   try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
@@ -657,17 +649,6 @@
   ];
 
   var STYLES = ['Country','Pop','Acoustic','Rock','Singer-Songwriter','R&B','Faith','Jazz','Lullaby'];
-  // Optional: a specific singer. Lily is not taking work at the moment.
-  var SINGERS = [
-    { name: 'Harper',  voice: 'Female', desc: 'country',    src: 'audio/voices/voice-harper.mp3' },
-    { name: 'Gabriel', voice: 'Female', desc: 'pop',        src: 'audio/voices/voice-gabriel.mp3' },
-    { name: 'Lily',    voice: 'Female', desc: 'joyful pop', src: 'audio/voices/voice-lily.mp3', unavailable: true },
-    { name: 'Brett',   voice: 'Male',   desc: 'country',    src: 'audio/voices/voice-brett.mp3' },
-    { name: 'Cameron', voice: 'Male',   desc: 'pop',        src: 'audio/voices/voice-cameron.mp3' },
-    { name: 'Justin',  voice: 'Male',   desc: 'soul',       src: 'audio/voices/voice-justin.mp3' },
-    { name: 'Shaun',   voice: 'Male',   desc: 'hip hop',    src: 'audio/voices/voice-shaun.mp3' }
-  ];
-  var TEMPOS = ['Slow','Medium','Upbeat'];
   var PKGS = [
     { key: 'single', name: 'Single', price: 59, was: 89, desc: 'One finished song',
       gets: ['One complete song, written from your story', 'Yours to download and keep forever', 'Delivered within 24 hours'] },
@@ -695,11 +676,6 @@
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'chip'; b.textContent = s; b.dataset.style = s;
     $('styleGrid').appendChild(b);
-  });
-  TEMPOS.forEach(function (t) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'chip'; b.textContent = t; b.dataset.tempo = t;
-    $('tempoGrid').appendChild(b);
   });
 
   // ---------- story-step instrumentation ----------
@@ -729,7 +705,7 @@
       // An occasion in words, so the Next button blocks what the server would
       // refuse later with a generic error the customer could not act on.
       case 2: return !!state.occasion && (state.occasion !== 'Other' || /[a-z]{2}/i.test(state.occasionOther));
-      case 3: return !!state.style && !!state.tempo;
+      case 3: return !!state.style;
       case 4: return !!state.voice;
       case 5: return answerLength(state.story) >= STORY_TARGET;
       default: return false;
@@ -812,8 +788,6 @@
 
   function firstName() { return (state.who === 'myself' ? 'you' : (state.name.trim().split(/\s+/)[0] || 'them')); }
   function renderStep() {
-    // Never let a voice keep playing into the next question.
-    if (typeof stopSinger === 'function') { stopSinger(); if (typeof paintSingers === 'function') paintSingers(); }
     if (state.step === TOTAL) trackOnce('hn_story_view', 'story_view', { label: 'Reached the story step' });
     document.querySelectorAll('.step').forEach(function (s) { s.classList.toggle('live', +s.dataset.step === state.step); });
     $('stepLabel').textContent = 'Step ' + state.step + ' of ' + TOTAL;
@@ -858,78 +832,14 @@
     document.querySelectorAll('[data-style]').forEach(function (x) { x.classList.toggle('on', x.dataset.style === state.style); });
     refreshNext(); save();
   });
-  $('tempoGrid').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-tempo]'); if (!b) return;
-    state.tempo = b.dataset.tempo;
-    document.querySelectorAll('[data-tempo]').forEach(function (x) { x.classList.toggle('on', x.dataset.tempo === state.tempo); });
-    refreshNext(); save();
-  });
 
   // step 4
   document.querySelectorAll('[data-voice]').forEach(function (c) {
     c.addEventListener('click', function () {
       state.voice = c.dataset.voice;
       document.querySelectorAll('[data-voice]').forEach(function (x) { x.classList.toggle('on', x === c); });
-      if (state.singer) {
-        // A singer from the other voice no longer applies.
-        var keep = SINGERS.filter(function (v) { return v.name === state.singer && v.voice === state.voice; });
-        if (!keep.length) state.singer = '';
-      }
-      paintSingers();
-      $('voicePickWrap').classList.remove('hidden');
       refreshNext(); save();
     });
-  });
-
-  // Optional: pick the actual singer. Hidden behind a link so the quick
-  // male/female choice stays the fast path.
-  var singerAudio = null;
-  var singerPlaying = '';           // which singer is sounding right now
-  function stopSinger() {
-    if (singerAudio) { singerAudio.pause(); singerAudio = null; }
-    singerPlaying = '';
-  }
-  var ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
-  var ICON_PAUSE = '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>';
-  function paintSingers() {
-    var wrap = $('voiceList'); wrap.innerHTML = '';
-    SINGERS.filter(function (v) { return v.voice === state.voice; }).forEach(function (v) {
-      var row = document.createElement('div');
-      var on = state.singer === v.name;
-      var playing = singerPlaying === v.name;
-      row.className = 'flex items-center gap-3 rounded-[12px] border-[1.5px] p-3 ' +
-        (v.unavailable ? 'border-claret/10 opacity-50' : (on ? 'border-claret bg-claret/5' : 'border-claret/20'));
-      row.innerHTML =
-        '<button type="button" class="sg-play grid place-items-center w-9 h-9 rounded-full bg-claret text-ivory shrink-0 cursor-pointer" aria-label="' + (playing ? 'Stop' : 'Hear') + ' ' + v.name + '"' + (v.unavailable ? ' disabled' : '') + '>' +
-          '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' + (playing ? ICON_PAUSE : ICON_PLAY) + '</svg></button>' +
-        '<span class="flex-1"><span class="block font-700 text-ink text-[.95rem]">' + v.name + '</span>' +
-        '<span class="block text-ink-soft text-[.82rem]">' + v.desc + (v.unavailable ? ' &middot; unavailable' : '') + '</span></span>' +
-        (v.unavailable ? '' : '<button type="button" class="sg-pick text-claret font-700 text-[.88rem] cursor-pointer">' + (on ? 'Chosen' : 'Choose') + '</button>');
-      if (!v.unavailable) {
-        row.querySelector('.sg-play').addEventListener('click', function () {
-          // Second press on the one that is sounding stops it.
-          if (singerPlaying === v.name) { stopSinger(); paintSingers(); return; }
-          stopSinger();
-          singerAudio = new Audio(v.src);
-          singerPlaying = v.name;
-          singerAudio.addEventListener('ended', function () { stopSinger(); paintSingers(); });
-          singerAudio.play().catch(function () { stopSinger(); paintSingers(); });
-          paintSingers();
-        });
-        row.querySelector('.sg-pick').addEventListener('click', function () {
-          state.singer = (state.singer === v.name) ? '' : v.name;
-          paintSingers(); save();
-        });
-      }
-      wrap.appendChild(row);
-    });
-  }
-  $('voiceToggle').addEventListener('click', function () {
-    var list = $('voiceList');
-    var nowHidden = list.classList.toggle('hidden');
-    $('voicePickNote').classList.toggle('hidden', nowHidden);
-    this.textContent = nowHidden ? 'Or pick a specific singer' : 'Hide the singers';
-    if (nowHidden) { stopSinger(); paintSingers(); }
   });
 
   // step 5
@@ -1082,7 +992,6 @@
   }
 
   function setPhase(ph) {
-    if (typeof stopSinger === 'function') stopSinger();
     state.phase = ph; save();
     ['Quiz', 'Email', 'Checkout'].forEach(function (p) {
       $('phase' + p).classList.toggle('live', ph === p.toLowerCase());
@@ -1125,9 +1034,7 @@
             relationship: state.rel,
             yourName: state.yourName,
             occasion: state.occasion === 'Other' ? state.occasionOther : state.occasion,
-            singer: state.singer,
             style: state.style,
-            tempo: state.tempo,
             voice: state.voice,
             story: state.story,
             tier: state.tier,
@@ -1227,9 +1134,7 @@
         'Ordered through the v3 quiz.',
         'Song is for: ' + (state.who === 'myself' ? 'the buyer themselves' : 'someone else'),
         state.yourName ? 'From: ' + state.yourName : '',
-        state.tempo ? 'Tempo: ' + state.tempo : '',
-        state.voice ? 'Voice: ' + state.voice : '',
-        state.singer ? 'Requested singer: ' + state.singer : ''
+        state.voice ? 'Voice: ' + state.voice : ''
       ].filter(Boolean).join('\n');
       var res = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -1240,7 +1145,7 @@
           occasionOther: state.occasionOther,
           recipient: state.who === 'myself' ? 'The buyer (a song for themselves)' : state.name,
           relationship: state.rel,
-          style: state.style + (state.tempo ? ' (' + state.tempo.toLowerCase() + ' tempo)' : ''),
+          style: state.style,
           story: state.story,
           sender: state.yourName,
           other: other,
@@ -1335,12 +1240,9 @@
     }
     $('qOccasionOther').value = state.occasionOther;
     if (state.style) { var s = document.querySelector('[data-style="' + state.style + '"]'); if (s) s.classList.add('on'); }
-    if (state.tempo) { var t = document.querySelector('[data-tempo="' + state.tempo + '"]'); if (t) t.classList.add('on'); }
     if (state.voice) {
       var v = document.querySelector('[data-voice="' + state.voice + '"]');
       if (v) v.classList.add('on');
-      paintSingers();
-      $('voicePickWrap').classList.remove('hidden');
     }
     $('qStory').value = state.story;
     $('qStory').dispatchEvent(new Event('input'));

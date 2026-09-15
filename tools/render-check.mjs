@@ -51,7 +51,7 @@ const PAGES = [
     setup: () => {
       localStorage.setItem('hn_v3_quiz', JSON.stringify({
         who: 'someone', name: 'Check', rel: '', gender: 'Female', occasion: 'Anniversary',
-        occasionOther: '', themes: ['Love'], style: 'Acoustic', tempo: 'Medium', voice: 'Female',
+        occasionOther: '', themes: ['Love'], style: 'Acoustic', voice: 'Female',
         favorite: 'x', story: 'x'.repeat(300), email: 'check@example.com', tier: 'single',
         phase: 'checkout', step: 7,
       }));

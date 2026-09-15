@@ -250,8 +250,19 @@ When this file and an older spec disagree, **this file wins**.
   oversight: do not change it as a tidy-up. The no-AI rule still holds, so the
   copy claims neither a human vocalist nor anything else.
 
+- **Sep 16 — Tempo and the named voices removed from the quiz.** Paul's call,
+  on delivery grounds, and it supersedes the Sep 15 entry above. Tempo locked
+  him into one feel at order time, which is exactly the variety a two or three
+  version package is sold on. The named voices could not be upcharged in the
+  quiz and he could not reliably produce female voices distinct from the ones
+  already in use, so the choice promised more than it delivered. Male/female
+  stays. Side effect worth noting: removing named people also retires the
+  "real singers" implication, without the copy sweep that was declined twice.
+  The quiz is now five steps of four questions, which should help the story
+  drop-off we are measuring. Jazz replaced Cinematic in the same pass.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
 keep landing-page divergence until told otherwise ·
-singer wording is settled, see Sep 15.
+singer wording: see Sep 16, which supersedes Sep 15.
