@@ -242,7 +242,16 @@ When this file and an older spec disagree, **this file wins**.
   unsubscribe link (CAN-SPAM), and privacy.html now discloses the pre-payment
   email capture and its retention. Not yet live until db/abandoned.sql is run.
 
+- **Sep 15 — Singer wording left exactly as it is, deliberately.** Milan first
+  asked for a sweep so the site never claims real singers, then withdrew it
+  twice when shown what it touched. The quiz still offers named voices (Harper,
+  Gabriel, Brett, Cameron, Justin, Shaun) under "Or pick a specific singer" and
+  "we will match the best singer to your style". This is a decision, not an
+  oversight: do not change it as a tidy-up. The no-AI rule still holds, so the
+  copy claims neither a human vocalist nor anything else.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
-keep landing-page divergence until told otherwise.
+keep landing-page divergence until told otherwise ·
+singer wording is settled, see Sep 15.
