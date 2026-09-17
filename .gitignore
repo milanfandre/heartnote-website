@@ -17,6 +17,7 @@ brand_assets/hf-grandma.png
 # full-length master songs & voice sources — commit only the web-optimized clips
 audio/source/
 audio/Avatars/
+audio/genres/     # full-length masters, 90MB of WAV; web previews live in audio/
 
 # internal reference docs (contain AI prompts) — never commit / never web-accessible
 brand_assets/*.pdf
