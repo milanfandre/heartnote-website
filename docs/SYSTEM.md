@@ -94,8 +94,10 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 ## Money
 
 **Source of truth: `lib/pricing.js`** (tiers, compare-at, ADDONS, INCLUDED_ADDONS,
-UPSELL_CENTS, orderTotalCents). Current state: Single $59/~~$89~~ (MP3, 1 version),
-Deluxe $69/~~$99~~ (2 versions), Experience $89/~~$139~~ (3 versions, remastered).
+UPSELL_CENTS, orderTotalCents). Current state: Single $49/~~$98~~ (MP3, 1 version),
+Deluxe $59/~~$118~~ (2 versions), Experience $79/~~$158~~ (3 versions, remastered).
+Compare-at is exactly 2x the live price, because the banner claims a flat
+**50% off** and the strikes have to make that literally true.
 One add-on: voice $10 on every tier. One free revision per order. Upsell:
 unlock-all-versions $34/$49 after delivery.
 
@@ -105,9 +107,13 @@ production before):
 2. `order.html` — duplicated `TIERS` JS object **and** the static tier-card
    markup (headline + strike + any savings copy; `sumCompare`/`sumSave` derive)
 3. `index.html` pricing cards (price, strike, SAVE badge)
-4. `funnel.html` + 3 `lp-*.html` pricing blocks
+4. `funnel.html` + 3 `lp-*.html` pricing blocks **and their "From $X" copy**
+   (meta description, hero paragraph, footer line, sticky mobile bar)
+4b. `v1.html`, `order-classic.html` — unlinked but still served, and they carry
+   full tier markup + their own `TIERS` JS
 5. Stripe: create the new Price, update `PRICE_<TIER>` in **Vercel** env, redeploy
-6. Promo banner claim ("Up to $50 off") if the max saving changed
+6. Promo banner claim ("50% off for a limited time only") on index/v1/v3/order/
+   order-classic, plus the two extra "50% off" badges inside v3.html
 7. Verify live per RUNBOOK (grep served HTML for stale figures)
 
 Stripe price IDs live in env (`PRICE_SINGLE/DELUXE/EXPERIENCE`); a Vercel env

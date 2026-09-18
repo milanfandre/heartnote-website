@@ -60,7 +60,7 @@
     <div class="bg-claret-deep text-ivory relative overflow-hidden">
       <div class="absolute inset-0 pointer-events-none opacity-70" style="background-image: radial-gradient(60% 180% at 15% 50%, rgba(198,151,63,.28) 0%, rgba(198,151,63,0) 70%), radial-gradient(50% 160% at 88% 50%, rgba(233,203,192,.16) 0%, rgba(233,203,192,0) 72%);"></div>
       <p class="relative max-w-6xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0 text-center leading-snug">
-        <span class="text-[.88rem] sm:text-[.95rem] font-600">Up to <span class="text-gold-soft font-700">$50 off</span> for a limited time only</span>
+        <span class="text-[.88rem] sm:text-[.95rem] font-600"><span class="text-gold-soft font-700">50% off</span> for a limited time only</span>
         <span class="inline-flex items-center gap-1.5 text-[.8rem] sm:text-[.86rem] text-ivory/80">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E4C67F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           Ends in <span data-promo-countdown class="font-700 text-ivory tabular-nums tracking-wide">--:--:--</span>
@@ -100,13 +100,13 @@
           <legend class="font-display text-claret text-xl mb-3">Choose your package</legend>
           <div class="grid sm:grid-cols-3 gap-3" id="tiers">
             <label><input type="radio" name="tier" value="single" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Single</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$59</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$89</span></span><p class="text-sm text-ink-soft mt-1">One personalized song (MP3)</p></div>
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Single</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$49</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$98</span></span><p class="text-sm text-ink-soft mt-1">One personalized song (MP3)</p></div>
             </label>
             <label><input type="radio" name="tier" value="deluxe" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Deluxe</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$69</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$109</span></span><p class="text-sm text-ink-soft mt-1">2 versions &middot; Premium Audio Quality</p></div>
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Deluxe</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$59</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$118</span></span><p class="text-sm text-ink-soft mt-1">2 versions &middot; Premium Audio Quality</p></div>
             </label>
             <label><input type="radio" name="tier" value="experience" class="sr-only" />
-              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$89</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$139</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; remastered</p></div>
+              <div class="tier"><span class="font-700 text-claret block leading-tight">Experience Package</span><span class="flex items-baseline gap-1.5 mt-1.5"><span class="font-display text-xl text-claret">$79</span><span class="text-ink-soft/85 text-[1.05rem] font-600 line-through decoration-claret/60 decoration-2">$158</span></span><p class="text-sm text-ink-soft mt-1">3 versions &middot; remastered</p></div>
             </label>
           </div>
           <div id="tierRecap" class="lg:hidden mt-3 rounded-xl bg-blush/20 border border-claret/10 px-4 py-3"></div>
@@ -187,15 +187,15 @@
           <h2 class="font-display text-claret text-xl">Order summary</h2>
           <div class="mt-4 flex items-baseline justify-between gap-3">
             <span class="font-700 text-ink" id="sumTier">Deluxe Package</span>
-            <span class="font-display text-xl text-claret" id="sumTierPrice">$69</span>
+            <span class="font-display text-xl text-claret" id="sumTierPrice">$59</span>
           </div>
           <ul id="sumIncludes" class="mt-4 space-y-2 text-[.98rem] text-ink/85"></ul>
 
           <div class="mt-5 pt-4 border-t border-claret/10 space-y-2 text-[.98rem]">
-            <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$69</span></div>
+            <div class="flex justify-between text-ink/80"><span id="sumTierLabel">Deluxe Package</span><span id="sumBase">$59</span></div>
             <div id="sumVoiceRow" class="hidden flex justify-between text-ink/80"><span id="sumVoiceLabel">Choose your voice</span><span id="sumVoiceAmt">+$10</span></div>
-            <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$69</span></div>
-            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="text-[1.05rem] font-600 text-ink-soft/85 line-through decoration-claret/60 decoration-2">$109</span> <span class="text-claret font-700">You save <span id="sumSave">$40</span></span></p>
+            <div class="flex justify-between font-700 text-claret text-[1.1rem] pt-1 border-t border-claret/10 mt-1"><span>Total</span><span id="sumTotal">$59</span></div>
+            <p class="text-right text-sm text-ink-soft"><span id="sumCompare" class="text-[1.05rem] font-600 text-ink-soft/85 line-through decoration-claret/60 decoration-2">$118</span> <span class="text-claret font-700">You save <span id="sumSave">$59</span></span></p>
           </div>
 
           <button type="submit" id="submitBtn" class="btn-primary w-full mt-6 flex items-center justify-center gap-2">
@@ -223,9 +223,9 @@
     const VOICE_ADDON = 10;
     const ADDONS = { voice: 10 };
     const TIERS = {
-      single:     { name: 'Single',             price: 59, compare: 89,  versions: 1, included: [],                includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
-      deluxe:     { name: 'Deluxe',             price: 69, compare: 109,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
-      experience: { name: 'Experience Package', price: 89, compare: 139, versions: 3, included: [], includes: ['Three versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
+      single:     { name: 'Single',             price: 49, compare: 98,  versions: 1, included: [],                includes: ['One complete, personalized song (MP3)', 'Delivered within 24 hours', 'Yours to download & keep forever'] },
+      deluxe:     { name: 'Deluxe',             price: 59, compare: 118,  versions: 2, included: [],                includes: ['Two versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Delivered within 24 hours', 'Yours to keep forever'] },
+      experience: { name: 'Experience Package', price: 79, compare: 158, versions: 3, included: [], includes: ['Three versions to choose from', 'Premium WAV sound quality files for easy sharing', 'Songs remastered for that radio-quality finish', 'Delivered within 24 hours'] },
     };
     const params = new URLSearchParams(location.search);
     const form = document.getElementById('orderForm');

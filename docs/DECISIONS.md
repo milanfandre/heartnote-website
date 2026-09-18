@@ -261,6 +261,21 @@ When this file and an older spec disagree, **this file wins**.
   The quiz is now five steps of four questions, which should help the story
   drop-off we are measuring. Jazz replaced Cinematic in the same pass.
 
+- **Sep 18 — Repriced to $49 / $59 / $79, banner switched to a flat "50% off".**
+  Milan's call. Single $49/~~$98~~, Deluxe $59/~~$118~~, Experience $79/~~$158~~,
+  and the compare-at on every tier is exactly double the live price so the
+  banner's "50% off for a limited time only" is literally true rather than a
+  rounded-up anchor. Supersedes the Aug 2-3 entry and its "up to $50 off"
+  framing, which was a dollar cap and only ever applied to the top tier. Entry
+  price drops $59 to $49, so every "From $59" line on funnel.html and the three
+  lp-* pages moved with it. v3.html's price row in the comparison table said
+  "up to $50 off what comparable services charge"; that was a competitor claim
+  wearing the promo's clothes, and it now reads "50% off for a limited time",
+  which is the thing we can actually stand behind. v1.html and
+  order-classic.html are unlinked but still served, so they moved too.
+  Stripe: three new one-time Prices on the existing products; the old ones stay
+  active so any open session still resolves.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
