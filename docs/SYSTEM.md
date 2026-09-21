@@ -94,12 +94,16 @@ Companions: `RUNBOOK.md` (operate it), `DECISIONS.md` (why it's this way).
 ## Money
 
 **Source of truth: `lib/pricing.js`** (tiers, compare-at, ADDONS, INCLUDED_ADDONS,
-UPSELL_CENTS, orderTotalCents). Current state: Single $49/~~$98~~ (MP3, 1 version),
-Deluxe $59/~~$118~~ (2 versions), Experience $79/~~$158~~ (3 versions, remastered).
-Compare-at is exactly 2x the live price, because the banner claims a flat
-**50% off** and the strikes have to make that literally true.
-One add-on: voice $10 on every tier. One free revision per order. Upsell:
-unlock-all-versions $34/$49 after delivery.
+UPSELL_CENTS, expeditedWindow, orderTotalCents). Current state: Single $39/~~$78~~
+(MP3, 1 version), Deluxe $49/~~$98~~ (2 versions), Experience $59/~~$118~~
+(3 versions, remastered). Compare-at is exactly 2x the live price, because the
+banner claims a flat **50% off** and the strikes have to make that literally true.
+Add-ons: **expedited 6-hour delivery $20** (sold on the quiz's checkout card only
+while `expeditedWindow()` is open: before 12 pm Central; due 6 pm Central the
+same day; the API refuses it after noon with `code: expedited_closed`; it is an
+inline `price_data` line item, not a Stripe Price object), and voice $10 (legacy,
+only order-classic still sends it). One free revision per order. Upsell:
+unlock-all-versions $19/$29 after delivery.
 
 **Price-change checklist** — ALL of these move together (they have desynced in
 production before):
@@ -115,6 +119,9 @@ production before):
 6. Promo banner claim ("50% off for a limited time only") on index/v1/v3/order/
    order-classic, plus the two extra "50% off" badges inside v3.html
 7. Verify live per RUNBOOK (grep served HTML for stale figures)
+8. Expedited add-on price: `ADDONS.expedited` in lib/pricing.js, the `EXPEDITED`
+   mirror and the "+$20" label in order.html's checkout card. Upsell price:
+   `UPSELL_CENTS` only (gift page and create-upsell-session both read it).
 
 Stripe price IDs live in env (`PRICE_SINGLE/DELUXE/EXPERIENCE`); a Vercel env
 change requires a redeploy to take effect. Site shows a price ≠ Stripe charges

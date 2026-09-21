@@ -276,6 +276,26 @@ When this file and an older spec disagree, **this file wins**.
   Stripe: three new one-time Prices on the existing products; the old ones stay
   active so any open session still resolves.
 
+- **Sep 21 — Repriced again to $39 / $49 / $59; upsell to $19 / $29; expedited
+  6-hour delivery added at $20.** Milan's call, on a deadline. Everything came
+  down $10 except Experience, which came down $20, and the compare-at stays at
+  exactly double so "50% off" is still literally true ($78 / $98 / $118). The
+  unlock-all-versions upsell, which three days earlier was slated for removal,
+  is kept and cut to $19 (Deluxe) / $29 (Experience). Expedited is one press on
+  the checkout card, directly above "Complete my purchase": "Receive your song in
+  6 hours as an expedited service," +$20. It is only sold before 12 pm Central
+  and promises delivery by 6 pm Central the same day; after noon the button is
+  replaced by a one-line note and the checkout API refuses the flag, because a
+  tab opened at 11:50 and paid at 12:10 would otherwise buy a promise Paul
+  cannot keep. The window lives in `expeditedWindow()` in lib/pricing.js and is
+  mirrored in order.html; both read the Central clock through Intl, so DST is
+  handled and they cannot drift apart. An expedited order is loud everywhere
+  Paul looks: subject line prefix, claret banner at the top of the notification
+  email, a badge on the Deliver card, and a sheet column; the customer's
+  confirmation and the success page say 6 hours instead of 24. No weekend or
+  holiday rule was asked for, so none exists. Stripe: three new tier Prices;
+  the add-on is an inline line item, so no Price object was made for it.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

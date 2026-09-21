@@ -93,6 +93,16 @@
     .optcard:hover { border-color: rgba(110,20,35,.55); }
     .optcard:active { transform: scale(.98); }
     .optcard.on { border-color: var(--claret); background: #FBF3EE; box-shadow: 0 0 0 1.5px var(--claret) inset; }
+    /* Expedited toggle: same press-to-select language as the quiz cards. */
+    .expbtn { border: 1.5px solid rgba(198,151,63,.6); background: rgba(198,151,63,.1); transition: background-color .15s ease, border-color .15s ease; }
+    .expbtn:hover { background: rgba(198,151,63,.18); }
+    .expbtn:active { transform: scale(.985); }
+    .expbtn .expcheck { border: 2px solid rgba(110,20,35,.45); transition: background-color .15s ease, border-color .15s ease; }
+    .expbtn .expcheck svg { opacity: 0; transition: opacity .15s ease; }
+    .expbtn.on { border-color: var(--claret); background: #FBF3EE; box-shadow: 0 0 0 1.5px var(--claret) inset; }
+    .expbtn.on .expcheck { background: var(--claret); border-color: var(--claret); }
+    .expbtn.on .expcheck svg { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) { .expbtn, .expbtn .expcheck, .expbtn .expcheck svg { transition: none; } .expbtn:active { transform: none; } }
 
     .step { display: none; }
     .step.live { display: block; animation: stepIn .45s cubic-bezier(.22,1,.36,1); }
@@ -321,7 +331,21 @@
             <p class="mt-5 font-700 text-ink text-[.92rem]">Pick your package</p>
             <div id="pkgList" class="mt-2.5 space-y-2"></div>
 
-            <button type="button" id="payBtn" class="btn btn-primary w-full mt-5">Complete my purchase</button>
+            <div id="expWrap" class="mt-4">
+              <button type="button" id="expBtn" aria-pressed="false" class="expbtn w-full text-left rounded-[14px] p-3.5 cursor-pointer focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2">
+                <span class="flex items-center gap-3">
+                  <span class="expcheck shrink-0 w-5 h-5 rounded-full flex items-center justify-center" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F7F1E6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                  <span class="flex-1 min-w-0">
+                    <span class="block font-700 text-claret text-[.95rem] leading-snug">Receive your song in 6 hours as an expedited service</span>
+                    <span class="block text-ink-soft text-[.8rem] mt-0.5 leading-snug">Order before 12 pm Central and it's in your inbox by 6 pm Central today.</span>
+                  </span>
+                  <span class="shrink-0 font-700 text-claret text-[1rem]">+$20</span>
+                </span>
+              </button>
+              <p id="expClosed" hidden class="text-ink-soft text-[.82rem] text-center leading-snug">Expedited 6-hour delivery is available on orders placed before 12 pm Central.</p>
+            </div>
+            <p class="mt-4 flex items-baseline justify-between"><span class="font-700 text-ink text-[.92rem]">Total today</span><span id="coTotalAmt" class="font-display text-claret text-[1.35rem] leading-none">$59</span></p>
+            <button type="button" id="payBtn" class="btn btn-primary w-full mt-3">Complete my purchase</button>
             <p class="mt-3.5 text-center"><button type="button" id="checkoutBack" class="inline-flex items-center gap-1.5 text-claret font-700 text-[.9rem] cursor-pointer underline decoration-gold/60 underline-offset-4 transition-colors hover:text-claret-deep focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg> Back to my answers</button></p>
             <div class="mt-4 pt-4 border-t border-claret/12">
               <p class="text-ink-soft text-[.78rem] font-700 tracking-[.1em] uppercase text-center">Or jump straight to a question</p>
@@ -334,7 +358,7 @@
             </p>
             <p class="mt-2.5 text-center text-ink-soft text-[.78rem]">If it isn't right, tell us and we'll keep working until you love it.</p>
           </div>
-          <p class="mt-3 text-center text-ink-soft text-[.82rem]">Delivered within 24 hours of your order.</p>
+          <p id="coDeliveryNote" class="mt-3 text-center text-ink-soft text-[.82rem]">Delivered within 24 hours of your order.</p>
         </aside>
 
         <!-- Content column -->
@@ -521,7 +545,7 @@
   // ---------- state ----------
   var KEY = 'hn_v3_quiz';
   var LEGACY_KEY = 'hn_v2_quiz';   // this page was /v2-order before the rename
-  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', voice: '', story: '', email: '', tier: 'experience', phase: 'quiz', step: 1 };
+  var state = { who: '', name: '', rel: '', yourName: '', occasion: '', occasionOther: '', style: '', voice: '', story: '', email: '', tier: 'experience', expedited: false, phase: 'quiz', step: 1 };
   try { Object.assign(state, JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY) || '{}')); } catch (e) {}
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
@@ -649,12 +673,13 @@
   ];
 
   var STYLES = ['Country','Pop','Acoustic','Rock','Singer-Songwriter','R&B','Faith','Jazz','Lullaby'];
+  var EXPEDITED = 20; // mirrors ADDONS.expedited in lib/pricing.js
   var PKGS = [
-    { key: 'single', name: 'Single', price: 49, was: 98, desc: 'One finished song',
+    { key: 'single', name: 'Single', price: 39, was: 78, desc: 'One finished song',
       gets: ['One complete song, written from your story', 'Yours to download and keep forever', 'Delivered within 24 hours'] },
-    { key: 'deluxe', name: 'Deluxe', price: 59, was: 118, desc: 'Two versions to choose from',
+    { key: 'deluxe', name: 'Deluxe', price: 49, was: 98, desc: 'Two versions to choose from',
       gets: ['Two versions written from your story', 'Hear both, then keep the one you love', 'Premium sound quality files', 'Delivered within 24 hours'] },
-    { key: 'experience', name: 'Experience', price: 79, was: 158, desc: 'Three versions to choose from', best: true,
+    { key: 'experience', name: 'Experience', price: 59, was: 118, desc: 'Three versions to choose from', best: true,
       gets: ['Three versions written from your story', 'Hear all three, then keep the one you love', 'Premium sound quality files', 'Remastered for a radio-quality finish', 'Delivered within 24 hours'] }
   ];
   // Four songs, four genres. The set this replaces was three shades of country,
@@ -1088,7 +1113,40 @@
     var buyer = (state.yourName || '').trim().split(/\s+/)[0];
     document.querySelectorAll('.coBuyer').forEach(function (el) { el.textContent = buyer || 'friend'; });
     paintPkgs();
+    paintExpedited();
   }
+
+  // ---- expedited delivery ----
+  // Sold only before 12 pm Central; the server checks the same clock. If the
+  // browser cannot work out Central time at all, the option stays hidden
+  // rather than promising something the server will then refuse.
+  function expeditedOpen() {
+    try {
+      var h = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour: 'numeric', hourCycle: 'h23' }).format(new Date());
+      return parseInt(h, 10) < 12;
+    } catch (e) { return false; }
+  }
+  function paintExpedited() {
+    var open = expeditedOpen();
+    if (!open) state.expedited = false;
+    $('expBtn').hidden = !open;
+    $('expClosed').hidden = open;
+    $('expBtn').classList.toggle('on', !!state.expedited);
+    $('expBtn').setAttribute('aria-pressed', String(!!state.expedited));
+    $('coDeliveryNote').textContent = state.expedited
+      ? 'Delivered within 6 hours of your order, by 6 pm Central today.'
+      : 'Delivered within 24 hours of your order.';
+    paintTotal();
+  }
+  function paintTotal() {
+    var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
+    $('coTotalAmt').textContent = '$' + (pkg.price + (state.expedited ? EXPEDITED : 0));
+  }
+  $('expBtn').addEventListener('click', function () {
+    if (!expeditedOpen()) { paintExpedited(); return; }
+    state.expedited = !state.expedited; save(); paintExpedited();
+  });
+
   function paintPkgs() {
     var wrap = $('pkgList'); wrap.innerHTML = '';
     PKGS.forEach(function (p) {
@@ -1111,7 +1169,7 @@
               '<svg class="shrink-0 mt-[3px] ' + (on ? 'text-gold-soft' : 'text-gold') + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>' + g + '</span>';
           }).join('') +
         '</span>';
-      b.addEventListener('click', function () { state.tier = p.key; save(); paintPkgs(); });
+      b.addEventListener('click', function () { state.tier = p.key; save(); paintPkgs(); paintTotal(); });
       wrap.appendChild(b);
     });
   }
@@ -1122,6 +1180,14 @@
     if (paying) return;
     var missing = allStepsValid();
     if (missing) { goToStep(missing); return; }
+    // Noon may have passed since the button was pressed. Say so and stop,
+    // rather than silently changing what they are about to pay for.
+    if (state.expedited && !expeditedOpen()) {
+      state.expedited = false; save(); paintExpedited();
+      $('payErr').textContent = 'Expedited delivery closes at 12 pm Central, so it has been removed from your order. Press the button again to continue.';
+      $('payErr').classList.remove('hidden');
+      return;
+    }
     paying = true;
     var btn = $('payBtn'); btn.textContent = 'Opening secure checkout...';
     $('payErr').classList.add('hidden');
@@ -1152,6 +1218,7 @@
           sender: state.yourName,
           other: other,
           voiceAddon: 'no',
+          expedited: state.expedited ? 'yes' : 'no',
           email: state.email,
           from: 'v3',
           checkoutEventId: checkoutEventId,
@@ -1161,9 +1228,14 @@
       });
       var out = await res.json();
       if (out && out.url) { window.location = out.url; return; }
+      if (out && out.code === 'expedited_closed') {
+        state.expedited = false; save(); paintExpedited();
+        throw new Error('Expedited delivery closes at 12 pm Central, so it has been removed from your order. Press the button again to continue.');
+      }
       throw new Error((out && out.error) || 'Could not open checkout');
     } catch (err) {
-      $('payErr').textContent = 'Something went wrong opening checkout. Please try again, or email paul@heartnote.music.';
+      $('payErr').textContent = /^Expedited delivery/.test(err.message) ? err.message
+        : 'Something went wrong opening checkout. Please try again, or email paul@heartnote.music.';
       $('payErr').classList.remove('hidden');
       $('payBtn').textContent = 'Complete my purchase';
       paying = false;

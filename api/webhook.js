@@ -35,6 +35,8 @@ async function sendOrderConfirmation(order) {
         receipt,
         total: order.amount_total,
         currency: order.currency,
+        expedited: order.expedited === 'yes',
+        dueLabel: order.expedited_due_label,
       }),
       replyTo: process.env.ORDER_NOTIFY_EMAIL,
     });
@@ -84,7 +86,7 @@ async function sendOrderNotification(order) {
       body: JSON.stringify({
         from,
         to: to.split(',').map((s) => s.trim()).filter(Boolean),
-        subject: `New order — ${order.tier} ($${amount})`,
+        subject: `${order.expedited === 'yes' ? 'EXPEDITED, due by 6 pm Central: ' : ''}New order — ${order.tier} ($${amount})`,
         html: orderNotificationHTML(order),
         ...(order.customer_email ? { reply_to: order.customer_email } : {}),
       }),
@@ -267,6 +269,7 @@ function orderSheetRow(order) {
     'Other Info': order.other_info || '',
     'Wedding Songs': weddingSongs,
     'Order ID': order.stripe_session_id || '',
+    'Expedited': order.expedited === 'yes' ? `YES, due by ${order.expedited_due_label || '6 pm Central'}` : '',
   };
   return { headers: Object.keys(map), values: Object.values(map) };
 }

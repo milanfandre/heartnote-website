@@ -18,6 +18,7 @@ export default async function handler(req, res) {
       currency: (s.currency || 'usd').toUpperCase(),
       eventId,
       paid: s.payment_status === 'paid',
+      expedited: s.metadata?.expedited === 'yes',
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

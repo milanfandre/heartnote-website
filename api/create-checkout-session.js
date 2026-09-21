@@ -3,7 +3,7 @@
 // to the AI workflow after payment succeeds.
 import Stripe from 'stripe';
 import { sendMetaEvent, metaReady } from '../lib/meta.js';
-import { orderTotalCents } from '../lib/pricing.js';
+import { orderTotalCents, ADDONS, expeditedWindow } from '../lib/pricing.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -68,6 +68,19 @@ export default async function handler(req, res) {
 
     const voiceOn = b.voiceAddon === 'yes' || includesAddon(tierKey, 'voice');
 
+    // Expedited delivery is only sold inside the Central-time window. The form
+    // hides the button after noon, but a tab opened at 11:50 and paid at 12:10
+    // would otherwise buy a 6-hour promise nobody can keep, so the clock is
+    // checked again here and the request refused rather than quietly trimmed.
+    const win = expeditedWindow();
+    if (b.expedited === 'yes' && !win.open) {
+      return res.status(400).json({
+        error: 'Expedited delivery is only available on orders placed before 12 pm Central.',
+        code: 'expedited_closed',
+      });
+    }
+    const expedited = b.expedited === 'yes';
+
     // Build the brief metadata. Stripe caps each value at 500 chars and 50 keys
     // per object, so the long free-text fields are chunked.
     const metadata = {
@@ -75,6 +88,9 @@ export default async function handler(req, res) {
       sender_name: clip(b.sender, 120),
       voice_addon: voiceOn ? 'yes' : 'no',      // applied once per order, not per song
       voice: voiceOn ? clip(b.voice, 80) : '',
+      expedited: expedited ? 'yes' : 'no',
+      expedited_due: expedited ? win.dueISO : '',
+      expedited_due_label: expedited ? win.dueLabel : '',
       occasion: occasionChoice,
       occasion_other: occasionFreeText,
       recipient_name: clip(b.recipient, 120),
@@ -92,6 +108,7 @@ export default async function handler(req, res) {
       quantity: 1,
     });
     if (voiceOn && !includesAddon(tierKey, 'voice')) addon(VOICE_ADDON_CENTS, 'Choose your voice (add-on)');
+    if (expedited) addon(ADDONS.expedited.cents, 'Expedited delivery: your song within 6 hours');
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
 
@@ -158,7 +175,7 @@ export default async function handler(req, res) {
         fbc: clip(b.fbc, 200),
         ip: clientIp,
         userAgent: clip(req.headers['user-agent'], 300),
-        value: orderTotalCents(tierKey, { voice: voiceOn }),
+        value: orderTotalCents(tierKey, { voice: voiceOn, expedited }),
         currency: 'usd',
         eventSourceUrl: `${origin}${fromQuiz ? '/v3-order' : '/order'}`,
         customData: { content_name: tierKey },

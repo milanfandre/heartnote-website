@@ -107,6 +107,7 @@
       const out = [];
       if (b.lyric_addon === 'yes') out.push('<span class="badge bg-blush/60 text-claret">Lyrics to approve first</span>');
       if (b.cd_addon === 'yes') out.push('<span class="badge bg-gold/20 text-gold">Ship a CD</span>');
+      if (b.expedited === 'yes') out.push('<span class="badge bg-claret text-ivory">Expedited, due by ' + esc(b.expedited_due_label || '6 pm Central') + '</span>');
       return out.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${out.join('')}</div>` : '';
     }
 
