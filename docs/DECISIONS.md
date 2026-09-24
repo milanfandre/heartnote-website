@@ -296,6 +296,18 @@ When this file and an older spec disagree, **this file wins**.
   holiday rule was asked for, so none exists. Stripe: three new tier Prices;
   the add-on is an inline line item, so no Price object was made for it.
 
+- **Sep 24 — Story prompts rewritten to Paul's matrix edits.** Paul marked up
+  the "Heart Note — Story Prompt Matrix" Google Doc: strikethrough for removals,
+  red for additions, placed in the order he wants them shown rather than
+  appended. Applied verbatim to `STORY_PROMPTS` in order.html: 14 removed, 28
+  added, net 78 → 92 questions. Anniversary 7 → 10, Wedding 6 → 10, Birthday
+  6 → 8 (one line shortened to "How old are they turning?"), Just because 5 → 9,
+  Worship 5 → 7, Engagement 5 → 4; the other eight sets and the "Other" default
+  are untouched. His additions lean toward concrete inventories (nicknames,
+  hobbies, trips, family members, places) over the reflective phrasing they
+  replace, which is what he writes from. The doc is the editing surface from
+  here on: strike and add there, then it gets carried into the quiz.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·
