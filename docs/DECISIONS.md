@@ -308,6 +308,23 @@ When this file and an older spec disagree, **this file wins**.
   replace, which is what he writes from. The doc is the editing surface from
   here on: strike and add there, then it gets carried into the quiz.
 
+- **Sep 28 — Dashboard: full customer journey, Shopify-style conversion card,
+  Link CTR.** Milan's call. The Meta-only four-stage funnel is replaced by a
+  first-party "Conversion rate" card laid out like Shopify's (headline rate,
+  then checkout page / Stripe / paid as a share of sessions), and the story
+  section grew into "The customer journey": 13 steps from landing page to paid,
+  counted in unique sessions from raw events (paged past PostgREST's 1,000-row
+  cap). New events: `quiz_step` (meta.step 1-5), `checkout_click`,
+  `stripe_open`; steps tracked only from Sep 28 are flagged on the dashboard
+  rather than shown as a drop to zero. pixel.js now counts any link into
+  /order as a click-through: the homepage and /v1 had no tagged CTAs, so their
+  clicks were never recorded. "Wrote enough to go on" was mislabeled: it fired
+  at 280 characters (meter full) while the quiz unlocks at 80; it is now shown
+  as "Filled the writing meter", and "Finished the story" is pressing Create
+  my song. Help usage is now counted in people, which also fixes the Sep 18
+  double count. The ad tile shows Link CTR (inline_link_click_ctr) instead of
+  all-click CTR.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

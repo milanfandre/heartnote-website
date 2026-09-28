@@ -20,8 +20,13 @@ import { adminAuthed } from '../lib/auth.js';
 // abandoned_checkouts, never to the analytics table.
 // 'story_*' instruments the one step that asks people to write rather than
 // tap, which is where a test run showed them dropping out.
+// 'quiz_step' is one quiz question answered (meta.step = 1..5, fired when Next
+// is pressed on a valid answer), 'checkout_click' is pressing "Complete my
+// purchase", and 'stripe_open' is Stripe handing back a checkout page, sent
+// just before the browser leaves for it. Together they let the dashboard show
+// every step of the journey, not just the ends. None of them goes to Meta.
 const TYPES = new Set(['pageview', 'cta_click', 'reached_form', 'add_to_cart', 'purchase', 'abandon_capture',
-  'story_view', 'story_start', 'story_ready', 'story_help']);
+  'story_view', 'story_start', 'story_ready', 'story_help', 'quiz_step', 'checkout_click', 'stripe_open']);
 const str = (v, max = 300) => (typeof v === 'string' ? v.slice(0, max) : null);
 const int = (v) => (Number.isFinite(+v) ? Math.trunc(+v) : null);
 

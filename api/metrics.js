@@ -9,6 +9,100 @@ import metaDiagnose from '../lib/meta-diagnose.js';
 
 const dayStr = (d) => d.toISOString().slice(0, 10);
 
+// PostgREST returns at most 1,000 rows per request, so read in pages.
+async function selectAll(relation, query, pageSize = 1000) {
+  const out = [];
+  for (let offset = 0; offset < 50000; offset += pageSize) {
+    const rows = await sbSelect(relation, `${query}&limit=${pageSize}&offset=${offset}`);
+    out.push(...rows);
+    if (rows.length < pageSize) break;
+  }
+  return out;
+}
+
+// Pages that are part of buying or running the business, not places people
+// land. Everything else counts as a landing page view.
+const NOT_LANDING = /^\/(order|order-classic|success|dashboard|deliver|gift|lyrics|unsubscribe)(\/|\.html|$)/;
+// Our own tools and the gift pages recipients open: not shoppers, not sessions.
+const INTERNAL = /^\/(dashboard|deliver|gift|lyrics|unsubscribe)(\/|\.html|$)/;
+// Until this date the homepage's quiz buttons were untagged, so click-throughs
+// from it were not recorded.
+const CLICKS_COMPLETE_FROM = '2026-09-28T00:00:00Z';
+
+// The whole journey, counted in people (unique browser sessions), not events,
+// so a reload or a second tab never counts twice. Every rung is counted on its
+// own: someone who opens the order form from an email skipped the landing
+// page, and is still counted at the form.
+const JOURNEY_TYPES = ['cta_click', 'reached_form', 'quiz_step', 'story_start', 'story_ready', 'story_help',
+  'add_to_cart', 'checkout_click', 'stripe_open'];
+// Events added on 2026-09-28. Before that date these rungs have no data, and
+// the dashboard says so instead of showing a false drop to zero.
+const NEW_TYPES = ['quiz_step', 'checkout_click', 'stripe_open'];
+
+async function buildJourney(startISO, purchases) {
+  const [views, acts, firsts] = await Promise.all([
+    selectAll('events', `select=session_id,page&type=eq.pageview&created_at=gte.${startISO}&order=id.asc`),
+    selectAll('events', `select=session_id,type,meta&type=in.(${JOURNEY_TYPES.join(',')})&created_at=gte.${startISO}&order=id.asc`),
+    Promise.all(NEW_TYPES.map((t) => sbSelect('events', `select=created_at&type=eq.${t}&order=id.asc&limit=1`)
+      .then((r) => [t, r[0] ? r[0].created_at : null]).catch(() => [t, null]))),
+  ]);
+  const first = Object.fromEntries(firsts);
+
+  const sets = {};
+  const add = (k, sid) => { if (sid) (sets[k] ||= new Set()).add(sid); };
+  const sessions = new Set();
+  for (const v of views) {
+    if (!v.session_id || INTERNAL.test(v.page || '')) continue;
+    sessions.add(v.session_id);
+    if (!NOT_LANDING.test(v.page || '')) add('landed', v.session_id);
+  }
+  for (const e of acts) {
+    const sid = e.session_id;
+    if (e.type === 'cta_click') {
+      const href = (e.meta && e.meta.href) || '';
+      if (/order/.test(href)) add('clicked', sid);
+    } else if (e.type === 'quiz_step') {
+      const n = e.meta && +e.meta.step;
+      if (n >= 1 && n <= 5) add('step' + n, sid);
+    } else {
+      add(e.type, sid);
+    }
+  }
+  const n = (k) => (sets[k] ? sets[k].size : 0);
+  // A rung is "partial" when tracking for it began after the start of the
+  // window; its count is only for the days since then.
+  const since = (t) => (first[t] && first[t] > startISO ? first[t] : (first[t] ? null : 'never'));
+
+  const steps = [
+    { key: 'landed',   name: 'Viewed a landing page',        hint: 'the homepage or an ad landing page loaded', v: n('landed') },
+    { key: 'clicked',  name: 'Clicked through to the quiz',  hint: 'pressed a button that opens the order form', v: n('clicked'),
+      since: startISO < CLICKS_COMPLETE_FROM ? CLICKS_COMPLETE_FROM : null, sinceNote: 'homepage clicks counted from' },
+    { key: 'form',     name: 'Started the quiz',             hint: 'the order form loaded', v: n('reached_form') },
+    { key: 'step1',    name: 'Answered: who it is for',      hint: 'question 1 of 5, names and email', v: n('step1'), since: since('quiz_step') },
+    { key: 'step2',    name: 'Answered: the occasion',       hint: 'question 2 of 5', v: n('step2'), since: since('quiz_step') },
+    { key: 'step3',    name: 'Answered: the style',          hint: 'question 3 of 5', v: n('step3'), since: since('quiz_step') },
+    { key: 'step4',    name: 'Answered: the voice',          hint: 'question 4 of 5, which opens the story', v: n('step4'), since: since('quiz_step') },
+    { key: 'started',  name: 'Started writing the story',    hint: 'typed at least one character', v: n('story_start') },
+    { key: 'step5',    name: 'Finished the story',           hint: 'wrote the 80-character minimum and pressed Create my song', v: n('step5'), since: since('quiz_step') },
+    { key: 'checkout', name: 'Reached the checkout page',    hint: 'entered an email and saw the packages and price', v: n('add_to_cart') },
+    { key: 'pay',      name: 'Pressed Complete my purchase', hint: 'the button on the checkout page', v: n('checkout_click'), since: since('checkout_click') },
+    { key: 'stripe',   name: 'Reached Stripe',               hint: 'Stripe opened its payment page', v: n('stripe_open'), since: since('stripe_open') },
+    { key: 'paid',     name: 'Paid',                         hint: 'paid orders, from our own order records', v: purchases },
+  ];
+  return {
+    sessions: sessions.size,
+    steps,
+    story: {
+      started: n('story_start'),
+      finished: n('step5'),
+      finished_since: since('quiz_step'),
+      filled_meter: n('story_ready'),        // 280+ characters: the meter full, not a gate
+      used_help: n('story_help'),            // people, not clicks
+      reached: n('step4'),
+    },
+  };
+}
+
 export default async function handler(req, res) {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Wrong password' });
 
@@ -114,7 +208,10 @@ export default async function handler(req, res) {
     const timeseries = Object.values(byDay);
 
     // ── Meta ad spend (null until a token is configured) ───────────────────
-    const meta = await getAdInsights(days, revenueCents);
+    const [meta, journey] = await Promise.all([
+      getAdInsights(days, revenueCents),
+      buildJourney(startISO, purchases).catch((err) => ({ error: err.message })),
+    ]);
 
     return res.status(200).json({
       range: { days, start: startDay },
@@ -141,6 +238,7 @@ export default async function handler(req, res) {
         completion_rate: storyView ? storyReady / storyView : 0,
         help_rate: storyView ? storyHelp / storyView : 0,
       },
+      journey,
       timeseries, angles, sources, tiers, buttons,
       devices: Object.values((deviceDaily || []).reduce((acc, r) => {
         const k = r.device || 'unknown';

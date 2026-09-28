@@ -1054,8 +1054,12 @@
 
   // nav
   $('backBtn').addEventListener('click', function () { if (state.step > 1) { state.step--; renderStep(); } });
+  // One event per question answered, once per session, so the dashboard can
+  // show where in the quiz people stop.
+  var STEP_NAMES = ['', 'Who it is for', 'The occasion', 'The style', 'The voice', 'The story'];
   $('nextBtn').addEventListener('click', function () {
     if (!validStep(state.step)) return;
+    trackOnce('hn_step_done_' + state.step, 'quiz_step', { label: 'Answered: ' + STEP_NAMES[state.step], meta: { step: state.step } });
     // Leaving question one is the first moment an address exists. Everyone who
     // stops after this point is now reachable, which they were not before.
     if (state.step === 1) captureForRecovery(1);
@@ -1308,6 +1312,7 @@
     if (paying) return;
     var missing = allStepsValid();
     if (missing) { goToStep(missing); return; }
+    trackOnce('hn_pay_click', 'checkout_click', { label: 'Pressed Complete my purchase', value_cents: (PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2]).price * 100 });
     // Noon may have passed since the button was pressed. Say so and stop,
     // rather than silently changing what they are about to pay for.
     if (state.expedited && !expeditedOpen()) {
@@ -1356,7 +1361,8 @@
         })
       });
       var out = await res.json();
-      if (out && out.url) { window.location = out.url; return; }
+      // Sent as a beacon, so it survives the page unloading for Stripe.
+      if (out && out.url) { trackOnce('hn_stripe_open', 'stripe_open', { label: 'Reached Stripe checkout' }); window.location = out.url; return; }
       if (out && out.code === 'expedited_closed') {
         state.expedited = false; save(); paintExpedited();
         throw new Error('Expedited delivery closes at 12 pm Central, so it has been removed from your order. Press the button again to continue.');

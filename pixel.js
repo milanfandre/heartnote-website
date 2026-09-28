@@ -162,8 +162,12 @@ window.HN_META = {
 
   // Auto: every primary CTA click across the site. These are the buttons that
   // send someone toward the order page — the "buttons being clicked" view.
+  // Any link into the order form counts too, tagged or not: the homepage had
+  // eleven untagged ones, so its clicks were never recorded.
   document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[data-cta], [data-track]');
+    var a = e.target.closest && e.target.closest('a[data-cta], [data-track], a[href^="order"], a[href^="/order"]');
+    // On the order form, an untagged link back to it is navigation, not a click-through.
+    if (a && !a.matches('a[data-cta], [data-track]') && /^\/order/.test(location.pathname)) return;
     if (!a) return;
     var label = (a.getAttribute('data-track') || a.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80);
     send('cta_click', { label: label, meta: { href: a.getAttribute('href') || null } });

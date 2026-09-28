@@ -62,11 +62,21 @@
      about 110px wide and the labels wrap to one word per line, so below this
      width the shape sits above the labels instead. The inline grid on the
      element is what these override. */
-  @media (max-width: 760px) {
-    #funnelWrap, #storyWrap { grid-template-columns: 1fr !important; gap: .9rem !important; }
-    #funnelSvg { height: 190px !important; }
-    #storySvg  { height: 150px !important; }
-  }
+  /* Conversion rate, laid out like Shopify's card: the headline rate, then
+     each stage as a row with its share of sessions on the right. */
+  .conv-head { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
+  .conv-rate { font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 600; line-height: 1; margin: 0; }
+  .conv-rows { margin-top: 1.1rem; border-top: 1px solid var(--line); }
+  .conv-row { display: grid; grid-template-columns: 1fr auto; gap: .15rem 1rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
+  .conv-row p { margin: 0; }
+  .conv-pct { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .conv-sub { font-size: .8rem; color: var(--text-2); }
+  .conv-bar { grid-column: 1 / -1; height: 6px; background: rgba(255,255,255,.05); border-radius: 999px; overflow: hidden; margin-top: .35rem; }
+  .conv-bar > div { height: 100%; border-radius: 999px; background: var(--green); }
+  .partial { color: var(--orange); font-size: .74rem; }
+  .j-grp { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 1.1rem 0 .45rem; }
+  .j-grp:first-child { margin-top: 0; }
+  @media (max-width: 760px) { .rung-head { flex-direction: column; align-items: flex-start; gap: .1rem; } .rung-figs { white-space: normal !important; } }
 
   /* Funnel. Width encodes magnitude; one hue deepens as it narrows, so color
      reinforces the sequence instead of implying five separate things. */
@@ -146,28 +156,18 @@
 
     <section class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.7rem">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <h2 style="font-size:1.02rem;margin:0">Funnel</h2>
-        <p class="muted" style="margin:0;font-size:.79rem">Every stage comes from Meta for the selected period, so the percentages compare like with like.</p>
+        <h2 style="font-size:1.02rem;margin:0">Conversion rate</h2>
+        <p class="muted" style="margin:0;font-size:.79rem">Share of site sessions that reached each stage. Every visitor, not only ad clicks.</p>
       </div>
-      <div id="funnelWrap" style="margin-top:1.1rem;display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:1.5rem;align-items:stretch">
-        <svg id="funnelSvg" viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:260px;overflow:visible" role="img" aria-label="Conversion funnel"></svg>
-        <div id="funnelLabels" style="display:grid"></div>
-      </div>
-      <details style="margin-top:1rem">
-        <summary>View as table</summary>
-        <div style="overflow-x:auto;margin-top:.6rem"><table id="funnelTable"></table></div>
-      </details>
+      <div id="convWrap" style="margin-top:1rem"></div>
     </section>
 
     <section class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.7rem">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <h2 style="font-size:1.02rem;margin:0">The story step</h2>
-        <p class="muted" style="margin:0;font-size:.79rem">First-party, from inside the quiz. The only step that asks people to write rather than tap.</p>
+        <h2 style="font-size:1.02rem;margin:0">The customer journey</h2>
+        <p class="muted" style="margin:0;font-size:.79rem">Every step from landing page to payment, counted in people. Each person is counted once per step.</p>
       </div>
-      <div id="storyWrap" style="margin-top:1.1rem;display:grid;grid-template-columns:minmax(160px,260px) 1fr;gap:1.5rem;align-items:stretch">
-        <svg id="storySvg" viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:190px;overflow:visible" role="img" aria-label="Story step funnel"></svg>
-        <div id="storyLabels" style="display:grid"></div>
-      </div>
+      <div id="storyWrap" style="margin-top:1.1rem"></div>
       <div id="storyDrop" style="margin-top:1.15rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem"></div>
       <details style="margin-top:1rem">
         <summary>View as table</summary>
@@ -283,14 +283,16 @@
         tile('Ad spend', fUsd(m.spend), fInt(m.impressions) + ' impressions', PAL.orange),
         tile('CPM', fUsd(m.cpm), 'per 1,000 impressions', PAL.orange),
         tile('CPC', fUsd(m.cpc), fInt(m.clicks) + ' clicks', PAL.pink),
-        tile('CTR', m.ctr == null ? '—' : (+m.ctr).toFixed(2) + '%', 'clicks per impression', PAL.pink),
+        // Link clicks only: clicks that went to the site. Meta's plain CTR also
+        // counts likes, comments, profile taps and "see more".
+        tile('Link CTR', m.link_ctr == null ? '—' : (+m.link_ctr).toFixed(2) + '%', fInt(m.link_clicks) + ' link clicks' + (m.ctr ? ' · all-click CTR ' + (+m.ctr).toFixed(2) + '%' : ''), PAL.pink),
         tile('Cost per purchase', fUsd(m.cost_per_purchase), m.funnel ? fInt(m.funnel.purchases) + ' purchases' : '', PAL.purple),
         tile('ROAS', m.meta_roas == null ? '—' : (+m.meta_roas).toFixed(2) + '×', m.purchase_value ? fUsd(m.purchase_value) + ' attributed' : 'no attributed revenue', PAL.green),
       ].join('');
     }
 
-    renderFunnel(t, m);
-    renderStory(DATA);
+    renderConversion(DATA);
+    renderJourney(DATA);
 
     $('siteKpis').innerHTML = [
       tile('Visits', fInt(t.visits), fInt(t.pageviews) + ' pageviews'),
@@ -319,138 +321,100 @@
     }
   }
 
-  // The story step, first-party. Same band geometry and the same sequential
-  // ramp as the funnel above, because it is the same kind of question asked of
-  // a smaller stage; a second chart idiom here would imply a difference that
-  // is not there.
-  function renderStory(m) {
-    var st = (m && m.story) || {};
-    var steps = [
-      { name: 'Reached the question', v: st.reached,  hint: 'the story step was shown' },
-      { name: 'Started writing',      v: st.started,  hint: 'typed at least one character' },
-      { name: 'Wrote enough to go on', v: st.finished, hint: 'long enough to continue' }
-    ];
-    var top = steps[0].v || 0;
-
-    if (!top) {
-      $('storyWrap').innerHTML = '<p class="muted" style="margin:0;grid-column:1/-1">No one has reached the story step in this period yet.</p>';
-      $('storyDrop').innerHTML = '';
-      $('storyTable').innerHTML = '';
-      return;
-    }
-
-    // Three rungs across the full ramp, so the steps stay distinguishable.
-    var HUE = [RAMP[0], RAMP[2], RAMP[4]];
-    var n = steps.length, TOP = 100, BOTTOM = 34;
-    var W = steps.map(function (_, i) { return TOP - (TOP - BOTTOM) * (i / (n - 1)); });
-    var bandH = 100 / n, svg = '';
-    steps.forEach(function (s2, i) {
-      var wTop = W[i];
-      var wBot = (i < n - 1) ? W[i + 1] : BOTTOM - (TOP - BOTTOM) / (n - 1) * 0.55;
-      var y = i * bandH, y2 = y + bandH - 1.4;
-      svg += '<path d="M' + ((100 - wTop) / 2).toFixed(2) + ' ' + y.toFixed(2)
-          + ' L' + ((100 + wTop) / 2).toFixed(2) + ' ' + y.toFixed(2)
-          + ' L' + ((100 + wBot) / 2).toFixed(2) + ' ' + y2.toFixed(2)
-          + ' L' + ((100 - wBot) / 2).toFixed(2) + ' ' + y2.toFixed(2) + ' Z" fill="' + HUE[i] + '"></path>';
-    });
-    $('storySvg').innerHTML = svg;
-
-    // Every rung is labelled outright, so identity never rests on color.
-    $('storyLabels').style.gridTemplateRows = 'repeat(' + n + ', 1fr)';
-    $('storyLabels').style.rowGap = '.55rem';
-    $('storyLabels').innerHTML = steps.map(function (s2, i) {
-      var prev = i ? steps[i - 1].v : null;
-      return '<div style="display:flex;flex-direction:column;justify-content:center;border-left:2px solid ' + HUE[i] + ';padding-left:.7rem">'
-        + '<p style="margin:0;font-size:.92rem">' + esc(s2.name) + '</p>'
-        + '<p style="margin:.1rem 0 0;font-size:.82rem;color:var(--text-2)">'
-        + '<b style="font-family:Outfit,sans-serif;color:var(--text)">' + fInt(s2.v) + '</b>'
-        + ' &middot; ' + fPct((s2.v || 0) / top) + ' of those who got here'
-        + (prev ? ' &middot; ' + fPct((s2.v || 0) / prev) + ' of the step before' : '')
-        + '</p><p class="muted" style="margin:.1rem 0 0;font-size:.76rem">' + esc(s2.hint) + '</p></div>';
-    }).join('');
-
-    // The two failures that a single completion number hides.
-    $('storyDrop').innerHTML =
-        tile('Never typed a word', fPct(st.never_started_rate), fInt((st.reached || 0) - (st.started || 0)) + ' of ' + fInt(st.reached) + ' who got here', RAMP[0])
-      + tile('Gave up partway', fPct(st.gave_up_rate), fInt((st.started || 0) - (st.finished || 0)) + ' of ' + fInt(st.started) + ' who started', RAMP[2])
-      + tile('Finished the story', fPct(st.completion_rate), fInt(st.finished) + ' briefs we can write from', RAMP[4])
-      + tile('Opened the writing help', fPct(st.help_rate), fInt(st.used_help) + ' of ' + fInt(st.reached) + ' who got here', PAL.purple);
-
-    $('storyTable').innerHTML =
-      '<thead><tr><th>Stage</th><th style="text-align:right">People</th><th style="text-align:right">Of those who got here</th><th style="text-align:right">Of the step before</th></tr></thead><tbody>'
-      + steps.map(function (s2, i) {
-          var prev = i ? steps[i - 1].v : null;
-          return '<tr><td>' + esc(s2.name) + '</td><td style="text-align:right">' + fInt(s2.v) + '</td>'
-            + '<td style="text-align:right">' + fPct((s2.v || 0) / top) + '</td>'
-            + '<td style="text-align:right">' + (prev ? fPct((s2.v || 0) / prev) : '—') + '</td></tr>';
-        }).join('')
-      + '<tr><td>Opened the writing help</td><td style="text-align:right">' + fInt(st.used_help) + '</td>'
-      + '<td style="text-align:right">' + fPct(st.help_rate) + '</td><td style="text-align:right">—</td></tr>'
-      + '</tbody>';
+  var fSince = function (iso) { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+  // A step that only started being counted partway through the window.
+  function partialNote(s) {
+    if (!s.since) return '';
+    if (s.since === 'never') return '<span class="partial">Counting starts with the next visitor</span>';
+    return '<span class="partial">' + esc(s.sinceNote || 'Counted from') + ' ' + fSince(s.since) + '</span>';
   }
 
-  function renderFunnel(t, m) {
-    // Every rung comes from Meta, including the baseline, so the percentages
-    // compare like with like. Mixing an all-traffic baseline with ad-attributed
-    // conversions understated every rate on the page.
-    var f = (m && m.funnel) || {};
-    var steps = [
-      { name: 'Landing page views', v: f.landing_page_views, hint: 'the page actually loaded' },
-      { name: 'Add to cart',        v: f.add_to_cart,        hint: 'reached the order form' },
-      { name: 'Initiate checkout',  v: f.initiate_checkout,  hint: 'reached Stripe' },
-      { name: 'Purchases',          v: f.purchases,          hint: 'paid' },
+  // Shopify's conversion rate card: one headline rate, then each stage as a
+  // share of sessions. Same three stages Shopify uses, in Heart Note's terms.
+  function renderConversion(d) {
+    var j = d.journey || {};
+    if (j.error || !j.steps) { $('convWrap').innerHTML = '<p class="muted" style="margin:0">Could not load: ' + esc(j.error || 'no data') + '</p>'; return; }
+    var by = {}; j.steps.forEach(function (s) { by[s.key] = s; });
+    var S = j.sessions || 0;
+    var rows = [
+      { name: 'Reached the checkout page', s: by.checkout, shop: 'Added to cart' },
+      { name: 'Reached Stripe',            s: by.stripe,   shop: 'Reached checkout' },
+      { name: 'Sessions converted',        s: by.paid,     shop: 'Paid' },
     ];
-    var top = steps[0].v || 0;
+    var rate = S ? (by.paid.v || 0) / S : 0;
+    $('convWrap').innerHTML =
+        '<div class="conv-head"><p class="conv-rate">' + fPct(rate) + '</p>'
+      + '<p class="muted" style="margin:0;font-size:.85rem">' + fInt(by.paid.v) + ' paid orders from ' + fInt(S) + ' sessions</p></div>'
+      + '<div class="conv-rows">'
+      + rows.map(function (r) {
+          var v = r.s.v || 0, pct = S ? v / S : 0;
+          return '<div class="conv-row">'
+            + '<div><p style="font-size:.93rem">' + esc(r.name) + '</p>'
+            + '<p class="conv-sub">' + fInt(v) + ' session' + (v === 1 ? '' : 's') + ' ' + partialNote(r.s) + '</p></div>'
+            + '<p class="conv-pct">' + fPct(pct) + '</p>'
+            + '<div class="conv-bar"><div style="width:' + Math.max(pct / Math.max(rate, (by.checkout.v || 0) / (S || 1), 0.0001) * 100, pct ? 1.5 : 0).toFixed(1) + '%"></div></div>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
 
-    if (!top) {
-      $('funnelWrap').innerHTML = '<p class="muted" style="margin:0;grid-column:1/-1">'
-        + ((m && m.configured) ? 'No ad activity in this period.' : 'Meta is not connected, so the funnel is unavailable.')
-        + '</p>';
-      $('funnelTable').innerHTML = '';
-      return;
+  // The whole journey, landing page to payment, one row per step. Bars are
+  // scaled to the first step so the narrowing is visible; each row also
+  // states what share of the step before it made it through, which is where
+  // the leak is.
+  function renderJourney(d) {
+    var j = d.journey || {};
+    if (j.error || !j.steps) {
+      $('storyWrap').innerHTML = '<p class="muted" style="margin:0">Could not load: ' + esc(j.error || 'no data') + '</p>';
+      $('storyDrop').innerHTML = ''; $('storyTable').innerHTML = ''; return;
+    }
+    var steps = j.steps, top = steps[0].v || 0;
+    var GROUPS = { landed: 'On the site', form: 'The quiz', checkout: 'Checkout' };
+    var COLOR = function (k) { return /^(landed|clicked)$/.test(k) ? PAL.orange : (/^(checkout|pay|stripe|paid)$/.test(k) ? PAL.green : PAL.pink); };
+
+    // "Of the step before" skips rungs that were not being counted yet, so a
+    // missing measurement never reads as everyone leaving.
+    function prevOf(i) {
+      for (var k = i - 1; k >= 0; k -= 1) if (!steps[k].since) return steps[k];
+      return null;
     }
 
-    // A fixed, evenly stepped funnel. The widths are the same on every load,
-    // so the shape always reads as a funnel; the numbers beside it carry the
-    // real magnitudes. Data-driven widths collapsed the tail to slivers and
-    // made the outline lurch about between ranges.
-    var n = steps.length;
-    var TOP = 100, BOTTOM = 26;
-    var W = steps.map(function (_, i) { return TOP - (TOP - BOTTOM) * (i / (n - 1)); });
-    var bandH = 100 / n;
-    var svg = '';
+    // The biggest single leak among steps with full data.
+    var worst = null;
     steps.forEach(function (s, i) {
-      var wTop = W[i];
-      var wBot = (i < n - 1) ? W[i + 1] : BOTTOM - (TOP - BOTTOM) / (n - 1) * 0.55;
-      var y = i * bandH, y2 = y + bandH - 1.1;   // 1.1 unit gap between bands
-      var x1 = (100 - wTop) / 2, x2 = (100 + wTop) / 2;
-      var x3 = (100 + wBot) / 2, x4 = (100 - wBot) / 2;
-      svg += '<path d="M' + x1.toFixed(2) + ' ' + y.toFixed(2)
-          + ' L' + x2.toFixed(2) + ' ' + y.toFixed(2)
-          + ' L' + x3.toFixed(2) + ' ' + y2.toFixed(2)
-          + ' L' + x4.toFixed(2) + ' ' + y2.toFixed(2) + ' Z" fill="' + RAMP[i] + '"></path>';
+      var p = prevOf(i); if (!p || s.since || !p.v) return;
+      var lost = p.v - s.v;
+      if (lost > 0 && (!worst || lost > worst.lost)) worst = { from: p, to: s, lost: lost };
     });
-    $('funnelSvg').innerHTML = svg;
 
-    $('funnelLabels').style.gridTemplateRows = 'repeat(' + steps.length + ', 1fr)';
-    $('funnelLabels').innerHTML = steps.map(function (s, i) {
-      var prev = i ? steps[i - 1].v : null;
-      return '<div style="display:flex;flex-direction:column;justify-content:center;border-left:2px solid ' + RAMP[i] + ';padding-left:.7rem">'
-        + '<p style="margin:0;font-size:.92rem">' + esc(s.name) + '</p>'
-        + '<p style="margin:.1rem 0 0;font-size:.82rem;color:var(--text-2)">'
-        + '<b style="font-family:Outfit,sans-serif;color:var(--text)">' + fInt(s.v) + '</b>'
-        + ' &middot; ' + fPct(s.v / top) + ' of views'
-        + (i ? ' &middot; ' + fPct(prev ? s.v / prev : null) + ' of the step above' : '')
-        + '</p></div>';
+    $('storyWrap').innerHTML = steps.map(function (s, i) {
+      var p = prevOf(i);
+      var ofPrev = (p && p.v && !s.since) ? s.v / p.v : null;
+      var w = top ? Math.max(s.v / top * 100, s.v ? 1 : 0) : 0;
+      return (GROUPS[s.key] ? '<p class="j-grp">' + GROUPS[s.key] + '</p>' : '')
+        + '<div class="rung" style="margin-bottom:.55rem">'
+        + '<div class="rung-head"><span class="rung-name">' + esc(s.name) + ' <span class="muted" style="font-size:.76rem">&middot; ' + esc(s.hint) + '</span></span>'
+        + '<span class="rung-figs"><b>' + fInt(s.v) + '</b> &middot; ' + fPct(top ? s.v / top : 0) + ' of landing views'
+        + (ofPrev != null ? ' &middot; ' + fPct(ofPrev) + ' of the step before' : '') + '</span></div>'
+        + '<div class="rung-track" style="height:14px"><div class="rung-fill" style="width:' + w.toFixed(1) + '%;background:' + COLOR(s.key) + '"></div></div>'
+        + (s.since ? '<p class="drop" style="margin-bottom:0">' + partialNote(s) + '</p>' : '')
+        + '</div>';
     }).join('');
 
-    $('funnelTable').innerHTML =
-      '<thead><tr><th>Stage</th><th class="num">Count</th><th class="num">% of views</th><th class="num">% of previous</th></tr></thead><tbody>'
+    var st = j.story || {};
+    $('storyDrop').innerHTML =
+        (worst ? tile('Biggest drop', fInt(worst.lost) + ' people', 'between "' + worst.from.name + '" and "' + worst.to.name + '"', PAL.pink) : '')
+      + tile('Filled the writing meter', st.started ? fPct(st.filled_meter / st.started) : '—', fInt(st.filled_meter) + ' of ' + fInt(st.started) + ' who started wrote 280+ characters (the meter full; 80 is the minimum)', PAL.purple)
+      + tile('Opened the writing help', st.started ? fPct(st.used_help / st.started) : '—', fInt(st.used_help) + ' of ' + fInt(st.started) + ' who started writing', PAL.purple);
+
+    $('storyTable').innerHTML =
+      '<thead><tr><th>Step</th><th class="num">People</th><th class="num">Of landing views</th><th class="num">Of the step before</th><th>Note</th></tr></thead><tbody>'
       + steps.map(function (s, i) {
-          var prev = i ? steps[i - 1].v : null;
+          var p = prevOf(i);
           return '<tr><td>' + esc(s.name) + '</td><td class="num">' + fInt(s.v) + '</td>'
-            + '<td class="num">' + fPct(s.v / top) + '</td>'
-            + '<td class="num">' + (i && prev ? fPct(s.v / prev) : '&mdash;') + '</td></tr>';
+            + '<td class="num">' + fPct(top ? s.v / top : 0) + '</td>'
+            + '<td class="num">' + (p && p.v && !s.since ? fPct(s.v / p.v) : '&mdash;') + '</td>'
+            + '<td>' + partialNote(s) + '</td></tr>';
         }).join('') + '</tbody>';
   }
 
