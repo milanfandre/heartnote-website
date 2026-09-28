@@ -1323,9 +1323,10 @@
     try {
       var fb = (window.HN_META && HN_META.data()) || {};
       var attr = (typeof hnAttribution === 'function') ? hnAttribution() : undefined;
-      // InitiateCheckout already fired when the price page appeared, so nothing
-      // is sent here. The server sends its own copy once Stripe has a session;
-      // handing it this same id is what keeps the two as one event.
+      // No browser InitiateCheckout. The price page now sends AddToCart, which
+      // is what that moment actually is, and InitiateCheckout is sent server
+      // side once Stripe really has a session, so a failed session never counts.
+      // This id travels with the request and becomes that event's id.
       var checkoutEventId = sessionCheckoutEventId();
       var other = [
         'Ordered through the v3 quiz.',
