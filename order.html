@@ -196,6 +196,10 @@
           <label for="qYourName" class="block font-700 text-ink text-[.95rem] mb-1.5">Your name</label>
           <input id="qYourName" class="field" type="text" placeholder="Enter your first name" autocomplete="given-name" />
           <p class="mt-1.5 text-ink-soft text-[.85rem]">So they know who it is from, and so we can address your song page to you.</p>
+
+          <label for="qEmailEarly" class="block font-700 text-ink text-[.95rem] mb-1.5 mt-4">Your email</label>
+          <input id="qEmailEarly" class="field" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
+          <p class="mt-1.5 text-ink-soft text-[.85rem]">We save your answers to this address, so you can finish later on any device.</p>
         </div>
       </section>
 
@@ -249,6 +253,16 @@
             <p class="mt-3.5 text-ink-soft text-[.83rem] leading-snug">Tap any question to drop it into your story, then write your answer underneath. The questions themselves do not count toward the meter.</p>
           </div>
         </div>
+
+        <!-- Dictation. Starts hidden and is only revealed once the browser proves
+             it has speech recognition, so an unsupported browser shows nothing
+             rather than a dead control. Typing is never blocked either way. -->
+        <button type="button" id="dictateBtn" hidden aria-pressed="false"
+          class="mt-3 inline-flex items-center gap-2 rounded-full border border-claret/25 bg-white px-4 py-2.5 text-claret font-700 text-[.93rem] cursor-pointer transition-colors hover:bg-blush/50 focus-visible:outline focus-visible:outline-3 focus-visible:outline-gold focus-visible:outline-offset-2">
+          <svg id="dictateIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+          <span id="dictateLabel">Say it out loud instead</span>
+        </button>
+        <p id="dictateNote" hidden class="mt-2 text-ink-soft text-[.85rem]">Listening. Speak naturally, and tap again when you are done.</p>
 
         <textarea id="qStory" class="field mt-5 min-h-[11rem] resize-y" placeholder="Describe the memory, the person, or what you want this song to say. The more detail you share, the more personal your song will be."></textarea>
         <div class="mt-3">
@@ -550,7 +564,12 @@
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
   var $ = function (id) { return document.getElementById(id); };
-  var STORY_TARGET = 280; // roughly three to four sentences
+  // Two numbers, deliberately different. TARGET is what the meter fills to,
+  // because a longer brief makes a better song. MIN is the only hard gate and
+  // exists so Paul never gets a brief he cannot write from. Blocking Next on
+  // TARGET was costing roughly four out of five people who started the form.
+  var STORY_TARGET = 280; // what the meter fills to
+  var STORY_MIN = 80;     // the hard gate, about one full sentence
 
   // ---------- data ----------
   var OCCASIONS = [
@@ -744,13 +763,14 @@
   function validStep(n) {
     switch (n) {
       case 1: return !!state.who && state.yourName.trim().length > 0
-                     && (state.who === 'myself' || state.name.trim().length > 0);
+                     && (state.who === 'myself' || state.name.trim().length > 0)
+                     && /.+@.+\..+/.test(state.email);
       // An occasion in words, so the Next button blocks what the server would
       // refuse later with a generic error the customer could not act on.
       case 2: return !!state.occasion && (state.occasion !== 'Other' || /[a-z]{2}/i.test(state.occasionOther));
       case 3: return !!state.style;
       case 4: return !!state.voice;
-      case 5: return answerLength(state.story) >= STORY_TARGET;
+      case 5: return answerLength(state.story) >= STORY_MIN;
       default: return false;
     }
   }
@@ -857,6 +877,14 @@
   $('qName').addEventListener('input', function () { state.name = this.value; refreshNext(); save(); });
   $('qRel').addEventListener('input', function () { state.rel = this.value; save(); });
   $('qYourName').addEventListener('input', function () { state.yourName = this.value; refreshNext(); save(); });
+  // Asked here rather than after the last question. An address collected up
+  // front is the only way to reach someone who leaves partway, which is where
+  // most people were being lost.
+  $('qEmailEarly').addEventListener('input', function () {
+    state.email = this.value.trim();
+    var later = $('qEmail'); if (later) later.value = state.email;
+    refreshNext(); save();
+  });
 
   // step 2
   $('occasionGrid').addEventListener('click', function (e) {
@@ -900,8 +928,12 @@
     var pct = Math.min(100, Math.round(answerLength(state.story) / STORY_TARGET * 100));
     $('meterFill').style.width = pct + '%';
     $('meterPct').textContent = pct + '%';
-    $('meterHint').textContent = pct >= 100 ? 'Beautiful. That is plenty to work with.'
-      : pct > 0 ? 'Keep going, the details make the song' : 'Start typing to fill the meter';
+    var written = answerLength(state.story);
+    $('meterHint').textContent =
+      pct >= 100 ? 'Beautiful. That is plenty to work with.'
+      : written >= STORY_MIN ? 'You can continue. More detail makes a better song.'
+      : written > 0 ? 'Keep going, the details make the song'
+      : 'Start typing to fill the meter';
   }
 
   $('qStory').addEventListener('input', function () {
@@ -957,6 +989,61 @@
     ta.scrollTop = ta.scrollHeight;
   }
 
+  // ---------- Dictation ----------
+  // The buyer here is often 45 to 65, on a phone, and typing four sentences on
+  // a phone keyboard is the wall the story step runs into. Speech is an extra
+  // way in, never a replacement: the textarea stays exactly as it was.
+  (function () {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;                       // unsupported: button stays hidden
+
+    var btn = $('dictateBtn'), note = $('dictateNote'), label = $('dictateLabel');
+    var ta = $('qStory'), rec = null, listening = false, baseline = '';
+    btn.hidden = false;
+
+    function setListening(on) {
+      listening = on;
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      note.hidden = !on;
+      label.textContent = on ? 'Stop and keep this' : 'Say it out loud instead';
+      btn.classList.toggle('bg-blush/60', on);
+      btn.classList.toggle('bg-white', !on);
+    }
+
+    function commit(text) {
+      ta.value = text;
+      state.story = text;
+      paintMeter(); refreshNext(); save();
+    }
+
+    btn.addEventListener('click', function () {
+      if (listening) { try { rec.stop(); } catch (e) {} return; }
+
+      rec = new SR();
+      rec.lang = 'en-US';
+      rec.continuous = true;
+      rec.interimResults = true;
+
+      baseline = ta.value.replace(/\s+$/, '');
+      rec.onresult = function (e) {
+        var settled = '', pending = '';
+        for (var i = e.resultIndex; i < e.results.length; i += 1) {
+          var chunk = e.results[i][0].transcript;
+          if (e.results[i].isFinal) settled += chunk; else pending += chunk;
+        }
+        if (settled) baseline = (baseline ? baseline + ' ' : '') + settled.trim();
+        commit(baseline + (pending ? (baseline ? ' ' : '') + pending : ''));
+      };
+      // A denied microphone, a dropped connection, or simple silence all end the
+      // same way: stop listening and leave whatever was already written alone.
+      rec.onerror = function () { setListening(false); };
+      rec.onend = function () { setListening(false); commit(ta.value.trim()); };
+
+      try { rec.start(); setListening(true); }
+      catch (e) { setListening(false); }
+    });
+  }());
+
   $('helpToggle').addEventListener('click', function () {
     var panel = $('helpPanel');
     var wasOpen = !panel.hidden;
@@ -970,6 +1057,9 @@
   $('backBtn').addEventListener('click', function () { if (state.step > 1) { state.step--; renderStep(); } });
   $('nextBtn').addEventListener('click', function () {
     if (!validStep(state.step)) return;
+    // Leaving question one is the first moment an address exists. Everyone who
+    // stops after this point is now reachable, which they were not before.
+    if (state.step === 1) captureForRecovery(1);
     if (state.step < TOTAL) { state.step++; renderStep(); }
     else { setPhase('email'); }
   });
@@ -994,6 +1084,7 @@
   //      server event as two separate checkouts instead of one.
   var IC_ID_KEY = 'hn_v3_ic_id';
   var IC_SENT_KEY = 'hn_v3_ic_sent';
+  var ATC_ID_KEY = 'hn_v3_atc_id';
 
   function sessionCheckoutEventId() {
     var id = null;
@@ -1007,6 +1098,20 @@
     return id;
   }
 
+  // The price-page AddToCart needs an id of its own. Reusing the checkout id
+  // would put two different Meta events under one identifier.
+  function atcEventId() {
+    var id = null;
+    try { id = sessionStorage.getItem(ATC_ID_KEY); } catch (e) { /* private mode */ }
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'atc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      try { sessionStorage.setItem(ATC_ID_KEY, id); } catch (e) { /* private mode */ }
+    }
+    return id;
+  }
+
   function trackReachedCheckout() {
     try { if (sessionStorage.getItem(IC_SENT_KEY)) return; sessionStorage.setItem(IC_SENT_KEY, '1'); }
     catch (e) { /* private mode: fire anyway */ }
@@ -1015,11 +1120,15 @@
     var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
 
     if (typeof fbq === 'function') {
-      fbq('track', 'InitiateCheckout', {
+      // Seeing the configured song and its price is the add to cart. It used to
+      // send InitiateCheckout from here, which made Meta optimise toward people
+      // who merely reached a form. Its own id, kept apart from the checkout id
+      // below, so the two events never collide.
+      fbq('track', 'AddToCart', {
         value: pkg.price,
         currency: 'USD',
         content_name: pkg.name,
-      }, { eventID: eid });
+      }, { eventID: atcEventId() });
     }
     if (typeof hnTrack === 'function') {
       var fb = (window.HN_META && HN_META.data()) || {};
@@ -1029,7 +1138,7 @@
         label: 'Reached the v3 price page',
         fbp: fb.fbp,
         fbc: fb.fbc,
-        meta: { eid: eid },
+        meta: { eid: atcEventId() },
       });
     }
   }
@@ -1053,16 +1162,22 @@
   // email phase
   $('qEmail').addEventListener('input', function () {
     state.email = this.value.trim();
+    var early = $('qEmailEarly'); if (early) early.value = state.email;
     $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     save();
   });
   // Reaching the payment step with an email is the one moment we can reach
   // someone who has not paid, so it starts the recovery sequence. Fired once
   // per session, and canceled server-side the instant they buy.
-  var captured = false;
-  function captureForRecovery() {
-    if (captured || !/.+@.+\..+/.test(state.email)) return;
-    captured = true;
+  // Two stages. Stage 1 fires as soon as we have an address, which is the only
+  // way to reach someone who leaves partway through. Stage 2 fires at the price
+  // step with the finished brief. captureAbandoned updates the existing row and
+  // keeps the running sequence, so the second call enriches rather than duplicates.
+  var capturedStage = 0;
+  function captureForRecovery(stage) {
+    stage = stage || 2;
+    if (stage <= capturedStage || !/.+@.+\..+/.test(state.email)) return;
+    capturedStage = stage;
     try {
       fetch('/api/track', {
         method: 'POST',
@@ -1092,7 +1207,7 @@
     if (!/.+@.+\..+/.test(state.email)) return;
     var missing = allStepsValid();
     if (missing) { goToStep(missing); return; }
-    captureForRecovery();
+    captureForRecovery(2);
     setPhase('checkout');
   });
   $('changeEmail').addEventListener('click', function () { setPhase('email'); });
@@ -1322,6 +1437,7 @@
       $('aboutYou').classList.remove('hidden');
     }
     $('qName').value = state.name; $('qRel').value = state.rel; $('qYourName').value = state.yourName;
+    $('qEmailEarly').value = state.email;
     if (state.occasion) {
       var o = document.querySelector('[data-occasion="' + state.occasion + '"]'); if (o) o.classList.add('on');
       $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');
@@ -1401,7 +1517,9 @@
     var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
 
     if (typeof fbq === 'function') {
-      fbq('track', 'AddToCart', {
+      // Reaching the form is a content view, not a cart. Naming it AddToCart
+      // told Meta to buy people who open forms rather than people who buy.
+      fbq('track', 'ViewContent', {
         value: pkg.price,
         currency: 'USD',
         content_name: pkg.name,

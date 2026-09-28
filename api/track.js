@@ -56,12 +56,14 @@ export default async function handler(req, res) {
       meta: body.meta && typeof body.meta === 'object' ? body.meta : {},
     };
 
-    // Reaching the order form is our Add to Cart. Send it server-side too, so
-    // it survives ad blockers and iOS; the browser Pixel sends the same
-    // event_id, which is how Meta knows the two are one event and not two.
-    const toMeta = body.type === 'reached_form' && metaReady()
+    // Two steps are mirrored server-side so they survive ad blockers and iOS.
+    // Reaching the form is a ViewContent; reaching the configured price is the
+    // AddToCart. The browser Pixel sends the same event_id for each, which is
+    // how Meta knows a pair is one event and not two.
+    const META_EVENTS = { reached_form: 'ViewContent', add_to_cart: 'AddToCart' };
+    const toMeta = META_EVENTS[body.type] && metaReady()
       ? sendMetaEvent({
-          eventName: 'AddToCart',
+          eventName: META_EVENTS[body.type],
           eventId: row.meta && row.meta.eid,
           fbp: str(body.fbp, 120),
           fbc: str(body.fbc, 200),
