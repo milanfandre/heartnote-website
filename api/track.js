@@ -57,10 +57,14 @@ export default async function handler(req, res) {
     };
 
     // Two steps are mirrored server-side so they survive ad blockers and iOS.
-    // Reaching the form is a ViewContent; reaching the configured price is the
+    // Reaching the form is a Lead; reaching the configured price is the
     // AddToCart. The browser Pixel sends the same event_id for each, which is
     // how Meta knows a pair is one event and not two.
-    const META_EVENTS = { reached_form: 'ViewContent', add_to_cart: 'AddToCart' };
+    //
+    // Not ViewContent: funnel.js already sends that from every landing page, so
+    // reusing it here would have merged a page view and a started brief into one
+    // signal and given the optimizer nothing to tell them apart by.
+    const META_EVENTS = { reached_form: 'Lead', add_to_cart: 'AddToCart' };
     const toMeta = META_EVENTS[body.type] && metaReady()
       ? sendMetaEvent({
           eventName: META_EVENTS[body.type],

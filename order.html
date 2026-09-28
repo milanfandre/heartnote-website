@@ -1517,9 +1517,12 @@
     var pkg = PKGS.filter(function (p) { return p.key === state.tier; })[0] || PKGS[2];
 
     if (typeof fbq === 'function') {
-      // Reaching the form is a content view, not a cart. Naming it AddToCart
-      // told Meta to buy people who open forms rather than people who buy.
-      fbq('track', 'ViewContent', {
+      // Reaching the form is a Lead: someone has started a qualified brief.
+      // It was AddToCart, which told Meta to buy people who open forms rather
+      // than people who buy. ViewContent was the obvious replacement until it
+      // turned out funnel.js already sends that on every landing page, so the
+      // two would have shared one name at very different intent levels.
+      fbq('track', 'Lead', {
         value: pkg.price,
         currency: 'USD',
         content_name: pkg.name,
