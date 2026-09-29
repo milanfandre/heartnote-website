@@ -337,6 +337,16 @@ When this file and an older spec disagree, **this file wins**.
   collapse). Each row states step conversion and sessions lost; the worst step
   is highlighted and repeated in a "Biggest drop-off" tile.
 
+- **Sep 29 — Email no longer asked at question 1.** Milan's call: it is asked
+  again after the story, so asking twice was friction on the first screen.
+  Question 1 is names only. Trade-off accepted: stage-1 abandoned-checkout
+  capture (an address at question 1, so people who leave mid-quiz could be
+  emailed) now only fires for returning visitors with a saved address; new
+  visitors become reachable at the email step after the story. Same pass fixed
+  a bug from Sep 28: the tracking list `STEP_NAMES` overwrote the step bar's
+  captions of the same name, shifting every caption one step; renamed
+  `TRACK_STEP_NAMES`.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

@@ -195,10 +195,6 @@
           <label for="qYourName" class="block font-700 text-ink text-[.95rem] mb-1.5">Your name</label>
           <input id="qYourName" class="field" type="text" placeholder="Enter your first name" autocomplete="given-name" />
           <p class="mt-1.5 text-ink-soft text-[.85rem]">So they know who it is from, and so we can address your song page to you.</p>
-
-          <label for="qEmailEarly" class="block font-700 text-ink text-[.95rem] mb-1.5 mt-4">Your email</label>
-          <input id="qEmailEarly" class="field" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" />
-          <p class="mt-1.5 text-ink-soft text-[.85rem]">We save your answers to this address, so you can finish later on any device.</p>
         </div>
       </section>
 
@@ -762,8 +758,7 @@
   function validStep(n) {
     switch (n) {
       case 1: return !!state.who && state.yourName.trim().length > 0
-                     && (state.who === 'myself' || state.name.trim().length > 0)
-                     && /.+@.+\..+/.test(state.email);
+                     && (state.who === 'myself' || state.name.trim().length > 0);
       // An occasion in words, so the Next button blocks what the server would
       // refuse later with a generic error the customer could not act on.
       case 2: return !!state.occasion && (state.occasion !== 'Other' || /[a-z]{2}/i.test(state.occasionOther));
@@ -876,14 +871,6 @@
   $('qName').addEventListener('input', function () { state.name = this.value; refreshNext(); save(); });
   $('qRel').addEventListener('input', function () { state.rel = this.value; save(); });
   $('qYourName').addEventListener('input', function () { state.yourName = this.value; refreshNext(); save(); });
-  // Asked here rather than after the last question. An address collected up
-  // front is the only way to reach someone who leaves partway, which is where
-  // most people were being lost.
-  $('qEmailEarly').addEventListener('input', function () {
-    state.email = this.value.trim();
-    var later = $('qEmail'); if (later) later.value = state.email;
-    refreshNext(); save();
-  });
 
   // step 2
   $('occasionGrid').addEventListener('click', function (e) {
@@ -1056,12 +1043,14 @@
   $('backBtn').addEventListener('click', function () { if (state.step > 1) { state.step--; renderStep(); } });
   // One event per question answered, once per session, so the dashboard can
   // show where in the quiz people stop.
-  var STEP_NAMES = ['', 'Who it is for', 'The occasion', 'The style', 'The voice', 'The story'];
+  // Named apart from STEP_NAMES (the step bar's captions, 0-based), which
+  // this list once overwrote and knocked every caption one step out.
+  var TRACK_STEP_NAMES = ['', 'Who it is for', 'The occasion', 'The style', 'The voice', 'The story'];
   $('nextBtn').addEventListener('click', function () {
     if (!validStep(state.step)) return;
-    trackOnce('hn_step_done_' + state.step, 'quiz_step', { label: 'Answered: ' + STEP_NAMES[state.step], meta: { step: state.step } });
-    // Leaving question one is the first moment an address exists. Everyone who
-    // stops after this point is now reachable, which they were not before.
+    trackOnce('hn_step_done_' + state.step, 'quiz_step', { label: 'Answered: ' + TRACK_STEP_NAMES[state.step], meta: { step: state.step } });
+    // The email is only asked after the last question now, so this fires only
+    // for a returning visitor whose address is already saved.
     if (state.step === 1) captureForRecovery(1);
     if (state.step < TOTAL) { state.step++; renderStep(); }
     else { setPhase('email'); }
@@ -1165,7 +1154,6 @@
   // email phase
   $('qEmail').addEventListener('input', function () {
     state.email = this.value.trim();
-    var early = $('qEmailEarly'); if (early) early.value = state.email;
     $('emailNext').disabled = !/.+@.+\..+/.test(state.email);
     save();
   });
@@ -1443,7 +1431,6 @@
       $('aboutYou').classList.remove('hidden');
     }
     $('qName').value = state.name; $('qRel').value = state.rel; $('qYourName').value = state.yourName;
-    $('qEmailEarly').value = state.email;
     if (state.occasion) {
       var o = document.querySelector('[data-occasion="' + state.occasion + '"]'); if (o) o.classList.add('on');
       $('qOccasionOther').classList.toggle('hidden', state.occasion !== 'Other');

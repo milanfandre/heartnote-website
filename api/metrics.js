@@ -83,7 +83,7 @@ async function buildJourney(startISO, purchases, endISO = null) {
     { key: 'clicked',  name: 'Clicked through to the quiz', hint: 'pressed a button that opens the order form', v: n('clicked'),
       since: startISO < CLICKS_COMPLETE_FROM ? (endISO && endISO <= CLICKS_COMPLETE_FROM ? 'partial' : CLICKS_COMPLETE_FROM) : null, sinceNote: 'homepage clicks counted from' },
     { key: 'form',     name: 'Started the quiz',             hint: 'the order form loaded', v: n('reached_form') },
-    { key: 'step1',    name: 'Answered: who it is for',      hint: 'question 1 of 5, names and email', v: n('step1'), since: since('quiz_step') },
+    { key: 'step1',    name: 'Answered: who it is for',      hint: 'question 1 of 5, names', v: n('step1'), since: since('quiz_step') },
     { key: 'step2',    name: 'Answered: the occasion',       hint: 'question 2 of 5', v: n('step2'), since: since('quiz_step') },
     { key: 'step3',    name: 'Answered: the style',          hint: 'question 3 of 5', v: n('step3'), since: since('quiz_step') },
     { key: 'step4',    name: 'Answered: the voice',          hint: 'question 4 of 5, which opens the story', v: n('step4'), since: since('quiz_step') },
