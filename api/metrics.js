@@ -39,10 +39,11 @@ const JOURNEY_TYPES = ['cta_click', 'reached_form', 'quiz_step', 'story_start', 
 // the dashboard says so instead of showing a false drop to zero.
 const NEW_TYPES = ['quiz_step', 'checkout_click', 'stripe_open'];
 
-async function buildJourney(startISO, purchases) {
+async function buildJourney(startISO, purchases, endISO = null) {
+  const end = endISO ? `&created_at=lt.${endISO}` : '';
   const [views, acts, firsts] = await Promise.all([
-    selectAll('events', `select=session_id,page&type=eq.pageview&created_at=gte.${startISO}&order=id.asc`),
-    selectAll('events', `select=session_id,type,meta&type=in.(${JOURNEY_TYPES.join(',')})&created_at=gte.${startISO}&order=id.asc`),
+    selectAll('events', `select=session_id,page&type=eq.pageview&created_at=gte.${startISO}${end}&order=id.asc`),
+    selectAll('events', `select=session_id,type,meta&type=in.(${JOURNEY_TYPES.join(',')})&created_at=gte.${startISO}${end}&order=id.asc`),
     Promise.all(NEW_TYPES.map((t) => sbSelect('events', `select=created_at&type=eq.${t}&order=id.asc&limit=1`)
       .then((r) => [t, r[0] ? r[0].created_at : null]).catch(() => [t, null]))),
   ]);
@@ -71,12 +72,16 @@ async function buildJourney(startISO, purchases) {
   const n = (k) => (sets[k] ? sets[k].size : 0);
   // A rung is "partial" when tracking for it began after the start of the
   // window; its count is only for the days since then.
-  const since = (t) => (first[t] && first[t] > startISO ? first[t] : (first[t] ? null : 'never'));
+  const since = (t) => {
+    if (!first[t]) return 'never';
+    if (endISO && first[t] >= endISO) return 'never';      // not tracked at all in this window
+    return first[t] > startISO ? first[t] : null;
+  };
 
   const steps = [
-    { key: 'landed',   name: 'Viewed a landing page',        hint: 'the homepage or an ad landing page loaded', v: n('landed') },
-    { key: 'clicked',  name: 'Clicked through to the quiz',  hint: 'pressed a button that opens the order form', v: n('clicked'),
-      since: startISO < CLICKS_COMPLETE_FROM ? CLICKS_COMPLETE_FROM : null, sinceNote: 'homepage clicks counted from' },
+    { key: 'landed',   name: 'Landing page sessions',        hint: 'the homepage or an ad landing page loaded', v: n('landed') },
+    { key: 'clicked',  name: 'Clicked through to the quiz', hint: 'pressed a button that opens the order form', v: n('clicked'),
+      since: startISO < CLICKS_COMPLETE_FROM ? (endISO && endISO <= CLICKS_COMPLETE_FROM ? 'partial' : CLICKS_COMPLETE_FROM) : null, sinceNote: 'homepage clicks counted from' },
     { key: 'form',     name: 'Started the quiz',             hint: 'the order form loaded', v: n('reached_form') },
     { key: 'step1',    name: 'Answered: who it is for',      hint: 'question 1 of 5, names and email', v: n('step1'), since: since('quiz_step') },
     { key: 'step2',    name: 'Answered: the occasion',       hint: 'question 2 of 5', v: n('step2'), since: since('quiz_step') },
@@ -208,10 +213,19 @@ export default async function handler(req, res) {
     const timeseries = Object.values(byDay);
 
     // ── Meta ad spend (null until a token is configured) ───────────────────
-    const [meta, journey] = await Promise.all([
+    // The same window immediately before this one, for Shopify-style
+    // "vs previous period" changes on the conversion card.
+    const prevStart = new Date(start.getTime() - days * 864e5).toISOString();
+    const [meta, journey, prevJourney] = await Promise.all([
       getAdInsights(days, revenueCents),
       buildJourney(startISO, purchases).catch((err) => ({ error: err.message })),
+      sbSelect('orders', `select=amount_total&created_at=gte.${prevStart}&created_at=lt.${startISO}`)
+        .then((o) => buildJourney(prevStart, o.filter((x) => (x.amount_total || 0) > 0).length, startISO))
+        .catch((err) => ({ error: err.message })),
     ]);
+    if (journey && !journey.error && prevJourney && !prevJourney.error) {
+      journey.prev = { sessions: prevJourney.sessions, steps: prevJourney.steps.map((x) => ({ key: x.key, v: x.v, since: x.since || null })) };
+    }
 
     return res.status(200).json({
       range: { days, start: startDay },

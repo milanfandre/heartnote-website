@@ -325,6 +325,18 @@ When this file and an older spec disagree, **this file wins**.
   double count. The ad tile shows Link CTR (inline_link_click_ctr) instead of
   all-click CTR.
 
+- **Sep 29 — Conversion card copies Shopify's layout; journey back to a funnel.**
+  Milan supplied a Shopify Analytics capture. The card now mirrors its
+  "Conversion rate breakdown": headline rate with change vs the previous
+  window of equal length, four stage columns (share, count, change), and
+  stepped bars with an axis break on the first bar and drop-off wedges between.
+  Both it and the journey start from landing page sessions so they agree. The
+  journey is a real funnel again, one row per step with its slice of the shape
+  beside its numbers (sqrt-scaled widths; steps not tracked for the whole
+  window drawn as dashed outlines at the width of the step before, never as a
+  collapse). Each row states step conversion and sessions lost; the worst step
+  is highlighted and repeated in a "Biggest drop-off" tile.
+
 ## Standing client preferences (apply everywhere, always)
 No AI mentions on-site · no em dashes in customer copy · US spelling ·
 push-live pre-authorized but always verify · Paul fulfills via /deliver ·

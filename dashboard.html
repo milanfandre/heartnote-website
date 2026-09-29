@@ -62,17 +62,47 @@
      about 110px wide and the labels wrap to one word per line, so below this
      width the shape sits above the labels instead. The inline grid on the
      element is what these override. */
-  /* Conversion rate, laid out like Shopify's card: the headline rate, then
-     each stage as a row with its share of sessions on the right. */
-  .conv-head { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
-  .conv-rate { font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 600; line-height: 1; margin: 0; }
-  .conv-rows { margin-top: 1.1rem; border-top: 1px solid var(--line); }
-  .conv-row { display: grid; grid-template-columns: 1fr auto; gap: .15rem 1rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
-  .conv-row p { margin: 0; }
-  .conv-pct { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
-  .conv-sub { font-size: .8rem; color: var(--text-2); }
-  .conv-bar { grid-column: 1 / -1; height: 6px; background: rgba(255,255,255,.05); border-radius: 999px; overflow: hidden; margin-top: .35rem; }
-  .conv-bar > div { height: 100%; border-radius: 999px; background: var(--green); }
+  /* Conversion rate breakdown, laid out like Shopify's card: headline rate
+     and change, then one column per stage (share, count, change) over a
+     stepped bar chart. The first bar is drawn with an axis break because
+     sessions dwarf every later stage; the later bars share their own scale.
+     The lighter wedges between bars are the drop-off. */
+  .cv-rate { display: flex; align-items: baseline; gap: .6rem; margin: 0 0 1rem; }
+  .cv-rate b { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 600; line-height: 1; }
+  .delta { font-size: .8rem; font-weight: 600; white-space: nowrap; }
+  .delta.up { color: var(--green); } .delta.down { color: #f0719f; } .delta.flat { color: var(--muted); }
+  .cv-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cv-col { padding: 0 .8rem; border-left: 1px solid var(--line); min-width: 0; }
+  .cv-col:first-child { border-left: 0; padding-left: 0; }
+  .cv-name { font-size: .82rem; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+  .cv-pct { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; margin: .15rem 0 0; font-variant-numeric: tabular-nums; }
+  .cv-n { font-size: .9rem; margin: 0; font-variant-numeric: tabular-nums; }
+  .cv-chart { display: block; width: 100%; height: 200px; margin-top: .9rem; }
+  @media (max-width: 560px) {
+    .cv-col { padding: 0 .4rem; } .cv-pct { font-size: .98rem; } .cv-name { font-size: .72rem; } .cv-chart { height: 150px; }
+  }
+  /* The journey funnel: one row per step. Each row carries its own slice of
+     the funnel on the left, so the shape and the numbers can never drift out
+     of line, at any width. */
+  .fn-row { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; gap: 0 1.1rem; align-items: stretch; }
+  .fn-shapewrap { position: relative; min-height: 58px; }
+  .fn-shape { position: absolute; inset: 0; width: 100%; height: calc(100% + 1px); }
+  .fn-meta { padding: .38rem 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: .05rem 1rem; align-items: center; }
+  .fn-name { margin: 0; font-size: .9rem; }
+  .fn-hint { margin: 0; font-size: .74rem; color: var(--muted); grid-column: 1; }
+  .fn-num { margin: 0; text-align: right; font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; grid-row: 1 / span 2; grid-column: 2; }
+  .fn-num small { display: block; font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: .72rem; color: var(--text-2); }
+  .fn-step { grid-column: 1 / -1; margin: .1rem 0 0; font-size: .78rem; color: var(--text-2); }
+  .fn-step b { font-weight: 600; color: var(--text); }
+  .fn-step.worst, .fn-step.worst b { color: #f0719f; }
+  .fn-meta.g .fn-num { grid-row: 2 / span 2; }
+  .fn-num { align-self: start; }
+  .fn-name { align-self: start; }
+  .fn-grp { grid-column: 1 / -1; margin: .15rem 0 .1rem; font-size: .66rem; text-transform: uppercase; letter-spacing: .1em; color: var(--orange); }
+  @media (max-width: 560px) {
+    .fn-row { grid-template-columns: 34% 1fr; gap: 0 .7rem; }
+    .fn-hint, .fn-of { display: none; }
+  }
   .partial { color: var(--orange); font-size: .74rem; }
   .j-grp { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 1.1rem 0 .45rem; }
   .j-grp:first-child { margin-top: 0; }
@@ -156,8 +186,8 @@
 
     <section class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.7rem">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <h2 style="font-size:1.02rem;margin:0">Conversion rate</h2>
-        <p class="muted" style="margin:0;font-size:.79rem">Share of site sessions that reached each stage. Every visitor, not only ad clicks.</p>
+        <h2 style="font-size:1.02rem;margin:0">Conversion rate breakdown</h2>
+        <p class="muted" style="margin:0;font-size:.79rem">Share of sessions at each stage. Arrows compare with the same number of days before.</p>
       </div>
       <div id="convWrap" style="margin-top:1rem"></div>
     </section>
@@ -165,7 +195,7 @@
     <section class="card" style="padding:1.3rem 1.4rem;margin-bottom:1.7rem">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap">
         <h2 style="font-size:1.02rem;margin:0">The customer journey</h2>
-        <p class="muted" style="margin:0;font-size:.79rem">Every step from landing page to payment, counted in people. Each person is counted once per step.</p>
+        <p class="muted" style="margin:0;font-size:.79rem">Sessions at every step, landing page to payment. Read down the right side for where people drop off.</p>
       </div>
       <div id="storyWrap" style="margin-top:1.1rem"></div>
       <div id="storyDrop" style="margin-top:1.15rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem"></div>
@@ -329,39 +359,68 @@
     return '<span class="partial">' + esc(s.sinceNote || 'Counted from') + ' ' + fSince(s.since) + '</span>';
   }
 
-  // Shopify's conversion rate card: one headline rate, then each stage as a
-  // share of sessions. Same three stages Shopify uses, in Heart Note's terms.
+  // Change vs the previous window of the same length, Shopify-style.
+  function delta(cur, prev, ok) {
+    if (!ok || prev == null) return '<span class="delta flat">&mdash;</span>';
+    if (!prev) return cur ? '<span class="delta up">new</span>' : '<span class="delta flat">0%</span>';
+    var ch = (cur - prev) / prev;
+    if (Math.abs(ch) < 0.005) return '<span class="delta flat">0%</span>';
+    return '<span class="delta ' + (ch > 0 ? 'up' : 'down') + '">' + (ch > 0 ? '&#8599; ' : '&#8600; ') + Math.round(Math.abs(ch) * 100) + '%</span>';
+  }
+
+  // Shopify's "Conversion rate breakdown": headline rate, four stage
+  // columns, stepped bars with drop-off wedges between them.
   function renderConversion(d) {
     var j = d.journey || {};
     if (j.error || !j.steps) { $('convWrap').innerHTML = '<p class="muted" style="margin:0">Could not load: ' + esc(j.error || 'no data') + '</p>'; return; }
-    var by = {}; j.steps.forEach(function (s) { by[s.key] = s; });
-    var S = j.sessions || 0;
-    var rows = [
-      { name: 'Reached the checkout page', s: by.checkout, shop: 'Added to cart' },
-      { name: 'Reached Stripe',            s: by.stripe,   shop: 'Reached checkout' },
-      { name: 'Sessions converted',        s: by.paid,     shop: 'Paid' },
+    var by = {}, pby = {};
+    j.steps.forEach(function (x) { by[x.key] = x; });
+    ((j.prev && j.prev.steps) || []).forEach(function (x) { pby[x.key] = x; });
+    // Landing page sessions, the same base as the journey, so the two agree.
+    var S = by.landed.v || 0, PS = (j.prev && pby.landed) ? pby.landed.v : null;
+    var cols = [
+      { name: 'Landing page sessions', v: S,              p: PS,                              ok: true },
+      { name: 'Reached checkout page', v: by.checkout.v, p: pby.checkout && pby.checkout.v, ok: !by.checkout.since && pby.checkout && !pby.checkout.since },
+      { name: 'Reached Stripe',     v: by.stripe.v,    p: pby.stripe && pby.stripe.v,      ok: !by.stripe.since && pby.stripe && !pby.stripe.since, since: by.stripe.since },
+      { name: 'Paid',               v: by.paid.v,      p: pby.paid && pby.paid.v,          ok: true },
     ];
-    var rate = S ? (by.paid.v || 0) / S : 0;
+    var rate = S ? by.paid.v / S : 0;
+    var prate = (PS && pby.paid) ? pby.paid.v / PS : null;
+
+    // Bars: sessions at full height behind an axis break; the three later
+    // stages on a shared square-root scale so small differences stay visible.
+    var H = 100, rest = Math.max(cols[1].v, cols[2].v, cols[3].v, 1);
+    var hts = cols.map(function (c, i) { return i === 0 ? 92 : (c.v ? 8 + 26 * Math.sqrt(c.v / rest) : 0); });
+    var colW = 100 / 4, barW = colW * 0.74, svg = '';
+    cols.forEach(function (c, i) {
+      var x = i * colW, top = H - hts[i];
+      if (c.since) {   // not measured for the whole window: placeholder at the height of the stage before
+        hts[i] = hts[i - 1]; top = H - hts[i];
+        svg += '<rect x="' + x.toFixed(2) + '" y="' + top.toFixed(2) + '" width="' + barW.toFixed(2) + '" height="' + hts[i].toFixed(2) + '" fill="none" stroke="#3a3268" stroke-width="1.2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke" rx="1.2"></rect>';
+      } else if (hts[i]) svg += '<rect x="' + x.toFixed(2) + '" y="' + top.toFixed(2) + '" width="' + barW.toFixed(2) + '" height="' + hts[i].toFixed(2) + '" fill="var(--green)" rx="1.2"></rect>';
+      if (i === 0) {   // axis break across the first bar
+        svg += '<path d="M' + x + ' 30 l' + (barW / 4) + ' -2.5 l' + (barW / 4) + ' 2.5 l' + (barW / 4) + ' -2.5 l' + (barW / 4) + ' 2.5 v3.2 l' + (-barW / 4) + ' -2.5 l' + (-barW / 4) + ' 2.5 l' + (-barW / 4) + ' -2.5 l' + (-barW / 4) + ' 2.5 Z" fill="var(--raised)"></path>';
+      }
+      if (i < 3 && !cols[i + 1].since && !c.since) {     // drop-off wedge to the next bar
+        var nx = (i + 1) * colW, ntop = H - hts[i + 1];
+        svg += '<path d="M' + (x + barW).toFixed(2) + ' ' + top.toFixed(2) + ' L' + nx.toFixed(2) + ' ' + ntop.toFixed(2) + ' L' + nx.toFixed(2) + ' ' + H + ' L' + (x + barW).toFixed(2) + ' ' + H + ' Z" fill="var(--green)" opacity=".28"></path>';
+      }
+    });
+
     $('convWrap').innerHTML =
-        '<div class="conv-head"><p class="conv-rate">' + fPct(rate) + '</p>'
-      + '<p class="muted" style="margin:0;font-size:.85rem">' + fInt(by.paid.v) + ' paid orders from ' + fInt(S) + ' sessions</p></div>'
-      + '<div class="conv-rows">'
-      + rows.map(function (r) {
-          var v = r.s.v || 0, pct = S ? v / S : 0;
-          return '<div class="conv-row">'
-            + '<div><p style="font-size:.93rem">' + esc(r.name) + '</p>'
-            + '<p class="conv-sub">' + fInt(v) + ' session' + (v === 1 ? '' : 's') + ' ' + partialNote(r.s) + '</p></div>'
-            + '<p class="conv-pct">' + fPct(pct) + '</p>'
-            + '<div class="conv-bar"><div style="width:' + Math.max(pct / Math.max(rate, (by.checkout.v || 0) / (S || 1), 0.0001) * 100, pct ? 1.5 : 0).toFixed(1) + '%"></div></div>'
-            + '</div>';
-        }).join('')
-      + '</div>';
+        '<p class="cv-rate"><b>' + fPct(rate) + '</b>' + delta(rate, prate, prate != null) + '</p>'
+      + '<div class="cv-cols">' + cols.map(function (c) {
+          return '<div class="cv-col"><p class="cv-name" title="' + esc(c.name) + '">' + esc(c.name) + '</p>'
+            + '<p class="cv-pct">' + fPct(S ? c.v / S : 0) + '</p>'
+            + '<p class="cv-n">' + fInt(c.v) + '</p>'
+            + '<p style="margin:.1rem 0 0">' + (c.since ? '<span class="partial">from ' + (c.since === 'never' ? 'today' : fSince(c.since)) + '</span>' : delta(c.v, c.p, c.ok)) + '</p></div>';
+        }).join('') + '</div>'
+      + '<svg class="cv-chart" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Conversion rate breakdown bars">' + svg + '</svg>';
   }
 
-  // The whole journey, landing page to payment, one row per step. Bars are
-  // scaled to the first step so the narrowing is visible; each row also
-  // states what share of the step before it made it through, which is where
-  // the leak is.
+  // The journey as a real funnel. Band widths follow the data on a
+  // square-root scale (linear would shrink everything past the landing page
+  // to a sliver); every band still reads its exact count on the right.
   function renderJourney(d) {
     var j = d.journey || {};
     if (j.error || !j.steps) {
@@ -370,51 +429,58 @@
     }
     var steps = j.steps, top = steps[0].v || 0;
     var GROUPS = { landed: 'On the site', form: 'The quiz', checkout: 'Checkout' };
-    var COLOR = function (k) { return /^(landed|clicked)$/.test(k) ? PAL.orange : (/^(checkout|pay|stripe|paid)$/.test(k) ? PAL.green : PAL.pink); };
+    var RAMP13 = ['#f59551','#ee8a45','#e98039','#e2701e','#d86a1c','#cf641b','#c55e19','#bb5818','#b25316','#a84d15','#9f4814','#964213','#8c3d12'];
+    function prevOf(i) { for (var k = i - 1; k >= 0; k -= 1) if (!steps[k].since) return steps[k]; return null; }
+    var W = function (v) { return top ? Math.max(12, 100 * Math.sqrt((v || 0) / top)) : 12; };
 
-    // "Of the step before" skips rungs that were not being counted yet, so a
-    // missing measurement never reads as everyone leaving.
-    function prevOf(i) {
-      for (var k = i - 1; k >= 0; k -= 1) if (!steps[k].since) return steps[k];
-      return null;
-    }
-
-    // The biggest single leak among steps with full data.
+    // Step conversion for every step with full data, and the worst one.
     var worst = null;
-    steps.forEach(function (s, i) {
-      var p = prevOf(i); if (!p || s.since || !p.v) return;
-      var lost = p.v - s.v;
-      if (lost > 0 && (!worst || lost > worst.lost)) worst = { from: p, to: s, lost: lost };
+    steps.forEach(function (x, i) {
+      var p = prevOf(i);
+      x._p = p; x._conv = (p && p.v && !x.since) ? x.v / p.v : null;
+      x._lost = (p && !x.since) ? p.v - x.v : null;
+      if (x._conv != null && x._lost > 0 && (!worst || x._conv < worst._conv)) worst = x;
     });
 
-    $('storyWrap').innerHTML = steps.map(function (s, i) {
-      var p = prevOf(i);
-      var ofPrev = (p && p.v && !s.since) ? s.v / p.v : null;
-      var w = top ? Math.max(s.v / top * 100, s.v ? 1 : 0) : 0;
-      return (GROUPS[s.key] ? '<p class="j-grp">' + GROUPS[s.key] + '</p>' : '')
-        + '<div class="rung" style="margin-bottom:.55rem">'
-        + '<div class="rung-head"><span class="rung-name">' + esc(s.name) + ' <span class="muted" style="font-size:.76rem">&middot; ' + esc(s.hint) + '</span></span>'
-        + '<span class="rung-figs"><b>' + fInt(s.v) + '</b> &middot; ' + fPct(top ? s.v / top : 0) + ' of landing views'
-        + (ofPrev != null ? ' &middot; ' + fPct(ofPrev) + ' of the step before' : '') + '</span></div>'
-        + '<div class="rung-track" style="height:14px"><div class="rung-fill" style="width:' + w.toFixed(1) + '%;background:' + COLOR(s.key) + '"></div></div>'
-        + (s.since ? '<p class="drop" style="margin-bottom:0">' + partialNote(s) + '</p>' : '')
-        + '</div>';
+    $('storyWrap').innerHTML = steps.map(function (x, i) {
+      var nextTracked = null;
+      for (var k = i + 1; k < steps.length; k += 1) { nextTracked = steps[k]; break; }
+      // A step without data for the whole window is drawn as a dashed outline
+      // at the width of the step before it, so missing history never looks
+      // like people leaving.
+      var width = function (st, idx) { if (!st.since) return W(st.v); var p = prevOf(idx); return p ? W(p.v) : W(0); };
+      var wTop = width(x, i), wBot = nextTracked ? width(nextTracked, i + 1) : wTop * 0.9;
+      var untracked = !!x.since;
+      var shape = '<svg class="fn-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'
+        + '<path d="M' + ((100 - wTop) / 2).toFixed(2) + ' 0 L' + ((100 + wTop) / 2).toFixed(2) + ' 0 L' + ((100 + wBot) / 2).toFixed(2) + ' 100 L' + ((100 - wBot) / 2).toFixed(2) + ' 100 Z"'
+        + (untracked ? ' fill="none" stroke="#3a3268" stroke-dasharray="3 3" stroke-width="1.2" vector-effect="non-scaling-stroke"' : ' fill="' + RAMP13[i] + '"') + '></path></svg>';
+      var stepLine = '';
+      if (x._conv != null) {
+        stepLine = '<p class="fn-step' + (x === worst ? ' worst' : '') + '"><b>' + fPct(x._conv) + '</b> of "' + esc(x._p.name) + '" continued'
+          + (x._lost > 0 ? ' &middot; ' + fInt(x._lost) + ' dropped off' : '') + (x === worst ? ' &middot; biggest drop-off' : '') + '</p>';
+      } else if (x.since) {
+        stepLine = '<p class="fn-step">' + partialNote(x) + '</p>';
+      }
+      return '<div class="fn-row"><div class="fn-shapewrap">' + shape + '</div>'
+        + '<div class="fn-meta' + (GROUPS[x.key] ? ' g' : '') + '">' + (GROUPS[x.key] ? '<p class="fn-grp">' + GROUPS[x.key] + '</p>' : '') + '<p class="fn-name">' + esc(x.name) + '</p><p class="fn-hint">' + esc(x.hint) + '</p>'
+        + '<p class="fn-num">' + fInt(x.v) + '<small>' + fPct(top ? x.v / top : 0) + '<span class="fn-of"> of sessions</span></small></p>'
+        + stepLine + '</div></div>';
     }).join('');
 
     var st = j.story || {};
     $('storyDrop').innerHTML =
-        (worst ? tile('Biggest drop', fInt(worst.lost) + ' people', 'between "' + worst.from.name + '" and "' + worst.to.name + '"', PAL.pink) : '')
-      + tile('Filled the writing meter', st.started ? fPct(st.filled_meter / st.started) : '—', fInt(st.filled_meter) + ' of ' + fInt(st.started) + ' who started wrote 280+ characters (the meter full; 80 is the minimum)', PAL.purple)
+        tile('Overall conversion', fPct(top ? steps[steps.length - 1].v / top : 0), fInt(steps[steps.length - 1].v) + ' paid of ' + fInt(top) + ' landing page sessions', PAL.green)
+      + (worst ? tile('Biggest drop-off', fPct(1 - worst._conv) + ' lost', 'between "' + worst._p.name + '" and "' + worst.name + '" (' + fInt(worst._lost) + ' sessions)', PAL.pink) : '')
+      + tile('Filled the writing meter', st.started ? fPct(st.filled_meter / st.started) : '—', fInt(st.filled_meter) + ' of ' + fInt(st.started) + ' who started wrote 280+ characters (80 is the minimum)', PAL.purple)
       + tile('Opened the writing help', st.started ? fPct(st.used_help / st.started) : '—', fInt(st.used_help) + ' of ' + fInt(st.started) + ' who started writing', PAL.purple);
 
     $('storyTable').innerHTML =
-      '<thead><tr><th>Step</th><th class="num">People</th><th class="num">Of landing views</th><th class="num">Of the step before</th><th>Note</th></tr></thead><tbody>'
-      + steps.map(function (s, i) {
-          var p = prevOf(i);
-          return '<tr><td>' + esc(s.name) + '</td><td class="num">' + fInt(s.v) + '</td>'
-            + '<td class="num">' + fPct(top ? s.v / top : 0) + '</td>'
-            + '<td class="num">' + (p && p.v && !s.since ? fPct(s.v / p.v) : '&mdash;') + '</td>'
-            + '<td>' + partialNote(s) + '</td></tr>';
+      '<thead><tr><th>Step</th><th class="num">Sessions</th><th class="num">% of sessions</th><th class="num">Step conversion</th><th class="num">Dropped off</th></tr></thead><tbody>'
+      + steps.map(function (x) {
+          return '<tr><td>' + esc(x.name) + '</td><td class="num">' + fInt(x.v) + '</td>'
+            + '<td class="num">' + fPct(top ? x.v / top : 0) + '</td>'
+            + '<td class="num">' + (x._conv != null ? fPct(x._conv) : '&mdash;') + '</td>'
+            + '<td class="num">' + (x._lost != null && x._lost > 0 ? fInt(x._lost) : '&mdash;') + '</td></tr>';
         }).join('') + '</tbody>';
   }
 
