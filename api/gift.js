@@ -114,6 +114,8 @@ function versionDownloads(v) {
 }
 
 function upsellCard(tier, orderId) {
+  // Heart Note has closed: no more purchases, so the unlock offer is hidden.
+  return '';
   const copy = upsellCopy(tier);
   return `<div class="mt-8 pt-7 border-t border-claret/10 text-center">
       <p class="font-display text-claret text-xl">${esc(copy.heading)}</p>

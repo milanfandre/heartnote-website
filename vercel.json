@@ -35,6 +35,11 @@
   ],
   "redirects": [
     {
+      "source": "/((?!closed|gift/|lyrics/|unsubscribe/|api/gift|api/lyrics|api/webhook|brand_assets/).*)",
+      "destination": "/closed",
+      "permanent": false
+    },
+    {
       "source": "/v2",
       "destination": "/v3",
       "permanent": false
